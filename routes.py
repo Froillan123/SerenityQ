@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify, render_template
 from models import User
 from imports import *
 from werkzeug.security import check_password_hash
+from controllers import *
 
 # Initialize Blueprints
 auth_bp = Blueprint('auth', __name__)
@@ -12,7 +13,7 @@ psychologist_bp = Blueprint('psychologist', __name__)
 # Landing page route (for /auth)
 @auth_bp.route('/')
 def landing_page():
-    return render_template('user/landingpage.html')  # Render the landing page HTML
+    return render_template('landing/landingpage.html') 
 
 # Route to register a new user
 @auth_bp.route('/register', methods=['POST'])
@@ -45,6 +46,10 @@ def login():
     else:
         return jsonify(message="Invalid credentials"), 401
 
+
+@auth_bp.route('/logout', methods=['POST'])
+def logout():
+    redirect('/')
 
 # Routes for the user side (e.g., /user)
 @user_bp.route('/ai')
@@ -81,7 +86,6 @@ def notifications():
 
 
 
-
 # Routes for admin side (e.g., /admin)
 @admin_bp.route('/dashboard')
 def admin_dashboard():
@@ -92,17 +96,20 @@ def admin_users():
     return render_template('admin/users.html')
 
 
-
-# Routes for psychologist side (e.g., /psychologist)
-@psychologist_bp.route('/dashboard')
-def psychologist_dashboard():
-    return render_template('psychologist/dashboard.html')
-
+# Psychologist Routes
 @psychologist_bp.route('/appointments')
-def psychologist_appointments():
-    return render_template('psychologist/appointments.html')
+def appointments():
+    return render_template('psychologist/psychologistappointment.html')
+
+@psychologist_bp.route('/dashboard')
+def dashboard():  # Changed from psychologist_dashboard to match template
+    return render_template('psychologist/psychologistdashboard.html')  # Note: Keeping your typo
 
 @psychologist_bp.route('/sessions')
-def psychologist_sessions():
-    return render_template('psychologist/sessions.html')
+def sessions():  # Changed from psychologist_sessions to match template
+    return render_template('psychologist/psychologistSession.html')
+
+@psychologist_bp.route('/settings')
+def settings():
+    return render_template('psychologist/psychologistsettings.html')  # Add this if needed
 

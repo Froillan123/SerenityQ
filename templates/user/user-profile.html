@@ -1,0 +1,453 @@
+{% extends "shared/userLayout/navigationLayout.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/user/user-profile.css') }}">
+{% endblock %}
+
+{% block content %}
+
+
+  <div class="container">
+    <div class="profile-header">
+      <div class="profile-pic">
+        <img src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80" alt="Profile Picture">
+        <div class="profile-camera-icon" id="profileCameraIcon">
+          <i class="fas fa-camera"></i>
+        </div>
+      </div>
+      <div class="profile-info">
+        <h1 class="profile-name" id="profileName">John Doe</h1>
+        <button class="profile-edit-btn" id="editProfileBtn">
+          <i class="fas fa-pencil-alt"></i> Edit Profile
+        </button>
+      </div>
+    </div>
+
+    <div class="profile-tabs">
+      <div class="profile-tab active" data-tab="about">About</div>
+      <div class="profile-tab" data-tab="appointments">Appointments</div>
+      <div class="profile-tab" data-tab="settings">Settings</div>
+      <div class="profile-tab" data-tab="billing">Billing</div>
+    </div>
+
+    <div class="profile-content">
+      <div class="left-sidebar">
+        <div class="intro-card">
+          <h2>
+            Intro
+            <i class="fas fa-ellipsis-h card-title-icon"></i>
+          </h2>
+          <div class="intro-item">
+            <div class="intro-icon">
+              <i class="fas fa-briefcase"></i>
+            </div>
+            <div id="workInfo">Works at ABC Company</div>
+          </div>
+          <div class="intro-item">
+            <div class="intro-icon">
+              <i class="fas fa-graduation-cap"></i>
+            </div>
+            <div id="educationInfo">Studied at XYZ University</div>
+          </div>
+          <div class="intro-item">
+            <div class="intro-icon">
+              <i class="fas fa-home"></i>
+            </div>
+            <div id="locationInfo">Lives in New York, USA</div>
+          </div>
+          <div class="intro-item">
+            <div class="intro-icon">
+              <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <div id="hometownInfo">From Chicago, Illinois</div>
+          </div>
+          <div class="intro-item">
+            <div class="intro-icon">
+              <i class="fas fa-heart"></i>
+            </div>
+            <div id="relationshipInfo">Single</div>
+          </div>
+          <div class="intro-item">
+            <div class="intro-icon">
+              <i class="fas fa-clock"></i>
+            </div>
+            <div>Joined January 2020</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="right-content">
+        <!-- About Content -->
+        <div class="tab-content active" id="about-content">
+          <div class="profile-about">
+            <h2>
+              About
+              <i class="fas fa-ellipsis-h card-title-icon" id="editAboutBtn"></i>
+            </h2>
+            <p id="aboutText">
+              Hi, I'm John! I'm a software developer passionate about creating user-friendly applications.
+              In my free time, I enjoy hiking, photography, and exploring new coffee shops.
+              Feel free to connect with me if you share similar interests or have exciting project ideas.
+            </p>
+          </div>
+          
+          <div class="interests-card">
+            <h2>
+              Interests
+              <i class="fas fa-ellipsis-h card-title-icon"></i>
+            </h2>
+            <div class="interests-list">
+              <span class="interest-tag">Technology</span>
+              <span class="interest-tag">Photography</span>
+              <span class="interest-tag">Hiking</span>
+              <span class="interest-tag">Coffee</span>
+              <span class="interest-tag">Travel</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Appointments Content -->
+        <div class="tab-content" id="appointments-content">
+          <div class="appointments-card">
+            <h2>
+              Recent Appointments
+              <i class="fas fa-ellipsis-h card-title-icon"></i>
+            </h2>
+            <div class="appointment-item" data-appointment-id="1">
+              <div class="appointment-icon">
+                <i class="fas fa-calendar-check"></i>
+              </div>
+              <div class="appointment-details">
+                <div class="appointment-title">Therapy Session</div>
+                <div class="appointment-date">April 10, 2025 • 10:00 AM</div>
+                <div class="appointment-status status-upcoming">Upcoming</div>
+              </div>
+            </div>
+            <div class="appointment-item" data-appointment-id="2">
+              <div class="appointment-icon">
+                <i class="fas fa-stethoscope"></i>
+              </div>
+              <div class="appointment-details">
+                <div class="appointment-title">Counseling Session</div>
+                <div class="appointment-date">March 25, 2025 • 2:30 PM</div>
+                <div class="appointment-status status-completed">Completed</div>
+              </div>
+            </div>
+            <div class="appointment-item" data-appointment-id="3">
+              <div class="appointment-icon">
+                <i class="fas fa-heartbeat"></i>
+              </div>
+              <div class="appointment-details">
+                <div class="appointment-title">Follow-up Session</div>
+                <div class="appointment-date">March 15, 2025 • 11:15 AM</div>
+                <div class="appointment-status status-cancelled">Cancelled</div>
+              </div>
+            </div>
+            <div class="view-all-btn" id="viewAllAppointments">
+              See All Appointments
+            </div>
+          </div>
+        </div>
+
+        <!-- Settings Content -->
+        <div class="tab-content" id="settings-content">
+          <div class="settings-card">
+            <h2>
+              Account Settings
+              <i class="fas fa-ellipsis-h card-title-icon"></i>
+            </h2>
+            <div class="settings-item">
+              <div class="settings-icon">
+                <i class="fas fa-lock"></i>
+              </div>
+              <div class="settings-details">
+                <h3>Password</h3>
+                <p>Last changed 3 months ago</p>
+              </div>
+              <button class="btn btn-outline">Change</button>
+            </div>
+            <div class="settings-item">
+              <div class="settings-icon">
+                <i class="fas fa-bell"></i>
+              </div>
+              <div class="settings-details">
+                <h3>Notifications</h3>
+                <p>Manage your notification preferences</p>
+              </div>
+              <button class="btn btn-outline">Manage</button>
+            </div>
+            <div class="settings-item">
+              <div class="settings-icon">
+                <i class="fas fa-shield-alt"></i>
+              </div>
+              <div class="settings-details">
+                <h3>Security</h3>
+                <p>Two-factor authentication, login history</p>
+              </div>
+              <button class="btn btn-outline">Secure</button>
+            </div>
+          </div>
+          
+        
+        </div>
+
+        <!-- Billing Content -->
+        <div class="tab-content" id="billing-content">
+          <div class="billing-card">
+            <h2>
+              Payment Methods
+              <i class="fas fa-ellipsis-h card-title-icon"></i>
+            </h2>
+            <div class="payment-methods">
+              <div class="payment-method active">
+                <div class="payment-icon">
+                  <i class="fab fa-cc-visa"></i>
+                </div>
+                <div class="payment-details">
+                  <h3>Visa ending in 4242</h3>
+                  <p>Expires 05/2026</p>
+                </div>
+                <div class="payment-actions">
+                  <button class="btn btn-outline btn-sm">Edit</button>
+                  <button class="btn btn-danger btn-sm">Remove</button>
+                </div>
+              </div>
+              
+              <div class="payment-method">
+                <div class="payment-icon">
+                  <i class="fab fa-paypal"></i>
+                </div>
+                <div class="payment-details">
+                  <h3>PayPal</h3>
+                  <p>john.doe@example.com</p>
+                </div>
+                <div class="payment-actions">
+                  <button class="btn btn-outline btn-sm">Edit</button>
+                  <button class="btn btn-danger btn-sm">Remove</button>
+                </div>
+              </div>
+            </div>
+            
+            <button class="btn btn-primary" id="addPaymentMethod">
+              <i class="fas fa-plus"></i> Add Payment Method
+            </button>
+          </div>
+          
+          <div class="billing-history">
+            <h2>
+              Billing History
+              <i class="fas fa-ellipsis-h card-title-icon"></i>
+            </h2>
+            <div class="billing-item">
+              <div class="billing-icon">
+                <i class="fas fa-file-invoice-dollar"></i>
+              </div>
+              <div class="billing-details">
+                <h3>Therapy Session - April 10, 2025</h3>
+                <p>Completed on April 10, 2025</p>
+              </div>
+              <div class="billing-amount">
+                $120.00
+              </div>
+            </div>
+            
+            <div class="billing-item">
+              <div class="billing-icon">
+                <i class="fas fa-file-invoice-dollar"></i>
+              </div>
+              <div class="billing-details">
+                <h3>Counseling Session - March 25, 2025</h3>
+                <p>Completed on March 25, 2025</p>
+              </div>
+              <div class="billing-amount">
+                $95.00
+              </div>
+            </div>
+            
+            <div class="view-all-btn">
+              View Full Billing History
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Profile Modal -->
+  <div class="modal" id="editProfileModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Edit Profile</h2>
+        <button class="close-btn" id="closeModal">&times;</button>
+      </div>
+      <form id="profileForm">
+        <div class="form-group">
+          <label for="editName" class="form-label">Full Name</label>
+          <input type="text" id="editName" class="form-input" value="John Doe">
+        </div>
+        <div class="form-group">
+          <label for="editWork" class="form-label">Work</label>
+          <input type="text" id="editWork" class="form-input" value="ABC Company">
+        </div>
+        <div class="form-group">
+          <label for="editEducation" class="form-label">Education</label>
+          <input type="text" id="editEducation" class="form-input" value="XYZ University">
+        </div>
+        <div class="form-group">
+          <label for="editLocation" class="form-label">Current Location</label>
+          <input type="text" id="editLocation" class="form-input" value="New York, USA">
+        </div>
+        <div class="form-group">
+          <label for="editHometown" class="form-label">Hometown</label>
+          <input type="text" id="editHometown" class="form-input" value="Chicago, Illinois">
+        </div>
+        <div class="form-group">
+          <label for="editRelationship" class="form-label">Relationship Status</label>
+          <select id="editRelationship" class="form-input">
+            <option value="Single">Single</option>
+            <option value="In a relationship">In a relationship</option>
+            <option value="Married">Married</option>
+            <option value="Divorced">Divorced</option>
+          </select>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" id="cancelEdit">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit About Modal -->
+  <div class="modal" id="editAboutModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Edit About</h2>
+        <button class="close-btn" id="closeAboutModal">&times;</button>
+      </div>
+      <form id="aboutForm">
+        <div class="form-group">
+          <label for="aboutTextarea" class="form-label">About Me</label>
+          <textarea id="aboutTextarea" class="form-input" rows="6">Hi, I'm John! I'm a software developer passionate about creating user-friendly applications.
+In my free time, I enjoy hiking, photography, and exploring new coffee shops.
+Feel free to connect with me if you share similar interests or have exciting project ideas.</textarea>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" id="cancelAboutEdit">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Image Upload Modal -->
+  <div class="modal" id="imageUploadModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Change Profile Picture</h2>
+        <button class="close-btn" id="closeImageModal">&times;</button>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Select an image</label>
+        <input type="file" id="profileImageUpload" accept="image/*" style="display: none;">
+        <button class="btn btn-secondary" id="chooseImageBtn" style="width: 100%; margin-bottom: 15px;">
+          <i class="fas fa-folder-open"></i> Choose Image
+        </button>
+        <div id="imagePreviewContainer" style="text-align: center; margin-bottom: 15px; display: none;">
+          <img id="imagePreview" style="max-width: 100%; max-height: 300px; border-radius: 4px;">
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" id="cancelImageUpload">Cancel</button>
+        <button type="button" class="btn btn-primary" id="saveImageBtn" disabled>Save Picture</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Payment Method Modal -->
+  <div class="modal" id="paymentMethodModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Add Payment Method</h2>
+        <button class="close-btn" id="closePaymentModal">&times;</button>
+      </div>
+      <form id="paymentForm">
+        <div class="form-group">
+          <label class="form-label">Payment Method</label>
+          <div class="payment-options">
+            <div class="payment-option active" data-type="card">
+              <i class="fab fa-cc-visa"></i>
+              <span>Credit/Debit Card</span>
+            </div>
+            <div class="payment-option" data-type="paypal">
+              <i class="fab fa-paypal"></i>
+              <span>PayPal</span>
+            </div>
+            <div class="payment-option" data-type="gcash">
+              <i class="fas fa-mobile-alt"></i>
+              <span>GCash</span>
+            </div>
+            <div class="payment-option" data-type="maya">
+              <i class="fas fa-wallet"></i>
+              <span>Maya</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="payment-form" id="card-form">
+          <div class="form-group">
+            <label for="cardNumber" class="form-label">Card Number</label>
+            <input type="text" id="cardNumber" class="form-input" placeholder="1234 5678 9012 3456">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="expiryDate" class="form-label">Expiry Date</label>
+              <input type="text" id="expiryDate" class="form-input" placeholder="MM/YY">
+            </div>
+            <div class="form-group">
+              <label for="cvv" class="form-label">CVV</label>
+              <input type="text" id="cvv" class="form-input" placeholder="123">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="cardName" class="form-label">Name on Card</label>
+            <input type="text" id="cardName" class="form-input" placeholder="John Doe">
+          </div>
+        </div>
+        
+        <div class="payment-form" id="paypal-form" style="display: none;">
+          <div class="paypal-info">
+            <i class="fab fa-paypal"></i>
+            <p>You will be redirected to PayPal to complete your payment method setup.</p>
+          </div>
+        </div>
+        
+        <div class="payment-form" id="gcash-form" style="display: none;">
+          <div class="form-group">
+            <label for="gcashNumber" class="form-label">GCash Mobile Number</label>
+            <input type="text" id="gcashNumber" class="form-input" placeholder="0912 345 6789">
+          </div>
+        </div>
+        
+        <div class="payment-form" id="maya-form" style="display: none;">
+          <div class="form-group">
+            <label for="mayaNumber" class="form-label">Maya Mobile Number</label>
+            <input type="text" id="mayaNumber" class="form-input" placeholder="0912 345 6789">
+          </div>
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" id="cancelPayment">Cancel</button>
+          <button type="submit" class="btn btn-primary">Add Payment Method</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="{{ url_for('static', filename='js/user/user-profile.js') }}"></script>
+{% endblock %}
