@@ -1,0 +1,151 @@
+{% extends "shared/userLayout/navigationLayout.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/user/booking-history.css') }}">
+{% endblock %}
+
+{% block content %}
+
+
+
+<div class="container">
+
+    <div class="filters">
+        <button class="filter-btn active" data-filter="all">All Appointments</button>
+        <button class="filter-btn" data-filter="upcoming">Upcoming</button>
+        <button class="filter-btn" data-filter="completed">Completed</button>
+        <button class="filter-btn" data-filter="cancelled">Cancelled</button>
+    </div>
+
+    <div class="view-toggle">
+        <button class="view-btn active" data-view="swiper">
+            <i class="fas fa-mobile-alt"></i> Swiper View
+        </button>
+        <button class="view-btn" data-view="table">
+            <i class="fas fa-table"></i> Table View
+        </button>
+    </div>
+
+    <!-- Swiper View -->
+    <div class="swiper-view active" id="swiperView">
+        <div class="swiper">
+            <div class="swiper-wrapper" id="swiperWrapper">
+                <!-- Swiper slides will be inserted here -->
+            </div>
+            <div class="swiper-pagination"></div>
+        </div>
+    </div>
+
+    <!-- Table View -->
+    <div class="table-container" id="tableContainer">
+        <table class="booking-table">
+            <thead>
+                <tr>
+                    <th>Session</th>
+                    <th>Psychologist</th>
+                    <th>Date & Time</th>
+                    <th>Duration</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- Table rows will be inserted here -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Reschedule Modal -->
+<div class="modal" id="rescheduleModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title">Reschedule Appointment</h2>
+            <button class="close-btn" id="closeReschedule">&times;</button>
+        </div>
+        <form id="rescheduleForm">
+            <div class="form-group">
+                <label for="rescheduleDate" class="form-label">New Date</label>
+                <input type="date" id="rescheduleDate" class="form-input" required>
+            </div>
+            <div class="form-group">
+                <label for="rescheduleTime" class="form-label">New Time</label>
+                <input type="time" id="rescheduleTime" class="form-input" required>
+            </div>
+            <button type="submit" class="submit-btn">Confirm Reschedule</button>
+        </form>
+    </div>
+</div>
+
+<!-- Cancel Modal -->
+<div class="modal" id="cancelModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title">Cancel Appointment</h2>
+            <button class="close-btn" id="closeCancel">&times;</button>
+        </div>
+        <p style="margin-bottom: 1.5rem;">Are you sure you want to cancel this appointment?</p>
+        <div style="display: flex; gap: 1rem;">
+            <button id="confirmCancel" class="submit-btn" style="background-color: var(--error);">Yes, Cancel</button>
+            <button id="dismissCancel" class="submit-btn" style="background-color: var(--gray);">No, Go Back</button>
+        </div>
+    </div>
+</div>
+
+<!-- Feedback Modal -->
+<div class="modal" id="feedbackModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title">Session Feedback</h2>
+            <button class="close-btn" id="closeFeedback">&times;</button>
+        </div>
+        <form id="feedbackForm">
+            <div class="form-group">
+                <label class="form-label">Rate your session</label>
+                <div class="rating-stars">
+                    <i class="fas fa-star star" data-rating="1"></i>
+                    <i class="fas fa-star star" data-rating="2"></i>
+                    <i class="fas fa-star star" data-rating="3"></i>
+                    <i class="fas fa-star star" data-rating="4"></i>
+                    <i class="fas fa-star star" data-rating="5"></i>
+                </div>
+                <input type="hidden" id="ratingValue" value="0">
+            </div>
+            <div class="form-group">
+                <label for="feedbackText" class="form-label">Your Feedback</label>
+                <textarea id="feedbackText" class="form-input" rows="4" placeholder="How was your session?"></textarea>
+            </div>
+            <button type="submit" class="submit-btn">Submit Feedback</button>
+        </form>
+    </div>
+</div>
+
+<!-- Chatbot Interface -->
+<button class="chatbot-toggle" id="chatbotToggle">
+    <i class="fas fa-comment-dots"></i>
+</button>
+
+<div class="chatbot-container" id="chatbotContainer">
+    <div class="chatbot-header">
+        <span><i class="fas fa-robot me-2"></i>SerenityQ Assistant</span>
+        <button class="chatbot-close" id="chatbotClose">&times;</button>
+    </div>
+    <div class="chatbot-messages" id="chatbotMessages">
+        <div class="message bot-message">Hello Sarah! I'm SerenityQ, your mental health assistant. How can I help you
+            today?</div>
+        <div class="message bot-message">You have an appointment with Dr. Chen tomorrow at 10:00 AM. Would you like me
+            to remind you?</div>
+    </div>
+    <div class="chatbot-input">
+        <input type="text" placeholder="Type your message..." id="chatbotInput">
+        <button id="chatbotSend"><i class="fas fa-paper-plane"></i></button>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="{{ url_for('static', filename='js/user/booking.js') }}"></script>
+<script src="{{ url_for('static', filename='js/user/userdashboard.js') }}"></script>
+{% endblock %}
