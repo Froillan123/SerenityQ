@@ -1,0 +1,156 @@
+
+{% extends "shared/userLayout/navigationLayout.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/user/notification.css') }}">
+{% endblock %}
+
+{% block content %}
+
+
+    <div class="container">
+        <div class="page-title">
+            <h1>Notifications</h1>
+            <button class="mark-all-read">
+                <i class="fas fa-check-double"></i>
+                <span>Mark all as read</span>
+            </button>
+        </div>
+
+        <div class="notifications-container">
+            <div class="notification-filters">
+                <button class="filter-button active">All</button>
+                <button class="filter-button">Accepted</button>
+                <button class="filter-button">Rescheduled</button>
+                <button class="filter-button">Cancelled</button>
+                <button class="filter-button">Reminders</button>
+            </div>
+
+            <!-- Notification Items -->
+            <div class="notification-item unread">
+                <div class="notification-avatar">
+                    <i class="fas fa-user-md"></i>
+                </div>
+                <div class="notification-content">
+                    <div class="notification-title">Dr. Emily Johnson has accepted your appointment</div>
+                    <div class="notification-message">
+                        Your appointment with Dr. Emily Johnson (Psychologist) on April 12, 2025 at 11:30 AM has been confirmed.
+                    </div>
+                    <div class="notification-meta">
+                        <div class="notification-time">5 mins ago</div>
+                        <div class="notification-tags">
+                            <div class="notification-tag tag-accepted">Accepted</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="notification-actions">
+                    <div class="notification-action">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="notification-item unread">
+                <div class="notification-avatar">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div class="notification-content">
+                    <div class="notification-title">Appointment reminder</div>
+                    <div class="notification-message">
+                        Don't forget your therapy session with Dr. Michael Rodriguez tomorrow at 3:00 PM.
+                    </div>
+                    <div class="notification-meta">
+                        <div class="notification-time">1 hour ago</div>
+                        <div class="notification-tags">
+                            <div class="notification-tag tag-reminder">Reminder</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="notification-actions">
+                    <div class="notification-action">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="notification-item">
+                <div class="notification-avatar">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="notification-content">
+                    <div class="notification-title">Appointment rescheduled</div>
+                    <div class="notification-message">
+                        Dr. Sarah Williams has rescheduled your therapy session from April 8, 2025 at 2:00 PM to April 9, 2025 at 10:00 AM.
+                    </div>
+                    <div class="notification-meta">
+                        <div class="notification-time">Yesterday</div>
+                        <div class="notification-tags">
+                            <div class="notification-tag tag-rescheduled">Rescheduled</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="notification-actions">
+                    <div class="notification-action">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="notification-item">
+                <div class="notification-avatar">
+                    <i class="fas fa-times-circle"></i>
+                </div>
+                <div class="notification-content">
+                    <div class="notification-title">Appointment cancelled</div>
+                    <div class="notification-message">
+                        Your appointment with Dr. Robert Chen on April 5, 2025 at 9:30 AM has been cancelled. Please reschedule at your earliest convenience.
+                    </div>
+                    <div class="notification-meta">
+                        <div class="notification-time">2 days ago</div>
+                        <div class="notification-tags">
+                            <div class="notification-tag tag-cancelled">Cancelled</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="notification-actions">
+                    <div class="notification-action">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="notification-item">
+                <div class="notification-avatar">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="notification-content">
+                    <div class="notification-title">Dr. Lisa Parker has accepted your appointment</div>
+                    <div class="notification-message">
+                        Your appointment with Dr. Lisa Parker (Clinical Psychologist) on April 3, 2025 at 1:00 PM has been confirmed.
+                    </div>
+                    <div class="notification-meta">
+                        <div class="notification-time">3 days ago</div>
+                        <div class="notification-tags">
+                            <div class="notification-tag tag-accepted">Accepted</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="notification-actions">
+                    <div class="notification-action">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="load-more">
+                Load more notifications
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="{{ url_for('static', filename='js/user/notification.js') }}"></script>
+{% endblock %}

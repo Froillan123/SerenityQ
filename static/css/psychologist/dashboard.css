@@ -1,0 +1,368 @@
+:root {
+    --primary: #5D5FEF;
+    --primary-light: #8B8DF2;
+    --primary-dark: #3F41D6;
+    --secondary: #FF7E5F;
+    --accent: #FFD166;
+    --light: #F7F9FC;
+    --dark: #2B2D42;
+    --gray: #8D99AE;
+    --success: #4CAF50;
+    --error: #F44336;
+    --modal-bg: rgba(0, 0, 0, 0.5);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--light);
+    color: var(--dark);
+    min-height: 100vh;
+    display: flex;
+    overflow-x: hidden;
+}
+
+
+
+
+/* Cards grid */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.card {
+    background-color: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-top: 4px solid var(--primary);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--dark);
+}
+
+.card-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    background-color: var(--primary);
+}
+
+.card-icon.blue {
+    background-color: var(--primary);
+}
+
+.card-icon.orange {
+    background-color: var(--secondary);
+}
+
+.card-icon.yellow {
+    background-color: var(--accent);
+}
+
+.card-icon.green {
+    background-color: var(--success);
+}
+
+.card-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 10px 0;
+    color: var(--primary);
+}
+
+.card-info {
+    display: flex;
+    align-items: center;
+    color: var(--gray);
+    font-size: 0.9rem;
+    gap: 5px;
+}
+
+.card-info.up {
+    color: var(--success);
+}
+
+.card-info.down {
+    color: var(--error);
+}
+
+/* Charts grid */
+.charts-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.chart-card {
+    background-color: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.chart-card .chart-container {
+    height: 300px;
+    margin-top: 20px;
+    position: relative;
+}
+
+/* Recent appointments */
+.appointments-section {
+    background-color: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.section-header h3 {
+    color: var(--primary);
+}
+
+.section-header button {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.section-header button:hover {
+    background-color: var(--primary-dark);
+}
+
+.appointment-list {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.appointment-list th,
+.appointment-list td {
+    padding: 15px 10px;
+    text-align: left;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.appointment-list th {
+    color: var(--gray);
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.appointment-list td {
+    font-size: 0.95rem;
+}
+
+.patient-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.patient-info img {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.patient-name {
+    font-weight: 500;
+}
+
+.patient-id {
+    color: var(--gray);
+    font-size: 0.8rem;
+}
+
+.status {
+    padding: 5px 12px;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.status.confirmed {
+    background-color: rgba(76, 175, 80, 0.1);
+    color: var(--success);
+}
+
+.status.pending {
+    background-color: rgba(255, 209, 102, 0.1);
+    color: var(--accent);
+}
+
+.status.cancelled {
+    background-color: rgba(244, 67, 54, 0.1);
+    color: var(--error);
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    color: var(--primary);
+    cursor: pointer;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.action-btn:hover {
+    color: var(--primary-dark);
+}
+
+/* Progress bars */
+.progress-container {
+    margin-bottom: 20px;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+}
+
+.progress-bar {
+    height: 8px;
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    border-radius: 4px;
+}
+
+.progress.blue {
+    background-color: var(--primary);
+}
+
+.progress.orange {
+    background-color: var(--secondary);
+}
+
+.progress.yellow {
+    background-color: var(--accent);
+}
+
+.progress.green {
+    background-color: var(--success);
+}
+
+/* Responsive design */
+@media (max-width: 1200px) {
+    .cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 992px) {
+
+    .main-container {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .hamburger {
+        display: block;
+    }
+
+    .close-sidebar {
+        display: block;
+    }
+
+    .header {
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .search-box {
+        order: 3;
+        width: 100%;
+        max-width: 100%;
+        margin-top: 0;
+    }
+
+    .user-profile {
+        margin-left: auto;
+        margin-top: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .cards-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .appointment-list {
+        display: block;
+        overflow-x: auto;
+    }
+
+    .main-container {
+        padding: 20px;
+        margin-bottom: 5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .search-box {
+        order: initial;
+        width: 100%;
+    }
+
+    .user-profile {
+        margin-left: 0;
+        width: 100%;
+        justify-content: flex-end;
+    }
+}
