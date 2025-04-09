@@ -1,0 +1,181 @@
+{% extends "shared/userLayout/navigationLayout.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/user/therapist.css') }}">
+{% endblock %}
+
+
+{% block content %}
+<div class="container">
+
+
+    <div class="filters">
+        <div class="filter-group">
+            <label for="specialtyFilter">Specialty</label>
+            <select id="specialtyFilter">
+                <option value="">All Specialties</option>
+                <option value="clinical">Clinical Psychologist</option>
+                <option value="counseling">Counseling Psychologist</option>
+                <option value="school">School Psychologist</option>
+                <option value="health">Health Psychologist</option>
+                <option value="child">Child/Adolescent</option>
+                <option value="neuro">Neuropsychologist</option>
+                <option value="forensic">Forensic Psychologist</option>
+                <option value="io">Industrial-Organizational</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label for="availabilityFilter">Availability</label>
+            <select id="availabilityFilter">
+                <option value="">Any Availability</option>
+                <option value="online">Online Now</option>
+                <option value="today">Available Today</option>
+                <option value="week">This Week</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label for="experienceFilter">Experience</label>
+            <select id="experienceFilter">
+                <option value="">Any Experience</option>
+                <option value="5">5+ years</option>
+                <option value="10">10+ years</option>
+                <option value="15">15+ years</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="swiper-container">
+        <div class="swiper therapistSwiper">
+            <div class="swiper-wrapper" id="therapistContainer">
+                <!-- Therapist cards will be inserted here by JavaScript -->
+            </div>
+            <!-- <div class="swiper-pagination"></div> -->
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+        </div>
+    </div>
+
+    <div class="legend">
+        <div class="legend-item">
+            <div class="legend-color legend-online"></div>
+            <span>Available</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color legend-busy"></div>
+            <span>In Session</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color legend-offline"></div>
+            <span>Offline</span>
+        </div>
+    </div>
+</div>
+
+<!-- Therapist Profile Modal -->
+<div class="modal" id="therapistModal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <div class="modal-header">
+            <img src="" alt="Therapist" id="modalTherapistImg" class="modal-profile-pic">
+            <h2 id="modalTherapistName"></h2>
+            <p id="modalTherapistSpecialty"></p>
+            <span class="therapist-status" id="modalTherapistStatus"></span>
+        </div>
+        <div class="modal-body">
+            <div class="modal-section">
+                <h3>About</h3>
+                <p id="modalTherapistAbout"></p>
+            </div>
+            <div class="modal-section">
+                <div class="detail-row">
+                    <span class="detail-label">Experience</span>
+                    <span class="detail-value" id="modalTherapistExperience"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Rating</span>
+                    <span class="detail-value" id="modalTherapistRating"></span>
+                </div>
+            </div>
+            <div class="modal-section">
+                <h3>Specializations</h3>
+                <div class="specializations" id="modalTherapistSpecializations"></div>
+            </div>
+            <div class="modal-section">
+                <h3>Availability</h3>
+                <div class="availability-slots" id="modalTherapistAvailability"></div>
+            </div>
+            <div class="modal-section">
+                <h3>Reviews</h3>
+                <div class="reviews" id="modalTherapistReviews"></div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" id="closeModalBtn">Close</button>
+            <button class="btn btn-primary" id="bookSessionBtn">Book Session</button>
+        </div>
+    </div>
+</div>
+
+<!-- Booking Modal -->
+<div class="modal" id="bookingModal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <div class="modal-header">
+            <h2>Book Session with <span id="bookingTherapistName"></span></h2>
+        </div>
+        <div class="modal-body">
+            <form class="booking-form">
+                <div class="form-group">
+                    <label for="sessionDate">Select Date</label>
+                    <input type="date" id="sessionDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="sessionTime">Select Time</label>
+                    <select id="sessionTime" required>
+                        <option value="">-- Select a time slot --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="sessionNotes">Notes (Optional)</label>
+                    <textarea id="sessionNotes"
+                        placeholder="Any specific concerns or notes for the therapist..."></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" id="cancelBookingBtn">Cancel</button>
+            <button class="btn btn-primary" id="confirmBookingBtn">Confirm Booking</button>
+        </div>
+    </div>
+</div>
+
+
+<!-- Chatbot Interface -->
+<button class="chatbot-toggle" id="chatbotToggle">
+    <i class="fas fa-comment-dots"></i>
+</button>
+
+<div class="chatbot-container" id="chatbotContainer">
+    <div class="chatbot-header">
+        <span><i class="fas fa-robot me-2"></i>SerenityQ Assistant</span>
+        <button class="chatbot-close" id="chatbotClose">&times;</button>
+    </div>
+    <div class="chatbot-messages" id="chatbotMessages">
+        <div class="message bot-message">Hello Sarah! I'm SerenityQ, your mental health assistant. How can I help you
+            today?</div>
+        <div class="message bot-message">You have an appointment with Dr. Chen tomorrow at 10:00 AM. Would you like me
+            to remind you?</div>
+    </div>
+    <div class="chatbot-input">
+        <input type="text" placeholder="Type your message..." id="chatbotInput">
+        <button id="chatbotSend"><i class="fas fa-paper-plane"></i></button>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="{{ url_for('static', filename='js/user/therapist.js') }}"></script>
+<script src="{{ url_for('static', filename='js/user/userdashboard.js') }}"></script>
+{% endblock %}

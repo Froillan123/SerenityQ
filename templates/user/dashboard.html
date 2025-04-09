@@ -1,0 +1,197 @@
+{% extends "shared/userLayout/navigationLayout.html" %}
+
+{% block extra_css %}
+
+{% endblock %}
+
+{% block content %}
+
+<!-- Dashboard Content -->
+<div class="dashboard-container">
+    <div class="welcome-card">
+        <h2>Welcome back, Sarah! <span class="mood-emoji">😊</span></h2>
+        <p>How are you feeling today? Remember to take time for yourself.</p>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon" style="background-color: rgba(93, 95, 239, 0.1); color: var(--primary);">
+                <i class="fas fa-calendar-check"></i>
+            </div>
+            <div class="stat-value">12</div>
+            <div class="stat-title">Total Sessions</div>
+            <div class="progress-container">
+                <div class="progress-bar" style="width: 70%; background-color: var(--primary);"></div>
+            </div>
+            <div class="progress-text">+2 from last month</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon" style="background-color: rgba(255, 214, 102, 0.1); color: var(--accent);">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-value">3</div>
+            <div class="stat-title">Upcoming</div>
+            <div class="progress-container">
+                <div class="progress-bar" style="width: 30%; background-color: var(--accent);"></div>
+            </div>
+            <div class="progress-text">1 new this week</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon" style="background-color: rgba(76, 175, 80, 0.1); color: var(--success);">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-value">8</div>
+            <div class="stat-title">Completed</div>
+            <div class="progress-container">
+                <div class="progress-bar" style="width: 80%; background-color: var(--success);"></div>
+            </div>
+            <div class="progress-text">Consistency: Excellent</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon" style="background-color: rgba(255, 126, 95, 0.1); color: var(--secondary);">
+                <i class="fas fa-heart"></i>
+            </div>
+            <div class="stat-value">85%</div>
+            <div class="stat-title">Wellness Progress</div>
+            <div class="progress-container">
+                <div class="progress-bar" style="width: 85%; background-color: var(--secondary);"></div>
+            </div>
+            <div class="progress-text">5% increase</div>
+        </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="content-grid">
+        <!-- Left Column -->
+        <div class="left-column">
+            <div class="card">
+                <h5 class="section-title"><i class="fas fa-calendar-alt"></i> Upcoming Appointments</h5>
+                <div class="appointment-item">
+                    <img src="https://randomuser.me/api/portraits/men/32.jpg" class="psychologist-img"
+                        alt="Dr. Michael Chen">
+                    <div class="appointment-details">
+                        <div class="appointment-name">Dr. Michael Chen - Cognitive Behavioral Therapy</div>
+                        <div class="appointment-time"><i class="far fa-clock"></i> Tomorrow, 10:00 AM - 11:00 AM</div>
+                    </div>
+                    <span class="appointment-status status-confirmed">Confirmed</span>
+                </div>
+
+                <div class="appointment-item">
+                    <img src="https://randomuser.me/api/portraits/women/65.jpg" class="psychologist-img"
+                        alt="Dr. Emily Rodriguez">
+                    <div class="appointment-details">
+                        <div class="appointment-name">Dr. Emily Rodriguez - Mindfulness Session</div>
+                        <div class="appointment-time"><i class="far fa-clock"></i> June 15, 2:30 PM - 3:30 PM</div>
+                    </div>
+                    <span class="appointment-status status-confirmed">Confirmed</span>
+                </div>
+
+                <div class="appointment-item">
+                    <img src="https://randomuser.me/api/portraits/men/75.jpg" class="psychologist-img"
+                        alt="Dr. James Wilson">
+                    <div class="appointment-details">
+                        <div class="appointment-name">Dr. James Wilson - Progress Evaluation</div>
+                        <div class="appointment-time"><i class="far fa-clock"></i> June 22, 4:00 PM - 5:00 PM</div>
+                    </div>
+                    <span class="appointment-status status-pending">Pending</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h5 class="section-title"><i class="fas fa-chart-line"></i> Mood Tracker</h5>
+                <div class="chart-container">
+                    <canvas id="moodChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="right-column">
+            <div class="card">
+                <h5 class="section-title"><i class="fas fa-bell"></i> Recent Activities</h5>
+                <div class="activity-item">
+                    <div class="activity-icon" style="color: var(--primary); background-color: rgba(93, 95, 239, 0.1);">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div>
+                        <div class="activity-text">Completed mood journal entry</div>
+                        <div class="activity-time"><i class="far fa-clock"></i> 2 hours ago</div>
+                    </div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon" style="color: var(--success); background-color: rgba(76, 175, 80, 0.1);">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div>
+                        <div class="activity-text">Attended session with Dr. Chen</div>
+                        <div class="activity-time"><i class="far fa-clock"></i> 3 days ago</div>
+                    </div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon"
+                        style="color: var(--accent); background-color: rgba(255, 214, 102, 0.1);">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div>
+                        <div class="activity-text">Read article on mindfulness techniques</div>
+                        <div class="activity-time"><i class="far fa-clock"></i> 1 week ago</div>
+                    </div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon"
+                        style="color: var(--secondary); background-color: rgba(255, 126, 95, 0.1);">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div>
+                        <div class="activity-text">Completed breathing exercise</div>
+                        <div class="activity-time"><i class="far fa-clock"></i> 2 weeks ago</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h5 class="section-title"><i class="fas fa-chart-pie"></i> Session Types</h5>
+                <div class="chart-container">
+                    <canvas id="sessionChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chatbot Interface -->
+<button class="chatbot-toggle" id="chatbotToggle">
+    <i class="fas fa-comment-dots"></i>
+</button>
+
+<div class="chatbot-container" id="chatbotContainer">
+    <div class="chatbot-header">
+        <span><i class="fas fa-robot me-2"></i>SerenityQ Assistant</span>
+        <button class="chatbot-close" id="chatbotClose">&times;</button>
+    </div>
+    <div class="chatbot-messages" id="chatbotMessages">
+        <div class="message bot-message">Hello Sarah! I'm SerenityQ, your mental health assistant. How can I help you
+            today?</div>
+        <div class="message bot-message">You have an appointment with Dr. Chen tomorrow at 10:00 AM. Would you like me
+            to remind you?</div>
+    </div>
+    <div class="chatbot-input">
+        <input type="text" placeholder="Type your message..." id="chatbotInput">
+        <button id="chatbotSend"><i class="fas fa-paper-plane"></i></button>
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="{{ url_for('static', filename='js/user/userdashboard.js') }}"></script>
+{% endblock %}

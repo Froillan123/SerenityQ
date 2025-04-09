@@ -1,0 +1,416 @@
+{% extends "shared/userLayout/navigationLayout.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/user/session.css') }}">
+{% endblock %}
+
+{% block content %}
+
+
+
+<!-- Main Content -->
+<main class="session-container">
+
+    <div class="session-layout">
+        <!-- Session List -->
+        <div class="session-list">
+            <div class="session-tabs">
+                <button class="tab-btn active" data-tab="current">Current Session</button>
+                <button class="tab-btn" data-tab="previous">Previous Sessions</button>
+            </div>
+
+            <div class="session-items">
+                <!-- Current Sessions Tab Content -->
+                <div class="tab-content active" id="current-tab">
+                    <div class="session-card active-session" data-session-id="1">
+                        <div class="session-info">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Therapist"
+                                class="therapist-avatar">
+                            <div class="session-details">
+                                <h3>Dr. Michael Chen</h3>
+                                <p class="session-method"><i class="fas fa-video"></i> Video Call</p>
+                                <div class="session-timer">
+                                    <i class="fas fa-clock"></i>
+                                    <span id="sessionTimer">00:12:35</span>
+                                </div>
+                                <p class="session-time">Today, 3:00 PM - 4:00 PM</p>
+                            </div>
+                        </div>
+                        <div class="session-status active">Active Now</div>
+                    </div>
+                </div>
+
+                <!-- Previous Sessions Tab Content -->
+                <div class="tab-content" id="previous-tab">
+                    <div class="session-card previous-session" data-session-id="3">
+                        <div class="session-info">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Therapist"
+                                class="therapist-avatar">
+                            <div class="session-details">
+                                <h3>Dr. Michael Chen</h3>
+                                <p class="session-method"><i class="fas fa-comment"></i> Chat</p>
+                                <p class="session-time">June 15, 2023</p>
+                                <p class="session-duration">45 minutes</p>
+                            </div>
+                        </div>
+                        <button class="btn request-btn" data-therapist-id="1">Request Again</button>
+                    </div>
+
+                    <div class="session-card previous-session" data-session-id="4">
+                        <div class="session-info">
+                            <img src="https://randomuser.me/api/portraits/women/28.jpg" alt="Therapist"
+                                class="therapist-avatar">
+                            <div class="session-details">
+                                <h3>Dr. Emily Wilson</h3>
+                                <p class="session-method"><i class="fas fa-video"></i> Video Call</p>
+                                <p class="session-time">May 28, 2023</p>
+                                <p class="session-duration">60 minutes</p>
+                            </div>
+                        </div>
+                        <button class="btn request-btn" data-therapist-id="3">Request Again</button>
+                    </div>
+
+                    <div class="session-card previous-session" data-session-id="5">
+                        <div class="session-info">
+                            <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="Therapist"
+                                class="therapist-avatar">
+                            <div class="session-details">
+                                <h3>Dr. Sarah Johnson</h3>
+                                <p class="session-method"><i class="fas fa-phone"></i> Voice Call</p>
+                                <p class="session-time">April 10, 2023</p>
+                                <p class="session-duration">30 minutes</p>
+                            </div>
+                        </div>
+                        <button class="btn request-btn" data-therapist-id="2">Request Again</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Area -->
+        <div class="session-chat">
+            <div class="chat-placeholder">
+                <div class="placeholder-content">
+                    <i class="fas fa-comments fa-3x"></i>
+                    <h3>Your session is ready</h3>
+                    <p>Select your current session to begin your therapy session with your therapist</p>
+                </div>
+            </div>
+
+            <div class="active-chat" style="display: none;">
+                <div class="chat-header">
+                    <div class="chat-therapist">
+                        <img src="" alt="Therapist" class="therapist-avatar" id="chatTherapistAvatar">
+                        <div class="therapist-info">
+                            <h3 id="chatTherapistName"></h3>
+                            <p class="session-method" id="chatSessionMethod"></p>
+                            <div class="session-timer">
+                                <i class="fas fa-clock"></i>
+                                <span id="chatSessionTimer">00:12:35</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-actions">
+                        <button class="btn action-btn minimize-chat" title="Minimize">
+                            <i class="fas fa-window-minimize"></i>
+                        </button>
+                        <button class="btn action-btn video-call" title="Video Call">
+                            <i class="fas fa-video"></i>
+                        </button>
+                        <button class="btn action-btn voice-call" title="Voice Call">
+                            <i class="fas fa-phone"></i>
+                        </button>
+                        <button class="btn action-btn end-session" title="End Session">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="video-call-container" id="videoCallContainer" style="display: none;">
+                    <div class="video-wrapper">
+                        <div class="video-box local-video">
+                            <video id="localVideo" autoplay muted></video>
+                            <div class="video-controls">
+                                <button class="btn video-control-btn toggle-video">
+                                    <i class="fas fa-video"></i>
+                                </button>
+                                <button class="btn video-control-btn toggle-mic">
+                                    <i class="fas fa-microphone"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="video-box remote-video">
+                            <video id="remoteVideo" autoplay></video>
+                            <div class="video-overlay">
+                                <img src="" alt="Therapist" id="remoteVideoAvatar" class="therapist-avatar">
+                                <h3 id="remoteVideoName"></h3>
+                                <p id="remoteVideoStatus">Calling...</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="call-actions">
+                        <button class="btn call-action-btn end-call">
+                            <i class="fas fa-phone-slash"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="chat-messages" id="chatMessages">
+                    <!-- Messages will be loaded here -->
+                </div>
+
+                <div class="chat-input-container">
+                    <textarea id="chatInput" placeholder="Type your message here..." rows="1"></textarea>
+                    <button class="btn send-btn" id="sendMessageBtn">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="previous-chat" style="display: none;">
+                <div class="chat-header">
+                    <div class="chat-therapist">
+                        <img src="" alt="Therapist" class="therapist-avatar" id="prevTherapistAvatar">
+                        <div class="therapist-info">
+                            <h3 id="prevTherapistName"></h3>
+                            <p class="session-method" id="prevSessionMethod"></p>
+                            <p class="session-date" id="prevSessionDate"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat-messages" id="prevChatMessages">
+                    <!-- Previous messages will be loaded here -->
+                </div>
+
+                <div class="previous-chat-footer">
+                    <button class="btn request-again-btn" id="requestAgainBtn">
+                        <i class="fas fa-calendar-plus"></i> Request Another Session
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Request Modal -->
+<div class="modal" id="requestModal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2>Request New Session</h2>
+
+        <div class="therapist-info-card">
+            <img src="" alt="Therapist" id="modalTherapistAvatar" class="therapist-avatar">
+            <div class="therapist-details">
+                <h3 id="modalTherapistName">Dr. Michael Chen</h3>
+                <p class="specialty">Clinical Psychologist</p>
+                <div class="rating">
+                    <i class="fas fa-star"></i>
+                    <span>4.9</span>
+                    <span class="reviews">(128 reviews)</span>
+                </div>
+            </div>
+        </div>
+
+        <form id="sessionRequestForm">
+            <div class="form-group">
+                <label for="sessionType">Session Type</label>
+                <div class="session-type-options">
+                    <label class="session-type-option">
+                        <input type="radio" name="sessionType" value="video" required checked>
+                        <div class="option-content">
+                            <i class="fas fa-video"></i>
+                            <span>Video Call</span>
+                            <small>$85 per hour</small>
+                        </div>
+                    </label>
+                    <label class="session-type-option">
+                        <input type="radio" name="sessionType" value="voice">
+                        <div class="option-content">
+                            <i class="fas fa-phone"></i>
+                            <span>Voice Call</span>
+                            <small>$65 per hour</small>
+                        </div>
+                    </label>
+                    <label class="session-type-option">
+                        <input type="radio" name="sessionType" value="chat">
+                        <div class="option-content">
+                            <i class="fas fa-comments"></i>
+                            <span>Chat</span>
+                            <small>$45 per hour</small>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="sessionDate">Preferred Date</label>
+                <input type="date" id="sessionDate" class="form-control" required min="">
+            </div>
+
+            <div class="form-group">
+                <label for="sessionTime">Preferred Time</label>
+                <input type="time" id="sessionTime" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="sessionNotes">Notes (Optional)</label>
+                <textarea id="sessionNotes" class="form-control" rows="3"
+                    placeholder="Any specific concerns or topics you'd like to discuss..."></textarea>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn cancel-btn">Cancel</button>
+                <button type="submit" class="btn submit-btn">Continue</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Payment Modal -->
+<div class="modal" id="paymentModal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2>Complete Payment</h2>
+
+        <div class="payment-summary">
+            <div class="payment-details">
+                <h3>Session Details</h3>
+                <p><strong>Therapist:</strong> <span id="paymentTherapist">Dr. Michael Chen</span></p>
+                <p><strong>Session Type:</strong> <span id="paymentType">Video Call</span></p>
+                <p><strong>Duration:</strong> <span id="paymentDuration">60 minutes</span></p>
+                <p><strong>Date & Time:</strong> <span id="paymentDateTime">July 5, 2023 at 2:00 PM</span></p>
+                <p><strong>Notes:</strong> <span id="paymentNotes">Anxiety management techniques</span></p>
+            </div>
+
+            <div class="payment-amount">
+                <h3>Total Amount</h3>
+                <div class="amount">$85.00</div>
+                <small>Including all service fees</small>
+            </div>
+        </div>
+
+        <div class="payment-methods">
+            <h3>Select Payment Method</h3>
+            <div class="method-options">
+                <label class="method-option active">
+                    <input type="radio" name="paymentMethod" value="card" checked>
+                    <div class="option-content">
+                        <i class="fas fa-credit-card"></i>
+                        <span>Credit/Debit Card</span>
+                    </div>
+                </label>
+                <label class="method-option">
+                    <input type="radio" name="paymentMethod" value="paypal">
+                    <div class="option-content">
+                        <i class="fab fa-paypal"></i>
+                        <span>PayPal</span>
+                    </div>
+                </label>
+
+                <label class="method-option">
+                    <input type="radio" name="paymentMethod" value="gcash">
+                    <div class="option-content">
+                        <!-- Inline SVG for GCash -->
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="50" height="50">
+                            <!-- GCash logo SVG content -->
+                        </svg>
+                        <span>GCash</span>
+                    </div>
+                </label>
+                <label class="method-option">
+                    <input type="radio" name="paymentMethod" value="maya">
+                    <div class="option-content">
+                        <!-- Inline SVG for Maya -->
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="50" height="50">
+                            <!-- Maya logo SVG content -->
+                        </svg>
+                        <span>Maya</span>
+                    </div>
+                </label>
+
+            </div>
+
+            <div class="card-details" id="cardDetails">
+                <div class="form-group">
+                    <label for="cardNumber">Card Number</label>
+                    <input type="text" id="cardNumber" class="form-control" placeholder="1234 5678 9012 3456"
+                        maxlength="19">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="cardExpiry">Expiry Date</label>
+                        <input type="text" id="cardExpiry" class="form-control" placeholder="MM/YY" maxlength="5">
+                    </div>
+                    <div class="form-group">
+                        <label for="cardCVC">CVC</label>
+                        <input type="text" id="cardCVC" class="form-control" placeholder="123" maxlength="3">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="cardName">Name on Card</label>
+                    <input type="text" id="cardName" class="form-control" placeholder="John Doe">
+                </div>
+            </div>
+
+            <div class="wallet-details" id="walletDetails" style="display: none;">
+                <div class="wallet-instructions">
+                    <p>You will be redirected to your wallet app to complete the payment.</p>
+                    <p>Make sure you have sufficient balance in your account.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="button" class="btn cancel-btn">Back</button>
+            <button type="button" class="btn submit-btn" id="completePaymentBtn">Pay Now</button>
+        </div>
+    </div>
+</div>
+
+<!-- Payment Success Modal -->
+<div class="modal" id="paymentSuccessModal">
+    <div class="modal-content small">
+        <div class="payment-success-content">
+            <div class="icon-circle success">
+                <i class="fas fa-check"></i>
+            </div>
+            <h2>Payment Successful</h2>
+            <p>Your session request has been submitted successfully.</p>
+            <div class="receipt-summary">
+                <p><strong>Amount Paid:</strong> <span>$85.00</span></p>
+                <p><strong>Transaction ID:</strong> <span>TX-789456123</span></p>
+                <p><strong>Date:</strong> <span id="paymentDate">June 28, 2023</span></p>
+            </div>
+            <button type="button" class="btn ok-btn" id="paymentSuccessOkBtn">Done</button>
+        </div>
+    </div>
+</div>
+
+<!-- Session Ended Modal -->
+<div class="modal" id="sessionEndedModal">
+    <div class="modal-content small">
+        <div class="session-ended-content">
+            <div class="icon-circle">
+                <i class="fas fa-check"></i>
+            </div>
+            <h2>Session Ended</h2>
+            <p>Your session has been successfully completed.</p>
+            <div class="session-summary">
+                <p><strong>Duration:</strong> <span id="sessionDuration">47 minutes</span></p>
+                <p><strong>Next Steps:</strong> <span>Review your session notes in your dashboard</span></p>
+            </div>
+            <button type="button" class="btn ok-btn" id="sessionEndedOkBtn">Close</button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="{{ url_for('static', filename='js/user/session.js') }}"></script>
+<script src="{{ url_for('static', filename='js/user/userdashboard.js') }}"></script>
+{% endblock %}

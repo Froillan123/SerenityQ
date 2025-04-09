@@ -1,0 +1,1030 @@
+/* Session Container Styles */
+.session-container {
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.session-layout {
+    display: flex;
+    gap: 20px;
+    height: calc(100vh - 180px);
+}
+
+/* Session List Styles */
+.session-list {
+    flex: 0 0 350px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.session-tabs {
+    display: flex;
+    border-bottom: 1px solid #eee;
+    background: #f9f9f9;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 15px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--gray);
+    position: relative;
+    transition: all 0.3s;
+    font-size: 0.95rem;
+}
+
+.tab-btn.active {
+    color: var(--primary);
+}
+
+.tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--primary);
+}
+
+.session-items {
+    flex: 1;
+    overflow-y: auto;
+    padding: 15px;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.session-card {
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+}
+
+.session-card:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.session-card.active {
+    border-left: 4px solid var(--primary);
+    background: #f5f7ff;
+}
+
+.session-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.therapist-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #f0f0f0;
+}
+
+.session-details h3 {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--dark);
+    font-weight: 600;
+}
+
+.session-method {
+    margin: 5px 0;
+    font-size: 0.85rem;
+    color: var(--gray);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.session-time {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--dark);
+    font-weight: 500;
+}
+
+.session-duration {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--gray);
+}
+
+.session-timer {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.85rem;
+    color: var(--primary);
+    font-weight: 600;
+    margin: 5px 0;
+}
+
+.session-status {
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 20px;
+    color: white;
+    background: var(--success);
+}
+
+.request-btn {
+    background: var(--primary);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+}
+
+.request-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+/* Chat Area Styles */
+.session-chat {
+    flex: 1;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.chat-placeholder {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 30px;
+    background: #f9f9f9;
+}
+
+.placeholder-content i {
+    color: var(--primary-light);
+    margin-bottom: 20px;
+    opacity: 0.8;
+}
+
+.placeholder-content h3 {
+    color: var(--dark);
+    margin-bottom: 10px;
+    font-size: 1.4rem;
+}
+
+.placeholder-content p {
+    color: var(--gray);
+    max-width: 400px;
+    margin: 0 auto;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.active-chat, .previous-chat {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.chat-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+}
+
+.chat-therapist {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.therapist-info h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--dark);
+    font-weight: 600;
+}
+
+.therapist-info p {
+    margin: 5px 0 0;
+    font-size: 0.85rem;
+    color: var(--gray);
+}
+
+.chat-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.action-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f0f0f0;
+    color: var(--dark);
+    transition: all 0.2s;
+}
+
+.action-btn:hover {
+    transform: scale(1.1);
+}
+
+.action-btn.minimize-chat {
+    color: var(--gray);
+}
+
+.action-btn.video-call {
+    color: var(--primary);
+}
+
+.action-btn.voice-call {
+    color: var(--success);
+}
+
+.action-btn.end-session {
+    color: var(--error);
+}
+
+/* Video Call Styles */
+.video-call-container {
+    display: none;
+    flex-direction: column;
+    height: 100%;
+    background: #1a1a1a;
+}
+
+.video-wrapper {
+    flex: 1;
+    display: flex;
+    position: relative;
+    padding: 20px;
+}
+
+.video-box {
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+}
+
+.local-video {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 25%;
+    min-width: 200px;
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.remote-video {
+    width: 100%;
+    height: 100%;
+    background: #333;
+}
+
+video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.video-overlay img {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 15px;
+}
+
+.video-overlay h3 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.video-overlay p {
+    margin: 5px 0 0;
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.video-controls {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px;
+}
+
+.video-control-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.video-control-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.call-actions {
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.call-action-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--error);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.call-action-btn:hover {
+    transform: scale(1.1);
+}
+
+/* Chat Messages Styles */
+.chat-messages {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background: #f5f5f5;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.message {
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.message.received {
+    align-items: flex-start;
+}
+
+.message.sent {
+    align-items: flex-end;
+}
+
+.message-content {
+    padding: 12px 16px;
+    border-radius: 18px;
+    position: relative;
+    word-wrap: break-word;
+    line-height: 1.4;
+}
+
+.message.received .message-content {
+    background: white;
+    border-top-left-radius: 5px;
+    color: var(--dark);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.message.sent .message-content {
+    background: var(--primary);
+    color: white;
+    border-top-right-radius: 5px;
+}
+
+.message-info {
+    margin-top: 5px;
+    font-size: 0.75rem;
+    color: var(--gray);
+}
+
+.chat-input-container {
+    padding: 15px;
+    border-top: 1px solid #eee;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    background: white;
+}
+
+.chat-input-container textarea {
+    flex: 1;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    padding: 12px 15px;
+    resize: none;
+    max-height: 100px;
+    outline: none;
+    transition: all 0.3s;
+    font-size: 0.95rem;
+}
+
+.chat-input-container textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(70, 90, 255, 0.1);
+}
+
+.send-btn {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.send-btn:hover {
+    background: var(--primary-dark);
+    transform: scale(1.05);
+}
+
+.send-btn:active {
+    transform: scale(0.95);
+}
+
+.previous-chat-footer {
+    padding: 15px;
+    border-top: 1px solid #eee;
+    text-align: center;
+    background: white;
+}
+
+.request-again-btn {
+    background: var(--primary);
+    color: white;
+    padding: 12px 25px;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.request-again-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(70, 90, 255, 0.2);
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 700px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    animation: modalSlideUp 0.3s;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes modalSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-content.small {
+    max-width: 400px;
+}
+
+.modal-content h2 {
+    margin: 0;
+    padding: 20px;
+    color: var(--dark);
+    font-size: 1.5rem;
+    border-bottom: 1px solid #eee;
+}
+
+.close-modal {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--gray);
+    background: none;
+    border: none;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s;
+}
+
+.close-modal:hover {
+    color: var(--dark);
+    background: #f0f0f0;
+}
+
+/* Therapist Info Card in Modal */
+.therapist-info-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.therapist-details h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--dark);
+}
+
+.specialty {
+    margin: 5px 0;
+    font-size: 0.9rem;
+    color: var(--gray);
+}
+
+.rating {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.9rem;
+    color: var(--dark);
+}
+
+.rating i {
+    color: #ffc107;
+}
+
+.reviews {
+    color: var(--gray);
+    font-size: 0.8rem;
+}
+
+/* Form Styles */
+.form-group {
+    margin-bottom: 20px;
+    padding: 0 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--dark);
+    font-size: 0.95rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(70, 90, 255, 0.1);
+}
+
+.form-row {
+    display: flex;
+    gap: 15px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 20px;
+    border-top: 1px solid #eee;
+}
+
+.cancel-btn {
+    background: #f0f0f0;
+    color: var(--dark);
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.cancel-btn:hover {
+    background: #e0e0e0;
+}
+
+.submit-btn {
+    background: var(--primary);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.submit-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(70, 90, 255, 0.2);
+}
+
+/* Session Type Options */
+.session-type-options {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.session-type-option {
+    flex: 1;
+}
+
+.session-type-option input {
+    display: none;
+}
+
+.session-type-option .option-content {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    height: 100%;
+}
+
+.session-type-option i {
+    font-size: 1.5rem;
+    color: var(--primary);
+    margin-bottom: 10px;
+}
+
+.session-type-option span {
+    display: block;
+    font-weight: 600;
+    color: var(--dark);
+}
+
+.session-type-option small {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--gray);
+    margin-top: 5px;
+}
+
+.session-type-option input:checked + .option-content {
+    border-color: var(--primary);
+    background: #f5f7ff;
+}
+
+/* Payment Styles */
+.payment-summary {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.payment-details {
+    flex: 2;
+}
+
+.payment-details h3 {
+    margin-top: 0;
+    color: var(--dark);
+    font-size: 1.1rem;
+}
+
+.payment-details p {
+    margin: 8px 0;
+    color: var(--gray);
+    font-size: 0.95rem;
+}
+
+.payment-details strong {
+    color: var(--dark);
+    font-weight: 600;
+}
+
+.payment-amount {
+    flex: 1;
+    text-align: center;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 10px;
+}
+
+.payment-amount h3 {
+    margin-top: 0;
+    color: var(--dark);
+    font-size: 1.1rem;
+}
+
+.amount {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin: 10px 0;
+}
+
+.payment-methods {
+    padding: 20px;
+}
+
+.payment-methods h3 {
+    margin-top: 0;
+    color: var(--dark);
+    font-size: 1.1rem;
+}
+
+.method-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.method-option {
+    flex: 1;
+    min-width: 120px;
+}
+
+.method-option input {
+    display: none;
+}
+
+.method-option .option-content {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    height: 100%;
+}
+
+.method-option i {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: var(--primary);
+}
+
+.method-option .payment-icon {
+    height: 24px;
+    margin-bottom: 10px;
+}
+
+.method-option.active .option-content {
+    border-color: var(--primary);
+    background: #f5f7ff;
+}
+
+.card-details {
+    margin-top: 20px;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 10px;
+}
+
+.wallet-details {
+    margin-top: 20px;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 10px;
+}
+
+.wallet-instructions {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: var(--gray);
+}
+
+.wallet-instructions p {
+    margin: 5px 0;
+}
+
+/* Success Modal Styles */
+.payment-success-content, .session-ended-content {
+    text-align: center;
+    padding: 30px;
+}
+
+.icon-circle {
+    width: 80px;
+    height: 80px;
+    background: var(--success);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+}
+
+.icon-circle.success {
+    background: var(--success);
+}
+
+.icon-circle i {
+    color: white;
+    font-size: 2rem;
+}
+
+.payment-success-content h2, .session-ended-content h2 {
+    color: var(--dark);
+    margin-bottom: 10px;
+}
+
+.payment-success-content p, .session-ended-content p {
+    color: var(--gray);
+    margin-bottom: 20px;
+}
+
+.receipt-summary, .session-summary {
+    text-align: left;
+    margin: 20px 0;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+
+.receipt-summary p, .session-summary p {
+    margin: 8px 0;
+    color: var(--gray);
+    display: flex;
+    justify-content: space-between;
+}
+
+.receipt-summary strong, .session-summary strong {
+    color: var(--dark);
+}
+
+.ok-btn {
+    background: var(--primary);
+    color: white;
+    padding: 12px 30px;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.ok-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(70, 90, 255, 0.2);
+}
+
+/* Responsive Styles */
+@media (max-width: 992px) {
+    .session-layout {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .session-list {
+        flex: 1;
+        margin-bottom: 20px;
+    }
+    
+    .payment-summary {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 768px) {
+    .session-container {
+        padding: 15px;
+    }
+    
+    .session-type-options {
+        flex-direction: column;
+    }
+    
+    .method-options {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 576px) {
+    .session-tabs {
+        flex-direction: column;
+    }
+
+    .tab-btn {
+        padding: 12px;
+        text-align: center;
+    }
+
+    .tab-btn.active::after {
+        height: 2px;
+        width: 100%;
+    }
+    
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    .video-wrapper {
+        flex-direction: column;
+    }
+    
+    .local-video {
+        position: relative;
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}

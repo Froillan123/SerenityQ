@@ -1,0 +1,126 @@
+{% extends "shared/landingpageLayout.html" %}
+
+{% block content %}
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>Intelligent Mental Health Support When You Need It</h1>
+                    <p>SerenityQ matches you with the perfect psychologist using AI technology. Describe how you feel and we'll connect you with the best professional for your needs.</p>
+                    <div class="hero-buttons">
+                        <a href="#" class="btn btn-primary">Find Your Psychologist</a>
+                        <a href="#" class="btn btn-outline">How It Works</a>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Therapy session">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2>Why Choose SerenityQ</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3>AI Matching</h3>
+                    <p>Our intelligent system analyzes your needs and matches you with the most suitable psychologist based on your specific situation.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>Instant Connection</h3>
+                    <p>Priority matching with online psychologists for immediate support when you need it most.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3>Integrated Chat</h3>
+                    <p>Seamless communication with your psychologist through our secure messaging platform.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <h2>How SerenityQ Works</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Describe Your Feelings</h3>
+                    <p>Chat with our AI assistant and describe what you're experiencing in your own words.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Get Matched</h3>
+                    <p>Our system analyzes your needs and suggests the best psychologists for your situation.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Book & Connect</h3>
+                    <p>Schedule an appointment and start your session through video, phone, or chat.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Psychologists Section -->
+    <section class="psychologists" id="psychologists">
+        <div class="container">
+            <h2>Our Trusted Psychologists</h2>
+            <div class="therapists-grid">
+                <div class="therapist-card">
+                    <div class="therapist-image" style="background-image: url('https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80');"></div>
+                    <div class="therapist-info">
+                        <h3>Dr. Sarah Johnson</h3>
+                        <span class="therapist-specialty">Anxiety & Depression</span>
+                        <span class="therapist-status status-online">Online Now</span>
+                    </div>
+                </div>
+                <div class="therapist-card">
+                    <div class="therapist-image" style="background-image: url('https://images.unsplash.com/photo-1594824476967-48c8b964273f?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80');"></div>
+                    <div class="therapist-info">
+                        <h3>Dr. Michael Chen</h3>
+                        <span class="therapist-specialty">Relationship Counseling</span>
+                        <span class="therapist-status status-online">Online Now</span>
+                    </div>
+                </div>
+                <div class="therapist-card">
+                    <div class="therapist-image" style="background-image: url('https://images.unsplash.com/photo-1622253692010-333f2da6031d?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80');"></div>
+                    <div class="therapist-info">
+                        <h3>Dr. Amina Rodriguez</h3>
+                        <span class="therapist-specialty">Trauma & PTSD</span>
+                        <span class="therapist-status status-offline">Offline</span>
+                    </div>
+                </div>
+                <div class="therapist-card">
+                    <div class="therapist-image" style="background-image: url('https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80');"></div>
+                    <div class="therapist-info">
+                        <h3>Dr. James Wilson</h3>
+                        <span class="therapist-specialty">Child Psychology</span>
+                        <span class="therapist-status status-online">Online Now</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <h2>Ready to Start Your Mental Health Journey?</h2>
+            <p>SerenityQ makes it easy to find the right support for your unique needs. Our AI matching system ensures you connect with the perfect psychologist.</p>
+            <a href="#" class="btn btn-secondary">Get Matched Now</a>
+        </div>
+    </section>
+{% endblock %}
