@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | SerenityQ</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #5D5FEF;
+            --primary-light: #8B8DF2;
+            --secondary: #FF7E5F;
+            --accent: #FFD166;
+            --light: #F7F9FC;
+            --dark: #2B2D42;
+            --gray: #8D99AE;
+            --success: #4CAF50;
+            --error: #F44336;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .auth-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 550px;
+            overflow: hidden;
+        }
+
+        .auth-header {
+            padding: 24px;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(93, 95, 239, 0.05) 0%, rgba(255, 126, 95, 0.05) 100%);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .auth-header h1 {
+            color: var(--primary);
+            margin-bottom: 8px;
+            font-size: 1.5rem;
+        }
+
+        .auth-header p {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .progress-bar {
+            height: 4px;
+            background-color: #eee;
+            margin-bottom: 10px;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .step-indicators {
+            display: flex;
+            justify-content: space-between;
+            margin: 0 20px 15px;
+        }
+
+        .step-indicator {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray);
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            border: 2px solid #eee;
+            transition: all 0.3s ease;
+        }
+
+        .step-label {
+            font-size: 0.75rem;
+            color: var(--gray);
+            text-align: center;
+        }
+
+        .step-indicator.active .step-dot {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .step-indicator.active .step-label {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .step-indicator.completed .step-dot {
+            background-color: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .step-content {
+            padding: 24px;
+        }
+
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 16px;
+        }
+
+        .form-col {
+            flex: 1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 0.9rem;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(93, 95, 239, 0.1);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 38px;
+            cursor: pointer;
+            color: var(--gray);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-light);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background-color: rgba(93, 95, 239, 0.1);
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            opacity: 0.9;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 24px;
+        }
+
+        .otp-container {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 24px 0;
+        }
+
+        .otp-input {
+            width: 40px;
+            height: 45px;
+            text-align: center;
+            font-size: 1.1rem;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 16px;
+            color: var(--gray);
+            font-size: 0.9rem;
+            padding: 16px;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .auth-footer a {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .resend-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .resend-link:hover {
+            text-decoration: underline;
+        }
+
+        .confirmation-icon {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 60px;
+            color: var(--success);
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .error-message {
+            color: var(--error);
+            font-size: 0.8rem;
+            margin-top: 4px;
+            display: none;
+        }
+
+        @media (max-width: 576px) {
+            .form-row {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .otp-input {
+                width: 36px;
+                height: 40px;
+                font-size: 1rem;
+            }
+            
+            .step-label {
+                font-size: 0.7rem;
+            }
+            
+            .step-dot {
+                width: 20px;
+                height: 20px;
+                font-size: 10px;
+            }
+            
+            .btn {
+                padding: 8px 16px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-card">
+        <div class="auth-header">
+            <h1>Create Your Account</h1>
+            <p>Join SerenityQ to begin your mental health journey</p>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress" id="progress-bar"></div>
+        </div>
+        
+        <div class="step-indicators">
+            <div class="step-indicator active" id="step1-indicator">
+                <div class="step-dot">1</div>
+                <div class="step-label">Personal</div>
+            </div>
+            <div class="step-indicator" id="step2-indicator">
+                <div class="step-dot">2</div>
+                <div class="step-label">Account</div>
+            </div>
+            <div class="step-indicator" id="step3-indicator">
+                <div class="step-dot">3</div>
+                <div class="step-label">Verify</div>
+            </div>
+            <div class="step-indicator" id="step4-indicator">
+                <div class="step-dot">4</div>
+                <div class="step-label">Done</div>
+            </div>
+        </div>
+        
+        <form id="registration-form">
+            <!-- Step 1: Personal Information -->
+            <div class="step-content">
+                <div class="step active" id="step1">
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="first-name">First Name</label>
+                                <input type="text" id="first-name" name="first_name" required>
+                                <div class="error-message" id="first-name-error"></div>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="last-name">Last Name</label>
+                                <input type="text" id="last-name" name="last_name" required>
+                                <div class="error-message" id="last-name-error"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="dob">Date of Birth</label>
+                                <input type="date" id="dob" name="dob" required>
+                                <div class="error-message" id="dob-error"></div>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="gender">Gender</label>
+                                <select id="gender" name="gender" required>
+                                    <option value="">Select</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                    <option value="prefer-not-to-say">Prefer not to say</option>
+                                </select>
+                                <div class="error-message" id="gender-error"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <div></div>
+                        <button type="button" class="btn btn-primary" onclick="validateStep1()">Next</button>
+                    </div>
+                </div>
+                
+                <!-- Step 2: Account Details -->
+                <div class="step" id="step2">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" required>
+                        <div class="error-message" id="email-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" required>
+                        <div class="error-message" id="username-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required>
+                        <i class="fas fa-eye password-toggle" id="toggle-password"></i>
+                        <div class="error-message" id="password-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" required>
+                        <div class="error-message" id="phone-error"></div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button type="button" class="btn btn-outline" onclick="prevStep(2)">Back</button>
+                        <button type="button" class="btn btn-primary" onclick="validateStep2()">Next</button>
+                    </div>
+                </div>
+                
+                <!-- Step 3: OTP Verification -->
+                <div class="step" id="step3">
+                    <p class="text-center">We've sent a verification code to your email</p>
+                    
+                    <div class="otp-container">
+                        <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" required>
+                        <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" required>
+                        <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" required>
+                        <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" required>
+                        <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" required>
+                        <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" required>
+                    </div>
+                    
+                    <p class="text-center">
+                        Didn't receive code? <span class="resend-link" onclick="resendOTP()">Resend</span>
+                    </p>
+                    
+                    <div class="action-buttons">
+                        <button type="button" class="btn btn-outline" onclick="prevStep(3)">Back</button>
+                        <button type="button" class="btn btn-primary" onclick="verifyOTP()">Verify</button>
+                    </div>
+                </div>
+                
+                <!-- Step 4: Confirmation -->
+                <div class="step" id="step4">
+                    <div class="confirmation-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    
+                    <h2 class="text-center">Registration Successful!</h2>
+                    <p class="text-center">Your account has been created successfully.</p>
+                    
+                    <div class="action-buttons" style="justify-content: center; margin-top: 30px;">
+                        <button type="button" class="btn btn-success" onclick="redirectToLogin()">Go to Login</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+        
+        <div class="auth-footer">
+            Already have an account? <a href="{{ url_for('auth.login') }}">Login here</a>
+        </div>
+    </div>
+
+    <script>
+        // Update progress bar
+        function updateProgress(step) {
+            const totalSteps = 4;
+            const progressPercentage = (step / totalSteps) * 100;
+            document.getElementById('progress-bar').style.width = `${progressPercentage}%`;
+        }
+        
+        // Step navigation
+        function nextStep(currentStep) {
+            document.getElementById(`step${currentStep}`).classList.remove('active');
+            document.getElementById(`step${currentStep}-indicator`).classList.add('completed');
+            
+            const nextStep = currentStep + 1;
+            document.getElementById(`step${nextStep}`).classList.add('active');
+            document.getElementById(`step${nextStep}-indicator`).classList.add('active');
+            
+            updateProgress(nextStep);
+            
+            if (nextStep === 3) {
+                // Simulate sending OTP when moving to verification step
+                sendOTP();
+            }
+        }
+        
+        function prevStep(currentStep) {
+            document.getElementById(`step${currentStep}`).classList.remove('active');
+            document.getElementById(`step${currentStep}-indicator`).classList.remove('active');
+            
+            const prevStep = currentStep - 1;
+            document.getElementById(`step${prevStep}`).classList.add('active');
+            document.getElementById(`step${prevStep}-indicator`).classList.add('completed');
+            
+            updateProgress(prevStep);
+        }
+        
+        // Form validation
+        function validateStep1() {
+            let isValid = true;
+            const firstName = document.getElementById('first-name').value.trim();
+            const lastName = document.getElementById('last-name').value.trim();
+            const dob = document.getElementById('dob').value;
+            const gender = document.getElementById('gender').value;
+            
+            // Reset errors
+            document.querySelectorAll('#step1 .error-message').forEach(el => el.style.display = 'none');
+            
+            if (!firstName) {
+                document.getElementById('first-name-error').textContent = 'First name is required';
+                document.getElementById('first-name-error').style.display = 'block';
+                isValid = false;
+            }
+            
+            if (!lastName) {
+                document.getElementById('last-name-error').textContent = 'Last name is required';
+                document.getElementById('last-name-error').style.display = 'block';
+                isValid = false;
+            }
+            
+            if (!dob) {
+                document.getElementById('dob-error').textContent = 'Date of birth is required';
+                document.getElementById('dob-error').style.display = 'block';
+                isValid = false;
+            }
+            
+            if (!gender) {
+                document.getElementById('gender-error').textContent = 'Gender is required';
+                document.getElementById('gender-error').style.display = 'block';
+                isValid = false;
+            }
+            
+            if (isValid) {
+                nextStep(1);
+            }
+        }
+        
+        function validateStep2() {
+            let isValid = true;
+            const email = document.getElementById('email').value.trim();
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const phone = document.getElementById('phone').value.trim();
+            
+            // Reset errors
+            document.querySelectorAll('#step2 .error-message').forEach(el => el.style.display = 'none');
+            
+            if (!email) {
+                document.getElementById('email-error').textContent = 'Email is required';
+                document.getElementById('email-error').style.display = 'block';
+                isValid = false;
+            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                document.getElementById('email-error').textContent = 'Please enter a valid email';
+                document.getElementById('email-error').style.display = 'block';
+                isValid = false;
+            }
+            
+            if (!username) {
+                document.getElementById('username-error').textContent = 'Username is required';
+                document.getElementById('username-error').style.display = 'block';
+                isValid = false;
+            } else if (username.length < 4) {
+                document.getElementById('username-error').textContent = 'Username must be at least 4 characters';
+                document.getElementById('username-error').style.display = 'block';
+                isValid = false;
+            }
+            
+            if (!password) {
+                document.getElementById('password-error').textContent = 'Password is required';
+                document.getElementById('password-error').style.display = 'block';
+                isValid = false;
+            } else if (password.length < 8) {
+                document.getElementById('password-error').textContent = 'Password must be at least 8 characters';
+                document.getElementById('password-error').style.display = 'block';
+                isValid = false;
+            }
+            
+            if (!phone) {
+                document.getElementById('phone-error').textContent = 'Phone number is required';
+                document.getElementById('phone-error').style.display = 'block';
+                isValid = false;
+            } else if (!/^[\d\s\-+]+$/.test(phone)) {
+                document.getElementById('phone-error').textContent = 'Please enter a valid phone number';
+                document.getElementById('phone-error').style.display = 'block';
+                isValid = false;
+            }
+            
+            if (isValid) {
+                nextStep(2);
+            }
+        }
+        
+        // OTP handling
+        function sendOTP() {
+            // In a real app, this would make an API call to send OTP
+            console.log('OTP sent to email');
+        }
+        
+        function resendOTP() {
+            // In a real app, this would resend OTP
+            alert('New verification code has been sent to your email');
+        }
+        
+        function verifyOTP() {
+            // In a real app, this would verify the OTP
+            const otpInputs = document.querySelectorAll('.otp-input');
+            let otpValid = true;
+            
+            otpInputs.forEach(input => {
+                if (!input.value) {
+                    otpValid = false;
+                }
+            });
+            
+            if (otpValid) {
+                nextStep(3);
+            } else {
+                alert('Please enter the complete verification code');
+            }
+        }
+        
+        function redirectToLogin() {
+            // Redirect to login page
+            window.location.href = "{{ url_for('auth.login') }}";
+        }
+        
+        // Password visibility toggle
+        document.getElementById('toggle-password').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const icon = this;
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+        
+        // OTP input auto-focus
+        const otpInputs = document.querySelectorAll('.otp-input');
+        otpInputs.forEach((input, index) => {
+            input.addEventListener('input', (e) => {
+                if (e.target.value.length === 1 && index < otpInputs.length - 1) {
+                    otpInputs[index + 1].focus();
+                }
+            });
+            
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && index > 0 && e.target.value.length === 0) {
+                    otpInputs[index - 1].focus();
+                }
+            });
+        });
+        
+        // Initialize progress
+        updateProgress(1);
+    </script>
+</body>
+</html>

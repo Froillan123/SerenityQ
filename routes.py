@@ -15,39 +15,15 @@ psychologist_bp = Blueprint('psychologist', __name__)
 def landing_page():
     return render_template('landing/landingpage.html') 
 
-# Route to register a new user
-@auth_bp.route('/register', methods=['POST'])
+@auth_bp.route('/register')
 def register():
-    data = request.get_json()
-    username = data.get('username')
-    password = data.get('password')
+    return render_template('user/register.html')
 
-    hashed_password = generate_password_hash(password)
-
-    new_user = User(username=username, password=hashed_password)
-
-    db.session.add(new_user)
-    db.session.commit()
-
-    return jsonify(message="User registered successfully"), 201
-
-# Route to login a user and return a JWT token
-@auth_bp.route('/login', methods=['POST'])
+@auth_bp.route('/login')
 def login():
-    data = request.get_json()
-    username = data.get('username')
-    password = data.get('password')
+    return render_template('user/login.html')
 
-    user = User.query.filter_by(username=username).first()
-
-    if user and check_password_hash(user.password, password):
-        access_token = jwt.create_access_token(identity=user.id)
-        return jsonify(access_token=access_token), 200
-    else:
-        return jsonify(message="Invalid credentials"), 401
-
-
-@auth_bp.route('/logout', methods=['POST'])
+@auth_bp.route('/logout')
 def logout():
     redirect('/')
 
@@ -97,6 +73,16 @@ def admin_users():
 
 
 # Psychologist Routes
+
+@psychologist_bp.route('/login')
+def login():
+    return render_template('psychologist/psychologistLogin.html')
+
+
+@psychologist_bp.route('/register')
+def register():
+    return render_template('psychologist/psychologistRegister.html')
+
 @psychologist_bp.route('/appointments')
 def appointments():
     return render_template('psychologist/psychologistappointment.html')
@@ -108,6 +94,11 @@ def dashboard():  # Changed from psychologist_dashboard to match template
 @psychologist_bp.route('/sessions')
 def sessions():  # Changed from psychologist_sessions to match template
     return render_template('psychologist/psychologistSession.html')
+
+@psychologist_bp.route('/reports')
+def reports():
+    return render_template('psychologist/pyschologistreport.html')
+
 
 @psychologist_bp.route('/settings')
 def settings():

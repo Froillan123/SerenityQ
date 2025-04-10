@@ -10,48 +10,56 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <!-- Sidebar for Desktop -->
-    <div class="sidebar" id="sidebar">
-        <button class="close-sidebar" id="closeSidebar">
-            <i class='bx bx-chevron-left'></i>
-        </button>
-        <div class="sidebar-header">
-            <i class='bx bx-brain icon'></i>
-            <h3>SerenityQ</h3>
+        <!-- Sidebar for Desktop -->
+        <div class="sidebar" id="sidebar">
+            <button class="close-sidebar" id="closeSidebar">
+                <i class='bx bx-chevron-left'></i>
+            </button>
+            <div class="sidebar-header">
+                <i class='bx bx-brain icon'></i>
+                <h3>SerenityQ</h3>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="{% if request.path == url_for('psychologist.appointments') %}active{% endif %}">
+                    <a href="{{ url_for('psychologist.appointments') }}">
+                        <i class='bx bx-calendar icon'></i>
+                        <span>Appointments</span>
+                    </a>
+                </li>
+                <li class="{% if request.path == url_for('psychologist.dashboard') %}active{% endif %}">
+                    <a href="{{ url_for('psychologist.dashboard') }}">
+                        <i class='bx bx-bar-chart-alt-2 icon'></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="{% if request.path == url_for('psychologist.sessions') %}active{% endif %}">
+                    <a href="{{ url_for('psychologist.sessions') }}">
+                        <i class='bx bx-conversation icon'></i>
+                        <span>Sessions</span>
+                    </a>
+                </li>
+                <!-- New Reports link added here -->
+                <li class="{% if request.path == url_for('psychologist.reports') %}active{% endif %}">
+                    <a href="{{ url_for('psychologist.reports') }}">
+                        <i class='bx bx-file icon'></i>
+                        <span>Reports</span>
+                    </a>
+                </li>
+                <li class="{% if request.path == url_for('psychologist.settings') %}active{% endif %}">
+                    <a href="{{ url_for('psychologist.settings') }}">
+                        <i class='bx bx-cog icon'></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('auth.logout') }}">
+                        <i class='bx bx-log-out icon'></i>
+                        <span>Log Out</span>
+                    </a>
+                </li>
+            </ul>
         </div>
-        <ul class="sidebar-menu">
-            <li class="{% if request.path == url_for('psychologist.appointments') %}active{% endif %}">
-                <a href="{{ url_for('psychologist.appointments') }}">
-                    <i class='bx bx-calendar icon'></i>
-                    <span>Appointments</span>
-                </a>
-            </li>
-            <li class="{% if request.path == url_for('psychologist.dashboard') %}active{% endif %}">
-                <a href="{{ url_for('psychologist.dashboard') }}">
-                    <i class='bx bx-bar-chart-alt-2 icon'></i>
-                    <span>Dashboard</span>
-                </a>
-            </li>
-            <li class="{% if request.path == url_for('psychologist.sessions') %}active{% endif %}">
-                <a href="{{ url_for('psychologist.sessions') }}">
-                    <i class='bx bx-conversation icon'></i>
-                    <span>Sessions</span>
-                </a>
-            </li>
-            <li class="{% if request.path == url_for('psychologist.settings') %}active{% endif %}">
-                <a href="{{ url_for('psychologist.settings') }}">
-                    <i class='bx bx-cog icon'></i>
-                    <span>Settings</span>
-                </a>
-            </li>
-            <li>
-                <a href="{{ url_for('auth.logout') }}">
-                    <i class='bx bx-log-out icon'></i>
-                    <span>Log Out</span>
-                </a>
-            </li>
-        </ul>
-    </div>
+
 
     <!-- Main Container -->
     <div class="main-container">
@@ -67,19 +75,23 @@
     <div class="bottom-navbar">
         <a href="{{ url_for('psychologist.appointments') }}" class="nav-item {% if request.path == url_for('psychologist.appointments') %}active{% endif %}">
             <i class='bx bx-calendar'></i>
-            <span>Appointments</span>
+            <span></span>
         </a>
         <a href="{{ url_for('psychologist.dashboard') }}" class="nav-item {% if request.path == url_for('psychologist.dashboard') %}active{% endif %}">
             <i class='bx bx-bar-chart-alt-2'></i>
-            <span>Dashboard</span>
+            <span></span>
         </a>
         <a href="{{ url_for('psychologist.sessions') }}" class="nav-item {% if request.path == url_for('psychologist.sessions') %}active{% endif %}">
             <i class='bx bx-conversation'></i>
-            <span>Sessions</span>
+            <span></span>
+        </a>
+        <a href="{{ url_for('psychologist.reports') }}" class="nav-item {% if request.path == url_for('psychologist.reports') %}active{% endif %}">
+            <i class='bx bx-file icon'></i>
+            <span></span>
         </a>
         <a href="{{ url_for('psychologist.settings') }}" class="nav-item {% if request.path == url_for('psychologist.settings') %}active{% endif %}">
             <i class='bx bx-cog'></i>
-            <span>Settings</span>
+            <span></span>
         </a>
     </div>
 

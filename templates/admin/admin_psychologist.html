@@ -1,0 +1,1382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Psychologist Management | SerenityQ Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+      :root {
+      --primary: #5D5FEF;
+      --primary-light: #A5A6F6;
+      --primary-dark: #4B4DCA;
+      --secondary: #6C757D;
+      --success: #4CAF50;
+      --warning: #FFC107;
+      --error: #F44336;
+      --accent: #FFD166;
+      --light: #F8F9FA;
+      --dark: #212529;
+      --gray: #6C757D;
+      --border: #e0e0e0;
+      --sidebar-width: 260px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #f5f7fb;
+      color: var(--dark);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar Styles */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: white;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      z-index: 100;
+      overflow-y: auto;
+    }
+
+    .sidebar-header {
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-header h3 {
+      color: var(--primary);
+      margin-left: 10px;
+      font-size: 1.3rem;
+    }
+
+    .sidebar-header i {
+      font-size: 1.8rem;
+      color: var(--primary);
+    }
+
+    .sidebar-menu {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .sidebar-menu li a {
+      display: flex;
+      align-items: center;
+      padding: 15px 20px;
+      color: var(--secondary);
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+
+    .sidebar-menu li a:hover {
+      background-color: rgba(93, 95, 239, 0.1);
+      color: var(--primary);
+    }
+
+    .sidebar-menu li a.active {
+      background-color: rgba(93, 95, 239, 0.1);
+      color: var(--primary);
+      border-left: 3px solid var(--primary);
+    }
+
+    .sidebar-menu li a i {
+      margin-right: 10px;
+      font-size: 1.2rem;
+    }
+
+    /* Main Content Styles */
+    .main-content {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      transition: all 0.3s ease;
+    }
+
+    /* Navbar Styles */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 30px;
+      background: white;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .navbar-left {
+      display: flex;
+      align-items: center;
+    }
+
+    .hamburger {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--primary);
+      cursor: pointer;
+      margin-right: 15px;
+      display: none;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+      text-align: right;
+    }
+
+    .user-info p {
+      font-weight: 600;
+    }
+
+    .user-info small {
+      color: var(--gray);
+      font-size: 0.8rem;
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--primary-light);
+    }
+
+    /* Hero Section */
+    .hero {
+      padding: 30px;
+      background: white;
+      margin: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .hero h1 {
+      color: var(--primary);
+      margin-bottom: 10px;
+      font-size: 1.8rem;
+    }
+
+    .hero p {
+      color: var(--secondary);
+      margin-bottom: 20px;
+    }
+
+    .cta-btn {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+
+    .cta-btn:hover {
+      background-color: var(--primary-dark);
+    }
+
+    /* Table Section */
+    .section-table {
+      padding: 0 30px 30px;
+    }
+
+    .section-table h2 {
+      margin-bottom: 20px;
+      color: var(--dark);
+    }
+
+    .table-container {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 15px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      background-color: var(--light);
+      font-weight: 600;
+      color: var(--dark);
+    }
+
+    tr:hover {
+      background-color: rgba(93, 95, 239, 0.05);
+    }
+
+    .status {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .status.active {
+      background-color: rgba(76, 175, 80, 0.1);
+      color: var(--success);
+    }
+
+    .status.inactive {
+      background-color: rgba(244, 67, 54, 0.1);
+      color: var(--error);
+    }
+
+    .action-btn {
+      padding: 5px 10px;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 600;
+      transition: all 0.3s;
+      margin-right: 5px;
+    }
+
+    .view-btn {
+      background-color: var(--primary-light);
+      color: var(--primary-dark);
+    }
+
+    .view-btn:hover {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .deactivate-btn {
+      background-color: rgba(255, 193, 7, 0.1);
+      color: var(--warning);
+    }
+
+    .deactivate-btn:hover {
+      background-color: var(--warning);
+      color: white;
+    }
+
+    .delete-btn {
+      background-color: rgba(244, 67, 54, 0.1);
+      color: var(--error);
+    }
+
+    .delete-btn:hover {
+      background-color: var(--error);
+      color: white;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background-color: white;
+      width: 90%;
+      max-width: 800px;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      padding: 20px;
+      background-color: var(--primary);
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h3 {
+      margin: 0;
+    }
+
+    .close-modal {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .modal-body {
+      padding: 20px;
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .profile-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 20px;
+      border: 3px solid var(--primary-light);
+    }
+
+    .profile-info h3 {
+      margin: 0 0 5px;
+      color: var(--dark);
+    }
+
+    .profile-info p {
+      margin: 0;
+      color: var(--secondary);
+    }
+
+    .detail-row {
+      display: flex;
+      margin-bottom: 15px;
+    }
+
+    .detail-label {
+      width: 150px;
+      font-weight: 600;
+      color: var(--dark);
+    }
+
+    .detail-value {
+      flex: 1;
+      color: var(--secondary);
+    }
+
+    .specialties-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .specialty-badge {
+      background-color: var(--primary-light);
+      color: var(--primary-dark);
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+    }
+
+    .modal-footer {
+      padding: 15px 20px;
+      background-color: var(--light);
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    /* Confirmation Modal */
+    .confirmation-modal .modal-content {
+      max-width: 500px;
+    }
+
+    .confirmation-body {
+      text-align: center;
+      padding: 30px;
+    }
+
+    .confirmation-body i {
+      font-size: 3rem;
+      color: var(--error);
+      margin-bottom: 20px;
+    }
+
+    .confirmation-body h3 {
+      margin-bottom: 10px;
+    }
+
+    .confirmation-body p {
+      margin-bottom: 20px;
+      color: var(--secondary);
+    }
+
+    /* Loader Styles */
+    .loader-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(255, 255, 255, 0.9);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .dna-loader {
+      width: 100px;
+      height: 100px;
+      position: relative;
+    }
+
+    .dna-loader span {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: var(--primary);
+      border-radius: 50%;
+      animation: dna 1s infinite ease-in-out;
+    }
+
+    .dna-loader span:nth-child(1) {
+      left: 0;
+      top: 0;
+      animation-delay: 0s;
+    }
+
+    .dna-loader span:nth-child(2) {
+      left: 20px;
+      top: 0;
+      animation-delay: 0.1s;
+    }
+
+    .dna-loader span:nth-child(3) {
+      left: 40px;
+      top: 0;
+      animation-delay: 0.2s;
+    }
+
+    .dna-loader span:nth-child(4) {
+      left: 60px;
+      top: 0;
+      animation-delay: 0.3s;
+    }
+
+    .dna-loader span:nth-child(5) {
+      left: 80px;
+      top: 0;
+      animation-delay: 0.4s;
+    }
+
+    .dna-loader span:nth-child(6) {
+      left: 100px;
+      top: 0;
+      animation-delay: 0.5s;
+    }
+
+    .dna-loader span:nth-child(7) {
+      left: 0;
+      top: 20px;
+      animation-delay: 0.6s;
+    }
+
+    .dna-loader span:nth-child(8) {
+      left: 20px;
+      top: 20px;
+      animation-delay: 0.7s;
+    }
+
+    .dna-loader span:nth-child(9) {
+      left: 40px;
+      top: 20px;
+      animation-delay: 0.8s;
+    }
+
+    .dna-loader span:nth-child(10) {
+      left: 60px;
+      top: 20px;
+      animation-delay: 0.9s;
+    }
+
+    @keyframes dna {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(20px);
+      }
+    }
+
+    .loader-text {
+      margin-top: 20px;
+      font-size: 1.2rem;
+      color: var(--primary);
+      font-weight: 500;
+    }
+
+    /* Pagination */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .pagination button {
+      background-color: white;
+      border: 1px solid var(--border);
+      color: var(--dark);
+      padding: 8px 15px;
+      margin: 0 5px;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: all 0.3s;
+    }
+
+    .pagination button:hover {
+      background-color: var(--primary-light);
+      color: var(--primary-dark);
+    }
+
+    .pagination button.active {
+      background-color: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .pagination button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 992px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+
+      .sidebar.active {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+
+      .hamburger {
+        display: block;
+      }
+
+      .detail-row {
+        flex-direction: column;
+      }
+
+      .detail-label {
+        width: 100%;
+        margin-bottom: 5px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 15px;
+      }
+
+      .hero {
+        margin: 10px;
+        padding: 20px;
+      }
+
+      .section-table {
+        padding: 0 10px 20px;
+      }
+
+      table {
+        display: block;
+        overflow-x: auto;
+      }
+
+      .profile-header {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .profile-avatar {
+        margin-right: 0;
+        margin-bottom: 15px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .action-btns {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      .action-btn {
+        width: 100%;
+        margin-right: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Loader -->
+  <div class="loader-overlay" id="loader">
+    <div class="dna-loader">
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <div class="loader-text">Loading...</div>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <i class='bx bx-brain'></i>
+      <h3>SerenityQ</h3>
+    </div>
+    <ul class="sidebar-menu">
+      <li><a href="admin_index.html"><i class='bx bx-bar-chart-alt-2'></i> Dashboard</a></li>
+      <li><a href="admin_psychologist.html" class="active"><i class='bx bx-user-voice'></i> Psychologists</a></li>
+      <li><a href="admin_user.html"><i class='bx bx-group'></i> Users</a></li>
+      <li><a href="admin_settings.html"><i class='bx bx-cog'></i> Settings</a></li>
+      <li><a href="#"><i class='bx bx-log-out'></i> Logout</a></li>
+    </ul>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="navbar-left">
+        <button class="hamburger" id="toggleSidebar">
+          <i class='bx bx-menu' id="menuIcon"></i>
+        </button>
+        <h2>Psychologist Management</h2>
+      </div>
+      <div class="user-profile">
+        <div class="user-info">
+          <p>Admin User</p>
+          <small>Super Admin</small>
+        </div>
+        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile Photo" class="user-avatar">
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero light-hero">
+      <h1>Psychologist Management Panel</h1>
+      <p>View, deactivate, or remove psychologist profiles from the system.</p>
+    </section>
+
+    <!-- Psychologist Table -->
+    <section class="section-table">
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Specialization</th>
+              <th>Email</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <div class="profile-info">
+                  <strong>Dr. Alice Rivera</strong>
+                  <small>Cognitive Behavioral Therapy</small>
+                </div>
+              </td>
+              <td>Anxiety, Depression</td>
+              <td>alice@serenityq.com</td>
+              <td><span class="status active">Active</span></td>
+              <td>
+                <div class="action-btns">
+                  <button class="action-btn view-btn" onclick="viewPsychologistDetails(1)">View</button>
+                  <button class="action-btn deactivate-btn" onclick="showDeactivateModal(1)">Deactivate</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div class="profile-info">
+                  <strong>Dr. John Lin</strong>
+                  <small>Mindfulness & Stress Relief</small>
+                </div>
+              </td>
+              <td>Stress, Trauma</td>
+              <td>john@serenityq.com</td>
+              <td><span class="status active">Active</span></td>
+              <td>
+                <div class="action-btns">
+                  <button class="action-btn view-btn" onclick="viewPsychologistDetails(2)">View</button>
+                  <button class="action-btn deactivate-btn" onclick="showDeactivateModal(2)">Deactivate</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div class="profile-info">
+                  <strong>Dr. Maria Gonzalez</strong>
+                  <small>Child Psychology</small>
+                </div>
+              </td>
+              <td>Child Development, ADHD</td>
+              <td>maria@serenityq.com</td>
+              <td><span class="status active">Active</span></td>
+              <td>
+                <div class="action-btns">
+                  <button class="action-btn view-btn" onclick="viewPsychologistDetails(3)">View</button>
+                  <button class="action-btn deactivate-btn" onclick="showDeactivateModal(3)">Deactivate</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div class="profile-info">
+                  <strong>Dr. Robert Chen</strong>
+                  <small>Marriage Counseling</small>
+                </div>
+              </td>
+              <td>Relationships, Family Therapy</td>
+              <td>robert@serenityq.com</td>
+              <td><span class="status inactive">Inactive</span></td>
+              <td>
+                <div class="action-btns">
+                  <button class="action-btn view-btn" onclick="viewPsychologistDetails(4)">View</button>
+                  <button class="action-btn delete-btn" onclick="showDeleteModal(4)">Delete</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div class="profile-info">
+                  <strong>Dr. Sarah Johnson</strong>
+                  <small>Clinical Psychology</small>
+                </div>
+              </td>
+              <td>Depression, PTSD</td>
+              <td>sarah@serenityq.com</td>
+              <td><span class="status active">Active</span></td>
+              <td>
+                <div class="action-btns">
+                  <button class="action-btn view-btn" onclick="viewPsychologistDetails(5)">View</button>
+                  <button class="action-btn deactivate-btn" onclick="showDeactivateModal(5)">Deactivate</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination">
+        <button disabled>Previous</button>
+        <button class="active">1</button>
+        <button>2</button>
+        <button>3</button>
+        <button>Next</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- Psychologist Details Modal -->
+  <div class="modal" id="psychologistModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Psychologist Details</h3>
+        <button class="close-modal" onclick="closeModal('psychologistModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="profile-header">
+          <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Profile Photo" class="profile-avatar">
+          <div class="profile-info">
+            <h3 id="modalPsychologistName">Dr. Alice Rivera</h3>
+            <p id="modalPsychologistSpecialty">Cognitive Behavioral Therapy</p>
+            <p id="modalPsychologistStatus"><span class="status active">Active</span></p>
+          </div>
+        </div>
+
+        <div class="detail-row">
+          <div class="detail-label">Email:</div>
+          <div class="detail-value" id="modalPsychologistEmail">alice@serenityq.com</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Phone:</div>
+          <div class="detail-value" id="modalPsychologistPhone">+1 (555) 123-4567</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">License Number:</div>
+          <div class="detail-value" id="modalPsychologistLicense">PSY-1234567</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Years of Experience:</div>
+          <div class="detail-value" id="modalPsychologistExperience">8 years</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Hourly Rate:</div>
+          <div class="detail-value" id="modalPsychologistRate">$150/hour</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Specialties:</div>
+          <div class="detail-value">
+            <div class="specialties-list" id="modalPsychologistSpecialties">
+              <span class="specialty-badge">Anxiety</span>
+              <span class="specialty-badge">Depression</span>
+              <span class="specialty-badge">Stress Management</span>
+            </div>
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Bio:</div>
+          <div class="detail-value" id="modalPsychologistBio">
+            Dr. Alice Rivera is a licensed clinical psychologist with over 8 years of experience in treating anxiety, depression, and stress-related disorders. She specializes in cognitive behavioral therapy and mindfulness-based approaches.
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Last Active:</div>
+          <div class="detail-value" id="modalPsychologistLastActive">2 days ago</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Patients Served:</div>
+          <div class="detail-value" id="modalPsychologistPatients">142</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="action-btn view-btn" onclick="closeModal('psychologistModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Deactivate Confirmation Modal -->
+  <div class="modal confirmation-modal" id="deactivateModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Deactivate Psychologist</h3>
+        <button class="close-modal" onclick="closeModal('deactivateModal')">&times;</button>
+      </div>
+      <div class="confirmation-body">
+        <i class='bx bx-error-circle'></i>
+        <h3>Deactivate this psychologist?</h3>
+        <p>This will prevent them from accessing the system but preserve their data. You can reactivate them later.</p>
+        <div class="modal-footer">
+          <button class="action-btn view-btn" onclick="closeModal('deactivateModal')">Cancel</button>
+          <button class="action-btn deactivate-btn" onclick="deactivatePsychologist()">Deactivate</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal confirmation-modal" id="deleteModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Delete Psychologist</h3>
+        <button class="close-modal" onclick="closeModal('deleteModal')">&times;</button>
+      </div>
+      <div class="confirmation-body">
+        <i class='bx bx-error-circle'></i>
+        <h3>Delete this psychologist permanently?</h3>
+        <p>This action cannot be undone. All associated data will be removed from the system.</p>
+        <div class="modal-footer">
+          <button class="action-btn view-btn" onclick="closeModal('deleteModal')">Cancel</button>
+          <button class="action-btn delete-btn" onclick="deletePsychologist()">Delete Permanently</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Psychologist Modal -->
+  <div class="modal" id="addPsychologistModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Add New Psychologist</h3>
+        <button class="close-modal" onclick="closeModal('addPsychologistModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="addPsychologistForm">
+          <div class="detail-row">
+            <div class="detail-label">First Name:</div>
+            <div class="detail-value">
+              <input type="text" placeholder="Enter first name" required>
+            </div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Last Name:</div>
+            <div class="detail-value">
+              <input type="text" placeholder="Enter last name" required>
+            </div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Email:</div>
+            <div class="detail-value">
+              <input type="email" placeholder="Enter email address" required>
+            </div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Specialization:</div>
+            <div class="detail-value">
+              <select required>
+                <option value="">Select specialization</option>
+                <option value="clinical">Clinical Psychology</option>
+                <option value="counseling">Counseling Psychology</option>
+                <option value="school">School Psychology</option>
+                <option value="health">Health Psychology</option>
+              </select>
+            </div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">License Number:</div>
+            <div class="detail-value">
+              <input type="text" placeholder="Enter license number" required>
+            </div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Initial Password:</div>
+            <div class="detail-value">
+              <input type="password" placeholder="Set initial password" required>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="action-btn view-btn" onclick="closeModal('addPsychologistModal')">Cancel</button>
+        <button class="action-btn deactivate-btn" onclick="addPsychologist()">Add Psychologist</button>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+
+     // Loader timeout
+     setTimeout(() => {
+      document.getElementById('loader').style.display = 'none';
+    }, 1500);
+
+
+    const sidebar = document.getElementById('sidebar');
+    const toggleSidebar = document.getElementById('toggleSidebar');
+    const menuIcon = document.getElementById('menuIcon');
+
+    toggleSidebar.addEventListener('click', function() {
+      sidebar.classList.toggle('active');
+      if (sidebar.classList.contains('active')) {
+        menuIcon.classList.remove('bx-menu');
+        menuIcon.classList.add('bx-x');
+      } else {
+        menuIcon.classList.remove('bx-x');
+        menuIcon.classList.add('bx-menu');
+      }
+    });
+
+    // Modal functions
+    function openModal(modalId) {
+      document.getElementById(modalId).style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+
+    // Psychologist data (in a real app, this would come from an API)
+    const psychologists = [
+      {
+        id: 1,
+        name: "Dr. Alice Rivera",
+        specialty: "Cognitive Behavioral Therapy",
+        email: "alice@serenityq.com",
+        phone: "+1 (555) 123-4567",
+        license: "PSY-1234567",
+        experience: "8 years",
+        rate: "$150/hour",
+        specialties: ["Anxiety", "Depression", "Stress Management"],
+        bio: "Dr. Alice Rivera is a licensed clinical psychologist with over 8 years of experience in treating anxiety, depression, and stress-related disorders. She specializes in cognitive behavioral therapy and mindfulness-based approaches.",
+        lastActive: "2 days ago",
+        patients: "142",
+        status: "active",
+        avatar: "https://randomuser.me/api/portraits/women/44.jpg"
+      },
+      {
+        id: 2,
+        name: "Dr. John Lin",
+        specialty: "Mindfulness & Stress Relief",
+        email: "john@serenityq.com",
+        phone: "+1 (555) 987-6543",
+        license: "PSY-7654321",
+        experience: "6 years",
+        rate: "$135/hour",
+        specialties: ["Stress", "Trauma", "Mindfulness"],
+        bio: "Dr. John Lin specializes in mindfulness-based stress reduction and trauma therapy. With 6 years of clinical experience, he has helped hundreds of clients manage stress and recover from traumatic experiences.",
+        lastActive: "1 day ago",
+        patients: "98",
+        status: "active",
+        avatar: "https://randomuser.me/api/portraits/men/32.jpg"
+      },
+      {
+        id: 3,
+        name: "Dr. Maria Gonzalez",
+        specialty: "Child Psychology",
+        email: "maria@serenityq.com",
+        phone: "+1 (555) 456-7890",
+        license: "PSY-9876543",
+        experience: "10 years",
+        rate: "$175/hour",
+        specialties: ["Child Development", "ADHD", "Autism"],
+        bio: "Dr. Maria Gonzalez has dedicated her career to helping children and adolescents with developmental challenges. She is particularly skilled in working with ADHD and autism spectrum disorders.",
+        lastActive: "Today",
+        patients: "210",
+        status: "active",
+        avatar: "https://randomuser.me/api/portraits/women/65.jpg"
+      },
+      {
+        id: 4,
+        name: "Dr. Robert Chen",
+        specialty: "Marriage Counseling",
+        email: "robert@serenityq.com",
+        phone: "+1 (555) 789-0123",
+        license: "PSY-5678901",
+        experience: "12 years",
+        rate: "$160/hour",
+        specialties: ["Relationships", "Family Therapy", "Couples Counseling"],
+        bio: "Dr. Robert Chen is a relationship expert with over 12 years of experience helping couples and families improve their communication and resolve conflicts.",
+        lastActive: "3 months ago",
+        patients: "185",
+        status: "inactive",
+        avatar: "https://randomuser.me/api/portraits/men/75.jpg"
+      },
+      {
+        id: 5,
+        name: "Dr. Sarah Johnson",
+        specialty: "Clinical Psychology",
+        email: "sarah@serenityq.com",
+        phone: "+1 (555) 234-5678",
+        license: "PSY-3456789",
+        experience: "9 years",
+        rate: "$155/hour",
+        specialties: ["Depression", "PTSD", "Anxiety Disorders"],
+        bio: "Dr. Sarah Johnson specializes in treating mood disorders and trauma-related conditions. She uses evidence-based approaches to help clients recover and thrive.",
+        lastActive: "1 week ago",
+        patients: "176",
+        status: "active",
+        avatar: "https://randomuser.me/api/portraits/women/33.jpg"
+      }
+    ];
+
+    // Current psychologist ID for actions
+    let currentPsychologistId = null;
+
+
+        // View psychologist details
+        function viewPsychologistDetails(id) {
+      const psychologist = psychologists.find(p => p.id === id);
+      if (psychologist) {
+        document.getElementById('modalPsychologistName').textContent = psychologist.name;
+        document.getElementById('modalPsychologistSpecialty').textContent = psychologist.specialty;
+        document.getElementById('modalPsychologistEmail').textContent = psychologist.email;
+        document.getElementById('modalPsychologistPhone').textContent = psychologist.phone;
+        document.getElementById('modalPsychologistLicense').textContent = psychologist.license;
+        document.getElementById('modalPsychologistExperience').textContent = psychologist.experience;
+        document.getElementById('modalPsychologistRate').textContent = psychologist.rate;
+        document.getElementById('modalPsychologistBio').textContent = psychologist.bio;
+        document.getElementById('modalPsychologistLastActive').textContent = psychologist.lastActive;
+        document.getElementById('modalPsychologistPatients').textContent = psychologist.patients;
+        
+        // Update status
+        const statusElement = document.getElementById('modalPsychologistStatus');
+        statusElement.innerHTML = '';
+        const statusSpan = document.createElement('span');
+        statusSpan.className = `status ${psychologist.status}`;
+        statusSpan.textContent = psychologist.status === 'active' ? 'Active' : 'Inactive';
+        statusElement.appendChild(statusSpan);
+        
+        // Update specialties
+        const specialtiesContainer = document.getElementById('modalPsychologistSpecialties');
+        specialtiesContainer.innerHTML = '';
+        psychologist.specialties.forEach(specialty => {
+          const badge = document.createElement('span');
+          badge.className = 'specialty-badge';
+          badge.textContent = specialty;
+          specialtiesContainer.appendChild(badge);
+        });
+        
+        // Update avatar
+        const avatar = document.querySelector('#psychologistModal .profile-avatar');
+        avatar.src = psychologist.avatar;
+        
+        openModal('psychologistModal');
+      }
+    }
+
+    // Show deactivate modal
+    function showDeactivateModal(id) {
+      currentPsychologistId = id;
+      openModal('deactivateModal');
+    }
+
+    // Show delete modal
+    function showDeleteModal(id) {
+      currentPsychologistId = id;
+      openModal('deleteModal');
+    }
+
+    // Deactivate psychologist
+    function deactivatePsychologist() {
+      if (currentPsychologistId) {
+        // In a real app, you would make an API call here
+        const psychologist = psychologists.find(p => p.id === currentPsychologistId);
+        if (psychologist) {
+          psychologist.status = 'inactive';
+          
+          // Update the table row
+          updatePsychologistRow(psychologist);
+          
+          // Show success message
+          showToast('Psychologist deactivated successfully', 'success');
+        }
+      }
+      closeModal('deactivateModal');
+    }
+
+    // Delete psychologist
+    function deletePsychologist() {
+      if (currentPsychologistId) {
+        // In a real app, you would make an API call here
+        const index = psychologists.findIndex(p => p.id === currentPsychologistId);
+        if (index !== -1) {
+          psychologists.splice(index, 1);
+          
+          // Remove the row from the table
+          const table = document.querySelector('.table-container table tbody');
+          const rows = table.querySelectorAll('tr');
+          rows.forEach(row => {
+            if (row.getAttribute('data-id') == currentPsychologistId) {
+              row.remove();
+            }
+          });
+          
+          // Show success message
+          showToast('Psychologist deleted successfully', 'success');
+        }
+      }
+      closeModal('deleteModal');
+    }
+
+    // Update psychologist row in table
+    function updatePsychologistRow(psychologist) {
+      const table = document.querySelector('.table-container table tbody');
+      const rows = table.querySelectorAll('tr');
+      
+      rows.forEach(row => {
+        if (row.getAttribute('data-id') == psychologist.id) {
+          // Update status
+          const statusCell = row.querySelector('.status');
+          statusCell.className = `status ${psychologist.status}`;
+          statusCell.textContent = psychologist.status === 'active' ? 'Active' : 'Inactive';
+          
+          // Update action buttons
+          const actionBtns = row.querySelector('.action-btns');
+          actionBtns.innerHTML = '';
+          
+          if (psychologist.status === 'active') {
+            actionBtns.innerHTML = `
+              <button class="action-btn view-btn" onclick="viewPsychologistDetails(${psychologist.id})">View</button>
+              <button class="action-btn deactivate-btn" onclick="showDeactivateModal(${psychologist.id})">Deactivate</button>
+            `;
+          } else {
+            actionBtns.innerHTML = `
+              <button class="action-btn view-btn" onclick="viewPsychologistDetails(${psychologist.id})">View</button>
+              <button class="action-btn delete-btn" onclick="showDeleteModal(${psychologist.id})">Delete</button>
+            `;
+          }
+        }
+      });
+    }
+
+    // Show toast notification
+    function showToast(message, type) {
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.classList.add('show');
+      }, 100);
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+          toast.remove();
+        }, 300);
+      }, 3000);
+    }
+
+    // Add psychologist button click handler
+    document.getElementById('addPsychologistBtn').addEventListener('click', function() {
+      openModal('addPsychologistModal');
+    });
+
+    // Add psychologist form submission
+    function addPsychologist() {
+      const form = document.getElementById('addPsychologistForm');
+      const inputs = form.querySelectorAll('input, select');
+      let isValid = true;
+      
+      // Simple validation
+      inputs.forEach(input => {
+        if (!input.value.trim()) {
+          isValid = false;
+          input.style.borderColor = 'var(--error)';
+        } else {
+          input.style.borderColor = '';
+        }
+      });
+      
+      if (!isValid) {
+        showToast('Please fill all required fields', 'error');
+        return;
+      }
+      
+      // In a real app, you would send this data to the server
+      const newId = psychologists.length > 0 ? Math.max(...psychologists.map(p => p.id)) + 1 : 1;
+      
+      const newPsychologist = {
+        id: newId,
+        name: `Dr. ${inputs[0].value.trim()} ${inputs[1].value.trim()}`,
+        specialty: inputs[3].options[inputs[3].selectedIndex].text,
+        email: inputs[2].value.trim(),
+        phone: "+1 (555) 000-0000", // Default phone
+        license: inputs[4].value.trim(),
+        experience: "0 years", // Default experience
+        rate: "$120/hour", // Default rate
+        specialties: ["General Counseling"], // Default specialties
+        bio: "New psychologist joining our team.", // Default bio
+        lastActive: "Never", // Default last active
+        patients: "0", // Default patients
+        status: "active",
+        avatar: `https://randomuser.me/api/portraits/${Math.random() > 0.5 ? 'men' : 'women'}/${Math.floor(Math.random() * 100)}.jpg`
+      };
+      
+      psychologists.push(newPsychologist);
+      
+      // Add to table
+      const tableBody = document.querySelector('.table-container table tbody');
+      const newRow = document.createElement('tr');
+      newRow.setAttribute('data-id', newId);
+      newRow.innerHTML = `
+        <td>
+          <div class="profile-info">
+            <strong>${newPsychologist.name}</strong>
+            <small>${newPsychologist.specialty}</small>
+          </div>
+        </td>
+        <td>${newPsychologist.specialties.join(', ')}</td>
+        <td>${newPsychologist.email}</td>
+        <td><span class="status active">Active</span></td>
+        <td>
+          <div class="action-btns">
+            <button class="action-btn view-btn" onclick="viewPsychologistDetails(${newId})">View</button>
+            <button class="action-btn deactivate-btn" onclick="showDeactivateModal(${newId})">Deactivate</button>
+          </div>
+        </td>
+      `;
+      tableBody.appendChild(newRow);
+      
+      // Reset form
+      form.reset();
+      closeModal('addPsychologistModal');
+      showToast('Psychologist added successfully', 'success');
+    }
+
+    // Initialize table rows with data attributes
+    document.addEventListener('DOMContentLoaded', function() {
+      const tableBody = document.querySelector('.table-container table tbody');
+      const rows = tableBody.querySelectorAll('tr');
+      
+      rows.forEach((row, index) => {
+        if (index < psychologists.length) {
+          row.setAttribute('data-id', psychologists[index].id);
+        }
+      });
+    });
+
+    // Add some CSS for toast notifications
+    const toastCSS = document.createElement('style');
+    toastCSS.textContent = `
+      .toast {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: var(--dark);
+        color: white;
+        padding: 15px 25px;
+        border-radius: 5px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        transform: translateY(100px);
+        opacity: 0;
+        transition: all 0.3s ease;
+        z-index: 1000;
+      }
+      
+      .toast.show {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      
+      .toast-success {
+        background-color: var(--success);
+      }
+      
+      .toast-error {
+        background-color: var(--error);
+      }
+    `;
+    document.head.appendChild(toastCSS);
+
+  </script>
+</body>
+</html>

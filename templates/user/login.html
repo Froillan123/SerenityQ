@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | SerenityQ - Mental Wellness Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #5D5FEF;
+            --primary-light: #8B8DF2;
+            --primary-dark: #3A3CD9;
+            --secondary: #FF7E5F;
+            --accent: #FFD166;
+            --light: #F7F9FC;
+            --dark: #2B2D42;
+            --gray: #8D99AE;
+            --success: #4CAF50;
+            --error: #F44336;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1), 0 5px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+
+
+        .auth-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 480px;
+            overflow-y: auto;
+            position: relative;
+            z-index: 1;
+            transform: translateY(0);
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .auth-header {
+            padding: 32px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 16px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .auth-header h1 {
+            color: var(--primary);
+            margin-bottom: 8px;
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .auth-header p {
+            color: var(--gray);
+            font-size: 0.95rem;
+            max-width: 80%;
+            margin: 0 auto;
+        }
+
+        .auth-content {
+            padding: 32px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 0.95rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: var(--transition);
+            background-color: #f9f9f9;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(93, 95, 239, 0.2);
+            background-color: white;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            top: 42px;
+            color: var(--gray);
+            font-size: 1rem;
+        }
+
+        .input-with-icon {
+            padding-left: 42px !important;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 16px;
+            top: 42px;
+            cursor: pointer;
+            color: var(--gray);
+            transition: var(--transition);
+            background: none;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .password-toggle:hover {
+            color: var(--primary);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            text-align: center;
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .forgot-password {
+            display: block;
+            text-align: right;
+            margin: 12px 0 24px;
+            color: var(--primary);
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .forgot-password:hover {
+            text-decoration: underline;
+            color: var(--primary-dark);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 24px 0;
+            color: var(--gray);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .divider::before, .divider::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .divider::before {
+            margin-right: 16px;
+        }
+
+        .divider::after {
+            margin-left: 16px;
+        }
+
+        .social-login {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .social-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+            background: white;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .social-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .social-btn:active {
+            transform: translateY(0);
+        }
+
+        .social-btn i {
+            font-size: 1.2rem;
+        }
+
+        .google-btn {
+            color: #DB4437;
+        }
+
+        .google-btn:hover {
+            border-color: #DB4437;
+            background-color: rgba(219, 68, 55, 0.05);
+        }
+
+        .facebook-btn {
+            color: #4267B2;
+        }
+
+        .facebook-btn:hover {
+            border-color: #4267B2;
+            background-color: rgba(66, 103, 178, 0.05);
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 16px;
+            color: var(--gray);
+            font-size: 0.95rem;
+            padding: 16px;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .auth-footer a {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .auth-footer a:hover {
+            text-decoration: underline;
+            color: var(--primary-dark);
+        }
+
+        .error-message {
+            color: var(--error);
+            font-size: 0.85rem;
+            margin-top: 6px;
+            display: none;
+            font-weight: 500;
+        }
+
+        .input-error {
+            border-color: var(--error) !important;
+        }
+
+        .input-error:focus {
+            box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.2) !important;
+        }
+
+        .success-message {
+            color: var(--success);
+            font-size: 0.9rem;
+            text-align: center;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 16px 0;
+        }
+
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(93, 95, 239, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 576px) {
+            .auth-card {
+                max-width: 100%;
+            }
+            
+            .auth-header, .auth-content {
+                padding: 24px;
+            }
+            
+            .social-login {
+                flex-direction: column;
+            }
+            
+            .logo {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+        }
+
+        /* Animation classes */
+        .shake {
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translateX(-1px); }
+            20%, 80% { transform: translateX(2px); }
+            30%, 50%, 70% { transform: translateX(-4px); }
+            40%, 60% { transform: translateX(4px); }
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="auth-card floating">
+        <div class="auth-header">
+            <div class="logo">SQ</div>
+            <h1>Welcome to SerenityQ</h1>
+            <p>Sign in to continue your mental wellness journey</p>
+        </div>
+        
+        <div class="auth-content">
+            <div class="success-message" id="success-message"></div>
+            
+            <form id="login-form" action="{{ url_for('auth.login') }}" method="POST" novalidate>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <i class="fas fa-envelope input-icon"></i>
+                    <input type="email" id="email" name="email" class="input-with-icon" required
+                           placeholder="your@email.com" autocomplete="username">
+                    <div class="error-message" id="email-error"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <i class="fas fa-lock input-icon"></i>
+                    <input type="password" id="password" name="password" class="input-with-icon" required
+                           placeholder="••••••••" autocomplete="current-password" minlength="8">
+                    <button type="button" class="password-toggle" id="toggle-password" aria-label="Show password">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <div class="error-message" id="password-error"></div>
+                </div>
+                
+                <a href="" class="forgot-password">Forgot password?</a>
+                
+                <button type="submit" class="btn btn-primary" id="submit-btn">
+                    <span id="btn-text">Sign In</span>
+                    <div class="spinner" id="spinner"></div>
+                </button>
+                
+            </form>
+        </div>
+        
+        <div class="auth-footer">
+            New to SerenityQ? <a href="{{ url_for('auth.register') }}">Create an account</a>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced Password visibility toggle
+        const togglePassword = document.getElementById('toggle-password');
+        const passwordInput = document.getElementById('password');
+        
+        togglePassword.addEventListener('click', function() {
+            const icon = this.querySelector('i');
+            const isPassword = passwordInput.type === 'password';
+            
+            passwordInput.type = isPassword ? 'text' : 'password';
+            icon.classList.toggle('fa-eye', !isPassword);
+            icon.classList.toggle('fa-eye-slash', isPassword);
+            
+            // Update aria-label for accessibility
+            this.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
+        });
+        
+        // Enhanced Form validation with async submission simulation
+        document.getElementById('login-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const emailError = document.getElementById('email-error');
+            const passwordError = document.getElementById('password-error');
+            const submitBtn = document.getElementById('submit-btn');
+            const btnText = document.getElementById('btn-text');
+            const spinner = document.getElementById('spinner');
+            const successMessage = document.getElementById('success-message');
+            
+            // Reset UI
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.style.display = 'none';
+                el.textContent = '';
+            });
+            document.querySelectorAll('input').forEach(input => {
+                input.classList.remove('input-error');
+            });
+            
+            // Validate email
+            let isValid = true;
+            
+            if (!email) {
+                emailError.textContent = 'Email is required';
+                emailError.style.display = 'block';
+                document.getElementById('email').classList.add('input-error');
+                isValid = false;
+            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                emailError.textContent = 'Please enter a valid email address';
+                emailError.style.display = 'block';
+                document.getElementById('email').classList.add('input-error');
+                isValid = false;
+            }
+            
+            // Validate password
+            if (!password) {
+                passwordError.textContent = 'Password is required';
+                passwordError.style.display = 'block';
+                document.getElementById('password').classList.add('input-error');
+                isValid = false;
+            } else if (password.length < 8) {
+                passwordError.textContent = 'Password must be at least 8 characters';
+                passwordError.style.display = 'block';
+                document.getElementById('password').classList.add('input-error');
+                isValid = false;
+            }
+            
+            if (!isValid) {
+                document.getElementById('login-form').classList.add('shake');
+                setTimeout(() => {
+                    document.getElementById('login-form').classList.remove('shake');
+                }, 500);
+                return;
+            }
+            
+            // Show loading state
+            submitBtn.disabled = true;
+            btnText.textContent = 'Signing in...';
+            spinner.style.display = 'inline-block';
+            
+            try {
+                // Simulate API call (replace with actual fetch in production)
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                // For demo purposes - in a real app, you would check the response
+                const isSuccess = true; // Simulate successful login
+                
+                if (isSuccess) {
+                    // Show success state
+                    successMessage.textContent = 'Login successful! Redirecting...';
+                    successMessage.style.display = 'block';
+                    
+                    // In a real app, you would redirect or handle the successful login
+                    setTimeout(() => {
+                        // window.location.href = '/dashboard'; // Uncomment in production
+                        alert('Login successful! Redirecting to dashboard...');
+                    }, 1000);
+                } else {
+                    // Simulate server-side error
+                    throw new Error('Invalid credentials');
+                }
+            } catch (error) {
+                // Handle errors
+                passwordError.textContent = error.message || 'Invalid email or password';
+                passwordError.style.display = 'block';
+                document.getElementById('password').classList.add('input-error');
+                document.getElementById('login-form').classList.add('shake');
+                setTimeout(() => {
+                    document.getElementById('login-form').classList.remove('shake');
+                }, 500);
+            } finally {
+                // Reset loading state
+                submitBtn.disabled = false;
+                btnText.textContent = 'Sign In';
+                spinner.style.display = 'none';
+            }
+        });
+        
+        // Social login handlers - would be implemented with OAuth in production
+        document.querySelector('.google-btn').addEventListener('click', function() {
+            alert('In a production app, this would redirect to Google OAuth');
+        });
+        
+        document.querySelector('.facebook-btn').addEventListener('click', function() {
+            alert('In a production app, this would redirect to Facebook OAuth');
+        });
+        
+        // Accessibility improvements
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && this.id !== 'email' && this.id !== 'password') {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

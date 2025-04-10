@@ -1,15 +1,14 @@
 /* Session Container Styles */
 .session-container {
-    padding: 20px;
-    max-width: 1400px;
-    margin: 0 auto;
+    width: 100%;
 }
 
 .session-layout {
     display: flex;
     gap: 20px;
-    height: calc(100vh - 180px);
+    min-height: 100vh;
 }
+
 
 /* Session List Styles */
 .session-list {
@@ -1028,3 +1027,5 @@ video {
         margin-bottom: 10px;
     }
 }
+
+
