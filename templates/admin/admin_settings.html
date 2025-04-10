@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Settings | SerenityQ Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="admin_style.css">
+</head>
+<body>
+
+  <style>
+      :root {
+      --primary: #5D5FEF;
+      --primary-light: #A5A6F6;
+      --primary-dark: #4B4DCA;
+      --secondary: #6C757D;
+      --success: #4CAF50;
+      --warning: #FFC107;
+      --error: #F44336;
+      --accent: #FFD166;
+      --light: #F8F9FA;
+      --dark: #212529;
+      --gray: #6C757D;
+      --border: #e0e0e0;
+      --sidebar-width: 260px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #f5f7fb;
+      color: var(--dark);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar Styles */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: white;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      z-index: 100;
+      overflow-y: auto;
+    }
+
+    .sidebar-header {
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-header h3 {
+      color: var(--primary);
+      margin-left: 10px;
+      font-size: 1.3rem;
+    }
+
+    .sidebar-header i {
+      font-size: 1.8rem;
+      color: var(--primary);
+    }
+
+    .sidebar-menu {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .sidebar-menu li a {
+      display: flex;
+      align-items: center;
+      padding: 15px 20px;
+      color: var(--secondary);
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+
+    .sidebar-menu li a:hover {
+      background-color: rgba(93, 95, 239, 0.1);
+      color: var(--primary);
+    }
+
+    .sidebar-menu li a.active {
+      background-color: rgba(93, 95, 239, 0.1);
+      color: var(--primary);
+      border-left: 3px solid var(--primary);
+    }
+
+    .sidebar-menu li a i {
+      margin-right: 10px;
+      font-size: 1.2rem;
+    }
+
+       /* Main Content Styles */
+    .main-content {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      transition: all 0.3s ease;
+    }
+
+    /* Navbar Styles */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 30px;
+      background: white;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .navbar-left {
+      display: flex;
+      align-items: center;
+    }
+
+    .hamburger {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--primary);
+      cursor: pointer;
+      margin-right: 15px;
+      display: none;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+      text-align: right;
+    }
+
+    .user-info p {
+      font-weight: 600;
+    }
+
+    .user-info small {
+      color: var(--gray);
+      font-size: 0.8rem;
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--primary-light);
+    }
+
+    /* Settings Page Styles */
+    .settings-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      margin-top: 2rem;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+    }
+
+    .settings-header {
+      padding: 20px 30px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .settings-header h2 {
+      color: var(--primary);
+      font-size: 1.8rem;
+      margin-bottom: 5px;
+    }
+
+    .settings-header p {
+      color: var(--secondary);
+    }
+
+    .settings-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .settings-tab {
+      padding: 15px 25px;
+      cursor: pointer;
+      color: var(--secondary);
+      font-weight: 500;
+      position: relative;
+      transition: all 0.3s;
+    }
+
+    .settings-tab.active {
+      color: var(--primary);
+    }
+
+    .settings-tab.active:after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: var(--primary);
+    }
+
+    .settings-tab:hover {
+      background: rgba(93, 95, 239, 0.05);
+    }
+
+    .settings-content {
+      padding: 30px;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .profile-section {
+      display: flex;
+      gap: 30px;
+    }
+
+    .profile-picture {
+      flex: 0 0 200px;
+      text-align: center;
+    }
+
+    .profile-picture img {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 5px solid var(--primary-light);
+      margin-bottom: 15px;
+    }
+
+    .profile-picture .btn {
+      display: block;
+      width: 100%;
+      padding: 8px;
+      background: var(--light);
+      color: var(--secondary);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .profile-picture .btn:hover {
+      background: var(--primary-light);
+      color: white;
+    }
+
+    .profile-form {
+      flex: 1;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--dark);
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      font-size: 1rem;
+      transition: all 0.3s;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(93, 95, 239, 0.2);
+      outline: none;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 20px;
+    }
+
+    .form-row .form-group {
+      flex: 1;
+    }
+
+    .btn {
+      padding: 12px 25px;
+      border: none;
+      border-radius: 5px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--secondary);
+    }
+
+    .btn-outline:hover {
+      background: var(--light);
+    }
+
+    .security-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      margin-bottom: 15px;
+    }
+
+    .security-info h4 {
+      margin-bottom: 5px;
+    }
+
+    .security-info p {
+      color: var(--secondary);
+      font-size: 0.9rem;
+    }
+
+    .security-status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .status-badge {
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .status-active {
+      background: rgba(76, 175, 80, 0.1);
+      color: var(--success);
+    }
+
+    .status-inactive {
+      background: rgba(244, 67, 54, 0.1);
+      color: var(--error);
+    }
+
+    .preferences-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .preference-card {
+      padding: 20px;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+    }
+
+    .preference-card h4 {
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .preference-card h4 i {
+      color: var(--primary);
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 24px;
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .toggle-slider {
+      background-color: var(--primary);
+    }
+
+    input:checked + .toggle-slider:before {
+      transform: translateX(26px);
+    }
+
+    /* Loader Styles */
+    .loader-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(255, 255, 255, 0.9);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .dna-loader {
+      width: 100px;
+      height: 100px;
+      position: relative;
+    }
+
+    .dna-loader span {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: var(--primary);
+      border-radius: 50%;
+      animation: dna 1s infinite ease-in-out;
+    }
+
+    .dna-loader span:nth-child(1) {
+      left: 0;
+      top: 0;
+      animation-delay: 0s;
+    }
+
+    .dna-loader span:nth-child(2) {
+      left: 20px;
+      top: 0;
+      animation-delay: 0.1s;
+    }
+
+    .dna-loader span:nth-child(3) {
+      left: 40px;
+      top: 0;
+      animation-delay: 0.2s;
+    }
+
+    .dna-loader span:nth-child(4) {
+      left: 60px;
+      top: 0;
+      animation-delay: 0.3s;
+    }
+
+    .dna-loader span:nth-child(5) {
+      left: 80px;
+      top: 0;
+      animation-delay: 0.4s;
+    }
+
+    .dna-loader span:nth-child(6) {
+      left: 100px;
+      top: 0;
+      animation-delay: 0.5s;
+    }
+
+    .dna-loader span:nth-child(7) {
+      left: 0;
+      top: 20px;
+      animation-delay: 0.6s;
+    }
+
+    .dna-loader span:nth-child(8) {
+      left: 20px;
+      top: 20px;
+      animation-delay: 0.7s;
+    }
+
+    .dna-loader span:nth-child(9) {
+      left: 40px;
+      top: 20px;
+      animation-delay: 0.8s;
+    }
+
+    .dna-loader span:nth-child(10) {
+      left: 60px;
+      top: 20px;
+      animation-delay: 0.9s;
+    }
+
+    @keyframes dna {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(20px);
+      }
+    }
+
+    .loader-text {
+      margin-top: 20px;
+      font-size: 1.2rem;
+      color: var(--primary);
+      font-weight: 500;
+    }
+
+    @media (max-width: 992px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+
+      .sidebar.active {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+
+      .hamburger {
+        display: block;
+      }
+
+      .profile-section {
+        flex-direction: column;
+      }
+
+      .profile-picture {
+        flex: 0 0 auto;
+      }
+
+      .preferences-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .form-row {
+        flex-direction: column;
+        gap: 0;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .navbar {
+        padding: 15px;
+      }
+      
+      .settings-content {
+        padding: 20px 15px;
+      }
+      
+      .settings-tabs {
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+    }
+  </style>
+
+  <!-- Loader -->
+  <div class="loader-overlay" id="loader">
+    <div class="dna-loader">
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <div class="loader-text">Loading...</div>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <i class='bx bx-brain'></i>
+      <h3>SerenityQ</h3>
+    </div>
+    <ul class="sidebar-menu">
+      <li><a href="admin_index.html"><i class='bx bx-bar-chart-alt-2'></i> Dashboard</a></li>
+      <li><a href="admin_psychologist.html"><i class='bx bx-user-voice'></i> Psychologists</a></li>
+      <li><a href="admin_user.html"><i class='bx bx-group'></i> Users</a></li>
+      <li><a href="admin_settings.html" class="active"><i class='bx bx-cog'></i> Settings</a></li>
+      <li><a href="#"><i class='bx bx-log-out'></i> Logout</a></li>
+    </ul>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="navbar-left">
+        <button class="hamburger" id="toggleSidebar">
+          <i class='bx bx-menu' id="menuIcon"></i>
+        </button>
+        <h3>Settings</h3>
+      </div>
+      <div class="user-profile">
+        <div class="user-info">
+          <p>Admin User</p>
+          <small>Super Admin</small>
+        </div>
+        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User Avatar" class="user-avatar">
+      </div>
+    </nav>
+
+    <!-- Settings Container -->
+    <div class="settings-container">
+      <div class="settings-header">
+        <h2>Account Settings</h2>
+        <p>Manage your account settings and preferences</p>
+      </div>
+
+      <div class="settings-tabs">
+        <div class="settings-tab active" data-tab="profile">Profile</div>
+        <div class="settings-tab" data-tab="account">Account</div>
+        <div class="settings-tab" data-tab="security">Security</div>
+        <div class="settings-tab" data-tab="preferences">Preferences</div>
+      </div>
+
+      <div class="settings-content">
+        <!-- Profile Tab -->
+        <div class="tab-content active" id="profile-tab">
+          <div class="profile-section">
+            <div class="profile-picture">
+              <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Profile Picture">
+              <button class="btn">Change Photo</button>
+              <small style="display: block; margin-top: 10px; color: var(--secondary);">JPG, GIF or PNG. Max size 2MB</small>
+            </div>
+            <div class="profile-form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="firstName">First Name</label>
+                  <input type="text" id="firstName" class="form-control" value="Sarah">
+                </div>
+                <div class="form-group">
+                  <label for="lastName">Last Name</label>
+                  <input type="text" id="lastName" class="form-control" value="Johnson">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" class="form-control" value="sarah.johnson@example.com">
+              </div>
+              <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" class="form-control" value="+1 (555) 123-4567">
+              </div>
+              <div class="form-group">
+                <label for="bio">Bio</label>
+                <textarea id="bio" class="form-control" rows="4">Senior administrator at SerenityQ with over 8 years of experience in mental health platform management.</textarea>
+              </div>
+              <button class="btn btn-primary">Save Changes</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Account Tab -->
+        <div class="tab-content" id="account-tab">
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" class="form-control" value="admin_sarah">
+          </div>
+          <div class="form-group">
+            <label for="language">Language</label>
+            <select id="language" class="form-control">
+              <option>English</option>
+              <option>Spanish</option>
+              <option>French</option>
+              <option>German</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="timezone">Timezone</label>
+            <select id="timezone" class="form-control">
+              <option>(GMT-12:00) International Date Line West</option>
+              <option>(GMT-08:00) Pacific Time (US & Canada)</option>
+              <option selected>(GMT-05:00) Eastern Time (US & Canada)</option>
+              <option>(GMT) Greenwich Mean Time : Dublin, London</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="role">Role</label>
+            <input type="text" id="role" class="form-control" value="Super Admin" disabled>
+          </div>
+          <div class="form-group">
+            <label for="joined">Member Since</label>
+            <input type="text" id="joined" class="form-control" value="January 15, 2018" disabled>
+          </div>
+          <div style="margin-top: 30px;">
+            <button class="btn btn-primary">Update Account</button>
+            <button class="btn btn-outline" style="margin-left: 10px;">Cancel</button>
+          </div>
+        </div>
+
+        <!-- Security Tab -->
+        <div class="tab-content" id="security-tab">
+          <div class="security-item">
+            <div class="security-info">
+              <h4>Password</h4>
+              <p>Last changed 3 months ago</p>
+            </div>
+            <div class="security-status">
+              <span class="status-badge status-active">Active</span>
+              <button class="btn btn-outline">Change</button>
+            </div>
+          </div>
+          <div class="security-item">
+            <div class="security-info">
+              <h4>Two-Factor Authentication</h4>
+              <p>Add an extra layer of security to your account</p>
+            </div>
+            <div class="security-status">
+              <span class="status-badge status-inactive">Inactive</span>
+              <button class="btn btn-primary">Enable</button>
+            </div>
+          </div>
+          <div class="security-item">
+            <div class="security-info">
+              <h4>Recent Devices</h4>
+              <p>Windows 10 - Chrome (Last accessed 2 hours ago)</p>
+            </div>
+            <div class="security-status">
+              <button class="btn btn-outline">View All</button>
+            </div>
+          </div>
+          <div class="security-item">
+            <div class="security-info">
+              <h4>Login History</h4>
+              <p>Track all login attempts to your account</p>
+            </div>
+            <div class="security-status">
+              <button class="btn btn-outline">View Logs</button>
+            </div>
+          </div>
+          <div style="margin-top: 30px; text-align: right;">
+            <button class="btn btn-outline">Sign out all devices</button>
+          </div>
+        </div>
+
+        <!-- Preferences Tab -->
+        <div class="tab-content" id="preferences-tab">
+          <div class="preferences-grid">
+            <div class="preference-card">
+              <h4><i class='bx bx-bell'></i> Notifications</h4>
+              <div class="form-group" style="display: flex; justify-content: space-between; align-items: center;">
+                <label for="email-notifications" style="margin-bottom: 0;">Email Notifications</label>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="email-notifications" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="form-group" style="display: flex; justify-content: space-between; align-items: center;">
+                <label for="push-notifications" style="margin-bottom: 0;">Push Notifications</label>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="push-notifications">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="form-group" style="display: flex; justify-content: space-between; align-items: center;">
+                <label for="sms-notifications" style="margin-bottom: 0;">SMS Alerts</label>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="sms-notifications">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+            <div class="preference-card">
+              <h4><i class='bx bx-palette'></i> Appearance</h4>
+              <div class="form-group">
+                <label for="theme">Theme</label>
+                <select id="theme" class="form-control">
+                  <option>Light</option>
+                  <option>Dark</option>
+                  <option>System Default</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="density">Density</label>
+                <select id="density" class="form-control">
+                  <option>Comfortable</option>
+                  <option>Compact</option>
+                  <option>Spacious</option>
+                </select>
+              </div>
+            </div>
+            <div class="preference-card">
+              <h4><i class='bx bx-data'></i> Data Preferences</h4>
+              <div class="form-group" style="display: flex; justify-content: space-between; align-items: center;">
+                <label for="data-collection" style="margin-bottom: 0;">Usage Data Collection</label>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="data-collection" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="form-group" style="display: flex; justify-content: space-between; align-items: center;">
+                <label for="personalized-ads" style="margin-bottom: 0;">Personalized Recommendations</label>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="personalized-ads" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+            <div class="preference-card">
+              <h4><i class='bx bx-mail-send'></i> Email Preferences</h4>
+              <div class="form-group" style="display: flex; justify-content: space-between; align-items: center;">
+                <label for="newsletter" style="margin-bottom: 0;">Newsletter</label>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="newsletter" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="form-group" style="display: flex; justify-content: space-between; align-items: center;">
+                <label for="product-updates" style="margin-bottom: 0;">Product Updates</label>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="product-updates">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="form-group" style="display: flex; justify-content: space-between; align-items: center;">
+                <label for="promotional" style="margin-bottom: 0;">Promotional Offers</label>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="promotional">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top: 30px;">
+            <button class="btn btn-primary">Save Preferences</button>
+            <button class="btn btn-outline" style="margin-left: 10px;">Reset to Default</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Loader timeout
+    setTimeout(() => {
+      document.getElementById('loader').style.display = 'none';
+    }, 2000);
+
+    // Toggle sidebar
+    const sidebar = document.getElementById('sidebar');
+    const toggleSidebar = document.getElementById('toggleSidebar');
+    const menuIcon = document.getElementById('menuIcon');
+
+    toggleSidebar.addEventListener('click', function() {
+      sidebar.classList.toggle('active');
+      if (sidebar.classList.contains('active')) {
+        menuIcon.classList.remove('bx-menu');
+        menuIcon.classList.add('bx-x');
+      } else {
+        menuIcon.classList.remove('bx-x');
+        menuIcon.classList.add('bx-menu');
+      }
+    });
+
+    // Tab switching functionality
+    const tabs = document.querySelectorAll('.settings-tab');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        // Remove active class from all tabs and contents
+        tabs.forEach(t => t.classList.remove('active'));
+        tabContents.forEach(c => c.classList.remove('active'));
+        
+        // Add active class to clicked tab and corresponding content
+        tab.classList.add('active');
+        const tabId = tab.getAttribute('data-tab');
+        document.getElementById(`${tabId}-tab`).classList.add('active');
+      });
+    });
+
+    // Form submission prevention for demo
+    document.querySelectorAll('form').forEach(form => {
+      form.addEventListener('submit', e => e.preventDefault());
+    });
+  </script>
+</body>
+</html>

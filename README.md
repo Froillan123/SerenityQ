@@ -1,7 +1,7 @@
 # 🧠⚡ SerenityQ: AI-Powered Mental Health Companion
 
 <div align="center">
-  <img src="https://media.giphy.com/media/L1R1tvI9svkIWwpVYr/giphy.gif" width="400" alt="Mental Health Awareness">
+  <img src="https://media.giphy.com/media/L1R1tvI9svkIWwpVYr/giphy.gif" width="400" alt="Mental Health Awareness" autoplay>
   <br>
   <em>Your intelligent gateway to personalized mental health support</em>
 </div>

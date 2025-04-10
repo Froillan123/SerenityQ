@@ -10,9 +10,9 @@ document.addEventListener('DOMContentLoaded', function() {
             <li><a href="#psychologists">Psychologists</a></li>
             <li><a href="#contact">Contact</a></li>
         </ul>
-        <div class="mobile-auth">
+        <div class="mobile-auth-links">
             <a href="#" class="btn btn-outline btn-sm" id="mobile-login-btn">Login</a>
-            <a href="#" class="btn btn-primary btn-sm" id="mobile-signup-btn">Sign Up</a>
+            <a href="#" class="btn btn-primary btn-sm" id="mobile-get-started-btn">Get Started</a>
         </div>
     `;
     document.body.appendChild(mobileNav);
@@ -31,69 +31,89 @@ document.addEventListener('DOMContentLoaded', function() {
         mobileNav.classList.remove('active');
         overlay.classList.remove('active');
         document.body.style.overflow = 'auto';
+        closeAllModals();
     });
     
     // Modal functionality
-    const loginModal = document.getElementById('login-modal');
-    const signupModal = document.getElementById('signup-modal');
+    const userTypeModal = document.getElementById('user-type-modal');
+    const loginTypeModal = document.getElementById('login-type-modal');
+    const getStartedBtn = document.getElementById('get-started-btn');
     const loginBtn = document.getElementById('login-btn');
-    const signupBtn = document.getElementById('signup-btn');
+    const mobileGetStartedBtn = document.getElementById('mobile-get-started-btn');
     const mobileLoginBtn = document.getElementById('mobile-login-btn');
-    const mobileSignupBtn = document.getElementById('mobile-signup-btn');
-    const showSignup = document.getElementById('show-signup');
-    const showLogin = document.getElementById('show-login');
+    const showLoginFromType = document.getElementById('show-login-from-type');
+    const showUserType = document.getElementById('show-user-type');
     const closeModals = document.querySelectorAll('.close-modal');
     
     function openModal(modal) {
+        closeAllModals();
         modal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
     }
     
     function closeModal(modal) {
         modal.style.display = 'none';
-        document.body.style.overflow = 'auto';
+        document.body.style.overflow = mobileNav.classList.contains('active') ? 'hidden' : 'auto';
     }
     
-    loginBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        openModal(loginModal);
-    });
+    function closeAllModals() {
+        document.querySelectorAll('.modal').forEach(modal => {
+            closeModal(modal);
+        });
+    }
     
-    signupBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        openModal(signupModal);
-    });
+    // Event listeners for desktop buttons
+    if (getStartedBtn) {
+        getStartedBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            openModal(userTypeModal);
+        });
+    }
+    
+    if (loginBtn) {
+        loginBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            openModal(loginTypeModal);
+        });
+    }
+    
+    // Event listeners for mobile buttons
+    if (mobileGetStartedBtn) {
+        mobileGetStartedBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            mobileNav.classList.remove('active');
+            overlay.classList.remove('active');
+            openModal(userTypeModal);
+        });
+    }
     
     if (mobileLoginBtn) {
         mobileLoginBtn.addEventListener('click', function(e) {
             e.preventDefault();
             mobileNav.classList.remove('active');
             overlay.classList.remove('active');
-            openModal(loginModal);
+            openModal(loginTypeModal);
         });
     }
     
-    if (mobileSignupBtn) {
-        mobileSignupBtn.addEventListener('click', function(e) {
+    // Switch between modals
+    if (showLoginFromType) {
+        showLoginFromType.addEventListener('click', function(e) {
             e.preventDefault();
-            mobileNav.classList.remove('active');
-            overlay.classList.remove('active');
-            openModal(signupModal);
+            closeModal(userTypeModal);
+            openModal(loginTypeModal);
         });
     }
     
-    showSignup.addEventListener('click', function(e) {
-        e.preventDefault();
-        closeModal(loginModal);
-        openModal(signupModal);
-    });
+    if (showUserType) {
+        showUserType.addEventListener('click', function(e) {
+            e.preventDefault();
+            closeModal(loginTypeModal);
+            openModal(userTypeModal);
+        });
+    }
     
-    showLogin.addEventListener('click', function(e) {
-        e.preventDefault();
-        closeModal(signupModal);
-        openModal(loginModal);
-    });
-    
+    // Close modals
     closeModals.forEach(btn => {
         btn.addEventListener('click', function() {
             const modal = this.closest('.modal');
@@ -107,28 +127,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Form submission
-    const loginForm = document.getElementById('login-form');
-    const signupForm = document.getElementById('signup-form');
-    
-    if (loginForm) {
-        loginForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            // Add your login logic here
-            alert('Login functionality will be implemented here!');
-            closeModal(loginModal);
-        });
-    }
-    
-    if (signupForm) {
-        signupForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            // Add your signup logic here
-            alert('Signup functionality will be implemented here!');
-            closeModal(signupModal);
-        });
-    }
-    
     // Smooth scrolling for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
@@ -138,9 +136,9 @@ document.addEventListener('DOMContentLoaded', function() {
             document.body.style.overflow = 'auto';
             
             // Skip if it's a modal trigger
-            if (this.id === 'login-btn' || this.id === 'signup-btn' || 
-                this.id === 'show-login' || this.id === 'show-signup' ||
-                this.id === 'mobile-login-btn' || this.id === 'mobile-signup-btn') {
+            if (this.id === 'login-btn' || this.id === 'get-started-btn' || 
+                this.id === 'show-login-from-type' || this.id === 'show-user-type' ||
+                this.id === 'mobile-login-btn' || this.id === 'mobile-get-started-btn') {
                 return;
             }
             

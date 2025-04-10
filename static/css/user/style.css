@@ -11,6 +11,34 @@
     --modal-bg: rgba(0, 0, 0, 0.5);
 }
 
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--light);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 10px;
+    background-clip: padding-box;
+    border: 2px solid transparent;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-light);
+}
+
+/* For Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary) var(--light);
+}
+
 /* Base Styles */
 * {
     margin: 0;
@@ -80,8 +108,9 @@ a {
 }
 
 .btn-outline:hover {
-    background-color: var(--primary);
+    background: var(--primary-light);
     color: white;
+    transform: translateY(-2px);
 }
 
 section {
@@ -540,7 +569,7 @@ footer {
     font-size: 0.9rem;
 }
 
-/* Mobile Menu */
+/* Mobile Menu Styles */
 .mobile-nav {
     position: fixed;
     top: 0;
@@ -554,6 +583,8 @@ footer {
     transition: right 0.3s ease;
     padding: 80px 30px 30px;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
 }
 
 .mobile-nav.active {
@@ -574,10 +605,26 @@ footer {
     font-weight: 600;
     color: var(--dark);
     transition: color 0.3s ease;
+    display: block;
+    padding: 10px 0;
 }
 
 .mobile-nav-links a:hover {
     color: var(--primary);
+}
+
+.mobile-auth-links {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.mobile-auth-links .btn {
+    width: 100%;
+    text-align: center;
 }
 
 .overlay {
@@ -596,6 +643,26 @@ footer {
 .overlay.active {
     opacity: 1;
     visibility: visible;
+}
+
+@media (min-width: 769px) {
+    .mobile-menu {
+        display: none;
+    }
+    
+    .mobile-nav {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+    }
+    
+    .mobile-menu {
+        display: flex;
+    }
 }
 
 /* Responsive Design */
@@ -668,5 +735,662 @@ footer {
 
     .hero-image img {
         height: 300px;
+    }
+}
+/* Improved User Type Selection */
+.user-selection-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+}
+
+.user-selection-title {
+    text-align: center;
+    margin-bottom: 40px;
+    color: var(--dark);
+    font-size: 2rem;
+}
+
+.user-options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+.user-option-card {
+    padding: 30px;
+    border-radius: 12px;
+    background: var(--light);
+    border: 1px solid rgba(93, 95, 239, 0.15);
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.user-option-card:hover {
+    border-color: var(--primary-light);
+    box-shadow: 0 8px 25px rgba(93, 95, 239, 0.1);
+}
+
+.user-option-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 2rem;
+    color: white;
+}
+
+.patient-option .user-option-icon {
+    background: var(--primary);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+}
+
+.psychologist-option .user-option-icon {
+    background: var(--secondary);
+    background: linear-gradient(135deg, var(--secondary) 0%, #FF9F7E 100%);
+}
+
+.user-option-title {
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+    color: var(--dark);
+}
+
+.user-option-description {
+    color: var(--gray);
+    margin-bottom: 25px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.user-option-button {
+    display: inline-block;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-align: center;
+    width: 100%;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.patient-option .user-option-button {
+    background: var(--primary);
+    color: white;
+}
+
+.psychologist-option .user-option-button {
+    background: var(--secondary);
+    color: white;
+}
+
+.user-option-button:hover {
+    opacity: 0.9;
+}
+
+.already-have-account {
+    text-align: center;
+    margin-top: 30px;
+    color: var(--gray);
+}
+
+.already-have-account a {
+    color: var(--primary);
+    font-weight: 600;
+    margin-left: 5px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .user-options-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .user-selection-container {
+        padding: 30px 20px;
+    }
+    
+    .user-selection-title {
+        font-size: 1.6rem;
+        margin-bottom: 30px;
+    }
+}
+
+/* Login Form Styles */
+.login-form-container {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 40px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+}
+
+.login-form-title {
+    text-align: center;
+    margin-bottom: 30px;
+    color: var(--dark);
+    font-size: 1.8rem;
+}
+
+.login-form-group {
+    margin-bottom: 20px;
+}
+
+.login-form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--dark);
+}
+
+.login-form-group input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.2s ease;
+}
+
+.login-form-group input:focus {
+    border-color: var(--primary);
+    outline: none;
+}
+
+.login-form-button {
+    width: 100%;
+    padding: 14px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.login-form-button:hover {
+    opacity: 0.9;
+}
+
+.login-form-footer {
+    text-align: center;
+    margin-top: 20px;
+    color: var(--gray);
+}
+
+.login-form-footer a {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+/* Enhanced Hero Section */
+.hero {
+    padding-top: 150px;
+    background: linear-gradient(135deg, rgba(93, 95, 239, 0.05) 0%, rgba(255, 126, 95, 0.05) 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 100%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(93, 95, 239, 0.08) 0%, rgba(255,255,255,0) 70%);
+    z-index: 0;
+}
+
+.hero-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 50px;
+    position: relative;
+    z-index: 1;
+}
+
+.hero-text {
+    flex: 1;
+    max-width: 600px;
+}
+
+.hero-text h1 {
+    color: var(--dark);
+    margin-bottom: 20px;
+    font-size: 3rem;
+    line-height: 1.2;
+    font-weight: 700;
+}
+
+.hero-text h1 .highlight {
+    color: var(--primary);
+    position: relative;
+    display: inline-block;
+}
+
+.hero-text h1 .highlight::after {
+    content: '';
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    width: 100%;
+    height: 12px;
+    background-color: rgba(93, 95, 239, 0.2);
+    z-index: -1;
+    border-radius: 6px;
+}
+
+.hero-subtitle {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    color: var(--dark);
+    opacity: 0.9;
+    max-width: 500px;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 40px;
+}
+
+.hero-buttons .btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    font-size: 1rem;
+    border-radius: 8px;
+}
+
+.hero-stats {
+    display: flex;
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: var(--gray);
+}
+
+.hero-image {
+    flex: 1;
+    position: relative;
+}
+
+.image-container {
+    position: relative;
+    max-width: 600px;
+    margin-left: auto;
+}
+
+.image-container img {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 2;
+}
+
+.image-highlight {
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--secondary) 100%);
+    border-radius: 12px;
+    z-index: 1;
+    opacity: 0.2;
+}
+
+/* Enhanced Modal Styles */
+.modal-content {
+    background-color: white;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 900px;
+    height: 85vh;
+    padding: 40px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+    position: relative;
+    overflow-y: auto;
+}
+
+.modal-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.modal-header h2 {
+    font-size: 2rem;
+    color: var(--dark);
+    margin-bottom: 10px;
+}
+
+.modal-header p {
+    color: var(--gray);
+    font-size: 1.1rem;
+}
+
+.modal-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    color: white;
+    font-size: 2rem;
+}
+
+.benefits-list {
+    margin: 20px 0;
+    text-align: left;
+}
+
+.benefit-item {
+    margin-bottom: 12px;
+    color: var(--dark);
+    font-size: 0.95rem;
+}
+
+.benefit-item i {
+    color: var(--primary);
+    margin-right: 8px;
+}
+
+.login-form {
+    margin-top: 20px;
+}
+
+.login-form .form-group {
+    margin-bottom: 15px;
+}
+
+.login-form input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+.login-form input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(93, 95, 239, 0.1);
+}
+
+.login-footer {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.forgot-password {
+    color: var(--primary);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1200px) {
+    .hero-text h1 {
+        font-size: 2.5rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .hero-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .hero-text {
+        max-width: 100%;
+        margin-bottom: 50px;
+    }
+    
+    .hero-stats {
+        justify-content: center;
+    }
+    
+    .image-container {
+        margin: 0 auto;
+    }
+    
+    .user-options-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero {
+        padding-top: 120px;
+    }
+    
+    .hero-text h1 {
+        font-size: 2.2rem;
+    }
+    
+    .hero-buttons {
+        flex-direction: column;
+    }
+    
+    .hero-stats {
+        flex-wrap: wrap;
+    }
+    
+    .modal-content {
+        padding: 30px 20px;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-text h1 {
+        font-size: 1.8rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+    
+    .stat-item {
+        flex: 1;
+        min-width: 100px;
+    }
+}
+
+/* Login Selection Modal Styles */
+.login-selection-modal {
+    max-width: 500px;
+    padding: 0;
+    border-radius: 16px;
+    height: 80vh;
+    overflow: auto;
+    background: white;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+.login-modal-header {
+    padding: 30px;
+    text-align: center;
+    background: linear-gradient(135deg, rgba(93, 95, 239, 0.05) 0%, rgba(255, 126, 95, 0.05) 100%);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.login-modal-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    color: var(--primary);
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.login-modal-logo i {
+    margin-right: 10px;
+    font-size: 1.8rem;
+}
+
+.login-modal-title {
+    margin-bottom: 5px;
+    color: var(--dark);
+    font-size: 1.8rem;
+}
+
+.login-modal-subtitle {
+    color: var(--gray);
+    margin-bottom: 0;
+    font-size: 1rem;
+}
+
+.login-selection-options {
+    padding: 20px;
+    display: grid;
+    gap: 20px;
+}
+
+.login-selection-card {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.login-selection-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.selection-card-inner {
+    padding: 25px;
+    background: white;
+    position: relative;
+    z-index: 2;
+}
+
+.selection-card-decoration {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(93, 95, 239, 0.03) 0%, rgba(255, 126, 95, 0.03) 100%);
+    z-index: 1;
+}
+
+.patient-selection .selection-card-decoration {
+    border-left: 4px solid var(--primary);
+}
+
+.psychologist-selection .selection-card-decoration {
+    border-left: 4px solid var(--secondary);
+}
+
+.selection-card-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    color: white;
+}
+
+.patient-selection .selection-card-icon {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+}
+
+.psychologist-selection .selection-card-icon {
+    background: linear-gradient(135deg, var(--secondary) 0%, #FF9F7E 100%);
+}
+
+.selection-card-content h3 {
+    margin-bottom: 10px;
+    color: var(--dark);
+    font-size: 1.3rem;
+}
+
+.selection-card-content p {
+    color: var(--gray);
+    margin-bottom: 20px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.btn-selection {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.btn-selection i {
+    font-size: 0.9rem;
+}
+
+.login-modal-footer {
+    padding: 20px;
+    text-align: center;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    color: var(--gray);
+    font-size: 0.95rem;
+}
+
+.login-modal-footer a {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+/* Responsive Design */
+@media (max-width: 576px) {
+    .login-selection-modal {
+        width: 95%;
+    }
+    
+    .login-modal-header {
+        padding: 25px 20px;
+    }
+    
+    .selection-card-inner {
+        padding: 20px;
     }
 }

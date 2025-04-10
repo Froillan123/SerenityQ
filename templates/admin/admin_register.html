@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Registration</title>
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #5D5FEF;
+            --primary-light: #A5A6F6;
+            --primary-dark: #4B4DCA;
+            --secondary: #6C757D;
+            --success: #4CAF50;
+            --warning: #FFC107;
+            --error: #F44336;
+            --accent: #FFD166;
+            --light: #F8F9FA;
+            --dark: #212529;
+            --gray: #6C757D;
+            --border: #e0e0e0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--dark);
+        }
+
+        .register-container {
+            width: 100%;
+            max-width: 700px;
+            padding: 2rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(93, 95, 239, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .register-container:hover {
+            box-shadow: 0 15px 35px rgba(93, 95, 239, 0.15);
+        }
+
+        .register-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .register-header h1 {
+            color: var(--primary);
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .register-header p {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .register-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+            font-size: 0.9rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            padding-right: 2.5rem;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(93, 95, 239, 0.2);
+        }
+
+        .form-group input::placeholder {
+            color: var(--secondary);
+            opacity: 0.6;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 38px;
+            cursor: pointer;
+            color: var(--secondary);
+            background: none;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .password-toggle:hover {
+            color: var(--primary);
+        }
+
+        .password-strength {
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .password-strength-meter {
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            margin-left: 0.5rem;
+            flex-grow: 1;
+            overflow: hidden;
+        }
+
+        .password-strength-meter-fill {
+            height: 100%;
+            width: 0%;
+            background: #e0e0e0;
+            transition: width 0.3s ease, background 0.3s ease;
+        }
+
+        .register-button {
+            width: 100%;
+            padding: 0.9rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            grid-column: span 2;
+        }
+
+        .register-button:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .register-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .register-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .register-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            color: var(--error);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .success-message {
+            color: var(--success);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .admin-limit-warning {
+            background-color: rgba(244, 67, 54, 0.1);
+            padding: 0.8rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
+            color: var(--error);
+            display: none;
+            grid-column: span 2;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .register-form {
+                grid-template-columns: 1fr;
+            }
+
+            .register-button {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="register-header">
+            <h1>Admin Registration</h1>
+            <p>Create a new admin account (Max 2 admins allowed)</p>
+        </div>
+
+        <div class="admin-limit-warning" id="adminLimitWarning">
+            Maximum number of admins (2) already registered. Cannot create more.
+        </div>
+
+        <form class="register-form" id="registerForm">
+            <div class="form-group">
+                <label for="fullname">Full Name</label>
+                <input type="text" id="fullname" placeholder="Enter your full name" required>
+                <div class="error-message" id="fullname-error">Please enter your full name</div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" placeholder="Enter your email" required>
+                <div class="error-message" id="email-error">Please enter a valid email address</div>
+            </div>
+
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" placeholder="Choose a username" required>
+                <div class="error-message" id="username-error">Username must be at least 4 characters</div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Create a password" required>
+                <button type="button" class="password-toggle" id="togglePassword">
+                    <i class="far fa-eye"></i>
+                </button>
+                <div class="password-strength">
+                    Strength: <span id="strength-text">Weak</span>
+                    <div class="password-strength-meter">
+                        <div class="password-strength-meter-fill" id="strength-meter"></div>
+                    </div>
+                </div>
+                <div class="error-message" id="password-error">Password must be at least 8 characters with uppercase, lowercase, number, and special character</div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirm-password">Confirm Password</label>
+                <input type="password" id="confirm-password" placeholder="Confirm your password" required>
+                <button type="button" class="password-toggle" id="toggleConfirmPassword">
+                    <i class="far fa-eye"></i>
+                </button>
+                <div class="error-message" id="confirm-password-error">Passwords do not match</div>
+            </div>
+
+            <div class="form-group">
+                <label for="secret-key">Admin Secret Key</label>
+                <input type="password" id="secret-key" placeholder="Enter admin secret key" required>
+                <div class="error-message" id="secret-key-error">Invalid admin secret key</div>
+            </div>
+
+            <button type="submit" class="register-button" id="registerButton">Register Admin</button>
+            <div class="success-message" id="success-message">Registration successful! Redirecting to login...</div>
+        </form>
+
+        <div class="register-footer">
+            <p>Already have an account? <a href="admin_login.html">Login here</a></p>
+        </div>
+    </div>
+
+    <script>
+        // Simulated admin count (in a real app, this would come from your backend)
+        let adminCount = 1; // Change to 2 to test the limit
+        
+        // Secret key (in a real app, this should be more secure and stored server-side)
+        const ADMIN_SECRET_KEY = "ADMIN@SECRET123";
+
+        // Check admin limit on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            if (adminCount >= 2) {
+                document.getElementById('adminLimitWarning').style.display = 'block';
+                document.getElementById('registerForm').style.display = 'none';
+                document.querySelector('.register-header p').textContent = 
+                    'Maximum admin accounts reached (2/2)';
+            }
+        });
+
+        // Toggle password visibility
+        const togglePassword = document.querySelector('#togglePassword');
+        const password = document.querySelector('#password');
+        const eyeIcon = togglePassword.querySelector('i');
+
+        const toggleConfirmPassword = document.querySelector('#toggleConfirmPassword');
+        const confirmPassword = document.querySelector('#confirm-password');
+        const confirmEyeIcon = toggleConfirmPassword.querySelector('i');
+
+        togglePassword.addEventListener('click', function () {
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            
+            if (type === 'password') {
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+            } else {
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            }
+        });
+
+        toggleConfirmPassword.addEventListener('click', function () {
+            const type = confirmPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+            confirmPassword.setAttribute('type', type);
+            
+            if (type === 'password') {
+                confirmEyeIcon.classList.remove('fa-eye-slash');
+                confirmEyeIcon.classList.add('fa-eye');
+            } else {
+                confirmEyeIcon.classList.remove('fa-eye');
+                confirmEyeIcon.classList.add('fa-eye-slash');
+            }
+        });
+
+        // Password strength meter
+        password.addEventListener('input', function() {
+            const strengthMeter = document.getElementById('strength-meter');
+            const strengthText = document.getElementById('strength-text');
+            const passwordValue = this.value;
+            let strength = 0;
+
+            // Check password length
+            if (passwordValue.length >= 8) strength += 1;
+            if (passwordValue.length >= 14) strength += 1;
+
+            // Check for character variety
+            if (/[A-Z]/.test(passwordValue)) strength += 1; // Uppercase
+            if (/[a-z]/.test(passwordValue)) strength += 1; // Lowercase
+            if (/[0-9]/.test(passwordValue)) strength += 1; // Numbers
+            if (/[^A-Za-z0-9]/.test(passwordValue)) strength += 1; // Special chars
+
+            // Update meter
+            const width = (strength / 5) * 100;
+            strengthMeter.style.width = width + '%';
+
+            if (passwordValue.length < 7) {
+                strengthMeter.style.background = 'red';
+                strengthText.textContent = 'Weak';
+            } else if (passwordValue.length >= 8 && passwordValue.length <= 13) {
+                strengthMeter.style.background = 'orange';
+                strengthText.textContent = 'Good';
+            } else {
+                strengthMeter.style.background = 'green';
+                strengthText.textContent = 'Excellent';
+            }
+        });
+
+        // Form validation logic here
+    </script>
+</body>
+</html>
