@@ -14,14 +14,14 @@
 <body>
     <!-- Header with Navigation -->
     <header class="header">
-        <a href="{{ url_for('user.serenityai') }}" class="logo">
+        <a href="{{ url_for('user.ai') }}" class="logo">
             <i class="fas fa-brain"></i>
             SerenityQ
         </a>
         <div>
             <nav class="navbar">
                 <ul class="nav-links">
-                    <li><a href="{{ url_for('user.serenityai') }}" class="nav-link {% if request.path == url_for('user.serenityai') %}active{% endif %}">
+                    <li><a href="{{ url_for('user.ai') }}" class="nav-link {% if request.path == url_for('user.ai') %}active{% endif %}">
                         <i class="fas fa-robot"></i><span>AI</span></a></li>
                     <li><a href="{{ url_for('user.dashboard') }}" class="nav-link {% if request.path == url_for('user.dashboard') %}active{% endif %}">
                         <i class="fas fa-home"></i><span>Stats</span></a></li>
@@ -41,7 +41,7 @@
                         <a href="{{ url_for('user.user_profile') }}" class="dropdown-item"><i class="fas fa-user"></i> Profile</a>
                         <a href="{{ url_for('user.notifications') }}" class="dropdown-item"><i class="fas fa-bell"></i> Notifications</a>
                         <div class="divider"></div>
-                        <a href="" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        <a href="" id="logout-btn" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Logout</a>
                     </div>
                 </div>
             </nav>
@@ -51,7 +51,7 @@
     <!-- Bottom Navigation (Mobile Only) -->
     <nav class="bottom-nav">
         <ul class="bottom-nav-links">
-            <li><a href="{{ url_for('user.serenityai') }}" class="bottom-nav-link {% if request.path == url_for('user.serenityai') %}active{% endif %}">
+            <li><a href="{{ url_for('user.ai') }}" class="bottom-nav-link {% if request.path == url_for('user.ai') %}active{% endif %}">
                 <i class="fas fa-robot"></i></a></li>
             <li><a href="{{ url_for('user.dashboard') }}" class="bottom-nav-link {% if request.path == url_for('user.dashboard') %}active{% endif %}">
                 <i class="fas fa-home"></i></a></li>

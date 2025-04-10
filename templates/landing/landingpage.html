@@ -178,7 +178,7 @@
                             <i class="fas fa-check-circle"></i> Secure communication
                         </div>
                     </div>
-                    <a href="{{ url_for('auth.register') }}" class="user-option-button">
+                    <a href="{{ url_for('auth.register_api') }}" class="user-option-button">
                         Continue as Patient
                     </a>
                 </div>
@@ -201,7 +201,7 @@
                             <i class="fas fa-check-circle"></i> Secure payment processing
                         </div>
                     </div>
-                    <a href="{{ url_for('psychologist.register') }}" class="user-option-button">
+                    <a href="{{ url_for('psychologist.psychologist_register') }}" class="user-option-button">
                         Continue as Psychologist
                     </a>
                 </div>
@@ -234,7 +234,7 @@
                         <h3>Patient Login</h3>
                         <p>Access your personalized mental health dashboard and continue your journey</p>
                     </div>
-                    <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-selection">
+                    <a href="{{ url_for('auth.login_api') }}" class="btn btn-primary btn-selection">
                         Continue as Patient
                         <i class="fas fa-arrow-right"></i>
                     </a>
@@ -250,7 +250,7 @@
                         <h3>Psychologist Login</h3>
                         <p>Access your professional dashboard and client management tools</p>
                     </div>
-                    <a href="{{ url_for('psychologist.login') }}" class="btn btn-secondary btn-selection">
+                    <a href="{{ url_for('psychologist.psychologist_login') }}" class="btn btn-secondary btn-selection">
                         Continue as Psychologist
                         <i class="fas fa-arrow-right"></i>
                     </a>
