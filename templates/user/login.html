@@ -388,7 +388,7 @@
         <div class="auth-content">
             <div class="success-message" id="success-message"></div>
             
-            <form id="login-form" action="{{ url_for('auth.login') }}" method="POST" novalidate>
+            <form id="login-form" action="{{ url_for('auth.login_api') }}" method="POST" novalidate>
                 <div class="form-group">
                     <label for="email">Email Address</label>
                     <i class="fas fa-envelope input-icon"></i>
@@ -419,29 +419,15 @@
         </div>
         
         <div class="auth-footer">
-            New to SerenityQ? <a href="{{ url_for('auth.register') }}">Create an account</a>
+            New to SerenityQ? <a href="{{ url_for('auth.register_api') }}">Create an account</a>
         </div>
     </div>
 
     <script>
-        // Enhanced Password visibility toggle
-        const togglePassword = document.getElementById('toggle-password');
-        const passwordInput = document.getElementById('password');
-        
-        togglePassword.addEventListener('click', function() {
-            const icon = this.querySelector('i');
-            const isPassword = passwordInput.type === 'password';
-            
-            passwordInput.type = isPassword ? 'text' : 'password';
-            icon.classList.toggle('fa-eye', !isPassword);
-            icon.classList.toggle('fa-eye-slash', isPassword);
-            
-            // Update aria-label for accessibility
-            this.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
-        });
-        
-        // Enhanced Form validation with async submission simulation
-        document.getElementById('login-form').addEventListener('submit', async function(e) {
+document.addEventListener('DOMContentLoaded', function() {
+    const loginForm = document.getElementById('login-form');
+    if (loginForm) {
+        loginForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const email = document.getElementById('email').value.trim();
@@ -454,7 +440,7 @@
             const successMessage = document.getElementById('success-message');
             
             // Reset UI
-            document.querySelectorAll('.error-message').forEach(el => {
+            [emailError, passwordError].forEach(el => {
                 el.style.display = 'none';
                 el.textContent = '';
             });
@@ -462,9 +448,8 @@
                 input.classList.remove('input-error');
             });
             
-            // Validate email
+            // Validate inputs
             let isValid = true;
-            
             if (!email) {
                 emailError.textContent = 'Email is required';
                 emailError.style.display = 'block';
@@ -477,23 +462,17 @@
                 isValid = false;
             }
             
-            // Validate password
             if (!password) {
                 passwordError.textContent = 'Password is required';
-                passwordError.style.display = 'block';
-                document.getElementById('password').classList.add('input-error');
-                isValid = false;
-            } else if (password.length < 8) {
-                passwordError.textContent = 'Password must be at least 8 characters';
                 passwordError.style.display = 'block';
                 document.getElementById('password').classList.add('input-error');
                 isValid = false;
             }
             
             if (!isValid) {
-                document.getElementById('login-form').classList.add('shake');
+                loginForm.classList.add('shake');
                 setTimeout(() => {
-                    document.getElementById('login-form').classList.remove('shake');
+                    loginForm.classList.remove('shake');
                 }, 500);
                 return;
             }
@@ -504,60 +483,63 @@
             spinner.style.display = 'inline-block';
             
             try {
-                // Simulate API call (replace with actual fetch in production)
-                await new Promise(resolve => setTimeout(resolve, 1500));
+                const response = await fetch('/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password }),
+                    credentials: 'include'  // Important for cookies
+                });
                 
-                // For demo purposes - in a real app, you would check the response
-                const isSuccess = true; // Simulate successful login
+                const data = await response.json();
                 
-                if (isSuccess) {
-                    // Show success state
-                    successMessage.textContent = 'Login successful! Redirecting...';
-                    successMessage.style.display = 'block';
-                    
-                    // In a real app, you would redirect or handle the successful login
-                    setTimeout(() => {
-                        // window.location.href = '/dashboard'; // Uncomment in production
-                        alert('Login successful! Redirecting to dashboard...');
-                    }, 1000);
-                } else {
-                    // Simulate server-side error
-                    throw new Error('Invalid credentials');
+                if (!response.ok) {
+                    throw new Error(data.error || 'Login failed');
                 }
+                
+                // Show success and redirect
+                successMessage.textContent = 'Login successful! Redirecting...';
+                successMessage.style.display = 'block';
+                
+                // Use the redirect URL from the server response
+                if (data.redirect) {
+                    window.location.href = data.redirect;
+                } else {
+                    // Fallback redirect
+                    window.location.href = '/user/ai';
+                }
+                
             } catch (error) {
-                // Handle errors
-                passwordError.textContent = error.message || 'Invalid email or password';
+                passwordError.textContent = error.message;
                 passwordError.style.display = 'block';
                 document.getElementById('password').classList.add('input-error');
-                document.getElementById('login-form').classList.add('shake');
+                loginForm.classList.add('shake');
                 setTimeout(() => {
-                    document.getElementById('login-form').classList.remove('shake');
+                    loginForm.classList.remove('shake');
                 }, 500);
             } finally {
-                // Reset loading state
                 submitBtn.disabled = false;
                 btnText.textContent = 'Sign In';
                 spinner.style.display = 'none';
             }
         });
-        
-        // Social login handlers - would be implemented with OAuth in production
-        document.querySelector('.google-btn').addEventListener('click', function() {
-            alert('In a production app, this would redirect to Google OAuth');
+    }
+    
+    // Password toggle functionality
+    const togglePassword = document.getElementById('toggle-password');
+    const passwordInput = document.getElementById('password');
+    if (togglePassword && passwordInput) {
+        togglePassword.addEventListener('click', function() {
+            const icon = this.querySelector('i');
+            const isPassword = passwordInput.type === 'password';
+            passwordInput.type = isPassword ? 'text' : 'password';
+            icon.classList.toggle('fa-eye', !isPassword);
+            icon.classList.toggle('fa-eye-slash', isPassword);
+            this.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
         });
-        
-        document.querySelector('.facebook-btn').addEventListener('click', function() {
-            alert('In a production app, this would redirect to Facebook OAuth');
-        });
-        
-        // Accessibility improvements
-        document.querySelectorAll('input').forEach(input => {
-            input.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter' && this.id !== 'email' && this.id !== 'password') {
-                    e.preventDefault();
-                }
-            });
-        });
+    }
+});
     </script>
 </body>
 </html>

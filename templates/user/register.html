@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register | SerenityQ</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
         :root {
             --primary: #5D5FEF;
@@ -456,7 +457,7 @@
                     </p>
                     
                     <div class="action-buttons">
-                        <button type="button" class="btn btn-outline" onclick="prevStep(3)">Back</button>
+                        <button type="button" class="btn btn-outline" id="back-button-step3" onclick="prevStep(3)">Back</button>
                         <button type="button" class="btn btn-primary" onclick="verifyOTP()">Verify</button>
                     </div>
                 </div>
@@ -478,11 +479,104 @@
         </form>
         
         <div class="auth-footer">
-            Already have an account? <a href="{{ url_for('auth.login') }}">Login here</a>
+            Already have an account? <a href="{{ url_for('auth.login_api') }}">Login here</a>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        let registrationData = {}; // Store registration data
+        let otpSent = false; // Flag to track if OTP has been sent
+        
+        // Initialize the form with saved data if available
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load saved progress from sessionStorage
+            const savedStep = sessionStorage.getItem('registrationStep');
+            const savedData = sessionStorage.getItem('registrationData');
+            
+            if (savedData) {
+                registrationData = JSON.parse(savedData);
+                populateFormFields();
+            }
+            
+            if (savedStep) {
+                // Hide all steps
+                document.querySelectorAll('.step').forEach(step => {
+                    step.classList.remove('active');
+                });
+                document.querySelectorAll('.step-indicator').forEach(indicator => {
+                    indicator.classList.remove('active', 'completed');
+                });
+                
+                // Show the saved step
+                const stepNum = parseInt(savedStep);
+                for (let i = 1; i <= stepNum; i++) {
+                    if (i < stepNum) {
+                        document.getElementById(`step${i}-indicator`).classList.add('completed');
+                    } else {
+                        document.getElementById(`step${i}`).classList.add('active');
+                        document.getElementById(`step${i}-indicator`).classList.add('active');
+                    }
+                }
+                
+                updateProgress(stepNum);
+                
+                // Special handling for OTP step
+                if (stepNum === 3) {
+                    otpSent = sessionStorage.getItem('otpSent') === 'true';
+                    if (otpSent) {
+                        document.getElementById('back-button-step3').disabled = true;
+                    }
+                }
+            } else {
+                updateProgress(1);
+            }
+        });
+        
+        // Populate form fields with saved data
+        function populateFormFields() {
+            if (registrationData.first_name) {
+                document.getElementById('first-name').value = registrationData.first_name;
+            }
+            if (registrationData.last_name) {
+                document.getElementById('last-name').value = registrationData.last_name;
+            }
+            if (registrationData.dob) {
+                document.getElementById('dob').value = registrationData.dob;
+            }
+            if (registrationData.gender) {
+                document.getElementById('gender').value = registrationData.gender;
+            }
+            if (registrationData.email) {
+                document.getElementById('email').value = registrationData.email;
+            }
+            if (registrationData.username) {
+                document.getElementById('username').value = registrationData.username;
+            }
+            if (registrationData.password) {
+                document.getElementById('password').value = registrationData.password;
+            }
+            if (registrationData.phone) {
+                document.getElementById('phone').value = registrationData.phone;
+            }
+        }
+        
+        // Save current state to sessionStorage
+        function saveProgress(currentStep) {
+            sessionStorage.setItem('registrationStep', currentStep);
+            sessionStorage.setItem('registrationData', JSON.stringify(registrationData));
+            if (currentStep === 3) {
+                sessionStorage.setItem('otpSent', otpSent);
+            }
+        }
+        
+        // Clear saved progress (call this after successful registration)
+        function clearProgress() {
+            sessionStorage.removeItem('registrationStep');
+            sessionStorage.removeItem('registrationData');
+            sessionStorage.removeItem('otpSent');
+        }
+        
         // Update progress bar
         function updateProgress(step) {
             const totalSteps = 4;
@@ -500,14 +594,26 @@
             document.getElementById(`step${nextStep}-indicator`).classList.add('active');
             
             updateProgress(nextStep);
+            saveProgress(nextStep);
             
-            if (nextStep === 3) {
-                // Simulate sending OTP when moving to verification step
+            if (nextStep === 3 && !otpSent) {
+                // Send OTP when moving to verification step for the first time
                 sendOTP();
             }
         }
         
         function prevStep(currentStep) {
+            // Prevent going back from OTP verification step if OTP has been sent
+            if (currentStep === 3 && otpSent) {
+                Swal.fire({
+                    title: 'Cannot Go Back',
+                    text: 'You cannot go back after OTP has been sent. Please complete the verification.',
+                    icon: 'warning',
+                    confirmButtonColor: '#5D5FEF'
+                });
+                return;
+            }
+            
             document.getElementById(`step${currentStep}`).classList.remove('active');
             document.getElementById(`step${currentStep}-indicator`).classList.remove('active');
             
@@ -516,6 +622,7 @@
             document.getElementById(`step${prevStep}-indicator`).classList.add('completed');
             
             updateProgress(prevStep);
+            saveProgress(prevStep);
         }
         
         // Form validation
@@ -525,6 +632,12 @@
             const lastName = document.getElementById('last-name').value.trim();
             const dob = document.getElementById('dob').value;
             const gender = document.getElementById('gender').value;
+            
+            // Store data for later use
+            registrationData.first_name = firstName;
+            registrationData.last_name = lastName;
+            registrationData.dob = dob;
+            registrationData.gender = gender;
             
             // Reset errors
             document.querySelectorAll('#step1 .error-message').forEach(el => el.style.display = 'none');
@@ -564,6 +677,12 @@
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
             const phone = document.getElementById('phone').value.trim();
+            
+            // Store data for later use
+            registrationData.email = email;
+            registrationData.username = username;
+            registrationData.password = password;
+            registrationData.phone = phone;
             
             // Reset errors
             document.querySelectorAll('#step2 .error-message').forEach(el => el.style.display = 'none');
@@ -613,38 +732,135 @@
             }
         }
         
-        // OTP handling
         function sendOTP() {
-            // In a real app, this would make an API call to send OTP
-            console.log('OTP sent to email');
-        }
-        
-        function resendOTP() {
-            // In a real app, this would resend OTP
-            alert('New verification code has been sent to your email');
-        }
-        
-        function verifyOTP() {
-            // In a real app, this would verify the OTP
-            const otpInputs = document.querySelectorAll('.otp-input');
-            let otpValid = true;
+            // Disable the back button on OTP step
+            document.getElementById('back-button-step3').disabled = true;
             
-            otpInputs.forEach(input => {
-                if (!input.value) {
-                    otpValid = false;
+            Swal.fire({
+                title: 'Sending OTP',
+                text: 'Please wait while we send the verification code to your email',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
                 }
             });
             
-            if (otpValid) {
-                nextStep(3);
-            } else {
-                alert('Please enter the complete verification code');
+            fetch('/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(registrationData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw err; });
+                }
+                return response.json();
+            })
+            .then(data => {
+                otpSent = true;
+                saveProgress(3); // Save that OTP has been sent
+                Swal.fire({
+                    title: 'OTP Sent!',
+                    text: 'We have sent a 6-digit verification code to your email address.',
+                    icon: 'success',
+                    confirmButtonColor: '#5D5FEF'
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    title: 'Error',
+                    text: error.error || 'Failed to send OTP. Please try again.',
+                    icon: 'error',
+                    confirmButtonColor: '#5D5FEF'
+                }).then(() => {
+                    prevStep(3);
+                });
+            });
+        }
+        
+        function resendOTP() {
+            Swal.fire({
+                title: 'Resend OTP',
+                text: 'Are you sure you want to resend the verification code?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#5D5FEF',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, resend'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    sendOTP();
+                }
+            });
+        }
+        
+        function verifyOTP() {
+            const otpInputs = document.querySelectorAll('.otp-input');
+            const otpCode = Array.from(otpInputs).map(input => input.value).join('');
+            
+            if (otpCode.length !== 6) {
+                Swal.fire({
+                    title: 'Incomplete Code',
+                    text: 'Please enter the complete 6-digit verification code',
+                    icon: 'warning',
+                    confirmButtonColor: '#5D5FEF'
+                });
+                return;
             }
+            
+            Swal.fire({
+                title: 'Verifying OTP',
+                text: 'Please wait while we verify your code',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            fetch('/auth/verify-otp', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: registrationData.email,
+                    otp_code: otpCode
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw err; });
+                }
+                return response.json();
+            })
+            .then(data => {
+                clearProgress(); // Clear saved data after successful verification
+                Swal.fire({
+                    title: 'Verification Successful!',
+                    text: 'Your account has been successfully verified.',
+                    icon: 'success',
+                    confirmButtonColor: '#5D5FEF'
+                }).then(() => {
+                    nextStep(3); // Move to success step
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    title: 'Verification Failed',
+                    text: error.error || 'The verification code is invalid or has expired.',
+                    icon: 'error',
+                    confirmButtonColor: '#5D5FEF'
+                });
+            });
         }
         
         function redirectToLogin() {
-            // Redirect to login page
-            window.location.href = "{{ url_for('auth.login') }}";
+            clearProgress(); // Clear saved data before redirecting
+            window.location.href = "{{ url_for('auth.login_api') }}";
         }
         
         // Password visibility toggle
