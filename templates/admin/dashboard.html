@@ -1,0 +1,175 @@
+{% extends "shared/adminLayout/adminlayout.html" %}
+{% block extra_css %}
+
+{% endblock %}
+
+{% block content %}
+
+
+
+  <!-- Stats Grid -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-header">
+        <div>
+          <div class="stat-value">1,245</div>
+          <div class="stat-title">Total Users</div>
+          <div class="stat-change positive">
+            <i class='bx bx-up-arrow-alt'></i> 12% from last month
+          </div>
+        </div>
+        <div class="stat-icon users">
+          <i class='bx bx-group'></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-header">
+        <div>
+          <div class="stat-value">78</div>
+          <div class="stat-title">Psychologists</div>
+          <div class="stat-change positive">
+            <i class='bx bx-up-arrow-alt'></i> 5% from last month
+          </div>
+        </div>
+        <div class="stat-icon psychologists">
+          <i class='bx bx-user-voice'></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-header">
+        <div>
+          <div class="stat-value">1,023</div>
+          <div class="stat-title">Active Users</div>
+          <div class="stat-change positive">
+            <i class='bx bx-up-arrow-alt'></i> 8% from last month
+          </div>
+        </div>
+        <div class="stat-icon active">
+          <i class='bx bx-check-circle'></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-header">
+        <div>
+          <div class="stat-value">22</div>
+          <div class="stat-title">Pending Users</div>
+          <div class="stat-change negative">
+            <i class='bx bx-down-arrow-alt'></i> 3% from last month
+          </div>
+        </div>
+        <div class="stat-icon pending">
+          <i class='bx bx-time-five'></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts Section -->
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-header">
+        <h3>User Registrations</h3>
+        <div class="chart-filter">
+          <button class="filter-btn active">Week</button>
+          <button class="filter-btn">Month</button>
+          <button class="filter-btn">Year</button>
+        </div>
+      </div>
+      <div class="chart-container">
+        <canvas id="userChart"></canvas>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-header">
+        <h3>Psychologist Registrations</h3>
+        <div class="chart-filter">
+          <button class="filter-btn active">Week</button>
+          <button class="filter-btn">Month</button>
+          <button class="filter-btn">Year</button>
+        </div>
+      </div>
+      <div class="chart-container">
+        <canvas id="psychologistChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Active Users Table -->
+  <div class="users-table">
+    <div class="table-header">
+      <h3>Active Users</h3>
+      <button class="filter-btn active">All</button>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Last Active</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>John Doe</td>
+            <td>john.doe@example.com</td>
+            <td>2 hours ago</td>
+            <td><span class="status-badge status-active">Active</span></td>
+            <td>
+              <button class="action-btn view-btn"><i class='bx bx-show'></i> View</button>
+            </td>
+          </tr>
+          <!-- More rows... -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Pending Users Table -->
+  <div class="users-table">
+    <div class="table-header">
+      <h3>Pending User Approvals</h3>
+      <button class="filter-btn active">All</button>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Registered</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>John Doe</td>
+            <td>john.doe@example.com</td>
+            <td>2 days ago</td>
+            <td><span class="status-badge status-pending">Pending</span></td>
+            <td>
+              <button class="action-btn approve-btn"><i class='bx bx-check'></i> Approve</button>
+              <button class="action-btn reject-btn"><i class='bx bx-x'></i> Reject</button>
+              <button class="action-btn view-btn"><i class='bx bx-show'></i> View</button>
+            </td>
+          </tr>
+          <!-- More rows... -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/admin/dashboard.js') }}"></script>
+{% endblock %}

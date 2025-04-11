@@ -23,237 +23,343 @@ document.addEventListener('DOMContentLoaded', function() {
     const viewAllAppointments = document.getElementById('viewAllAppointments');
     const appointmentItems = document.querySelectorAll('.appointment-item');
     const profileName = document.getElementById('profileName');
-    const workInfo = document.getElementById('workInfo');
-    const educationInfo = document.getElementById('educationInfo');
-    const locationInfo = document.getElementById('locationInfo');
-    const hometownInfo = document.getElementById('hometownInfo');
-    const relationshipInfo = document.getElementById('relationshipInfo');
+    const changePasswordBtn = document.getElementById('changePasswordBtn');
+    const changePasswordModal = document.getElementById('changePasswordModal');
+    const closePasswordModal = document.getElementById('closePasswordModal');
+    const cancelPasswordChange = document.getElementById('cancelPasswordChange');
+    const passwordForm = document.getElementById('passwordForm');
     const tabContents = document.querySelectorAll('.tab-content');
     const profileTabs = document.querySelectorAll('.profile-tab');
-    const addPaymentMethodBtn = document.getElementById('addPaymentMethod');
-    const paymentMethodModal = document.getElementById('paymentMethodModal');
-    const closePaymentModal = document.getElementById('closePaymentModal');
-    const cancelPayment = document.getElementById('cancelPayment');
-    const paymentForm = document.getElementById('paymentForm');
-    const paymentOptions = document.querySelectorAll('.payment-option');
-    const paymentForms = document.querySelectorAll('.payment-form');
 
-    // Profile data
-    let profileData = {
-        name: "John Doe",
-        work: "ABC Company",
-        education: "XYZ University",
-        location: "New York, USA",
-        hometown: "Chicago, Illinois",
-        relationship: "Single",
-        about: aboutText.textContent,
-        profileImage: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80"
-    };
+    // Profile data object
+    let profileData = {};
 
-    // Tab switching functionality
-    profileTabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            // Remove active class from all tabs
-            profileTabs.forEach(t => t.classList.remove('active'));
-            
-            // Add active class to clicked tab
-            tab.classList.add('active');
-            
-            // Hide all tab contents
-            tabContents.forEach(content => content.classList.remove('active'));
-            
-            // Show the corresponding tab content
-            const tabId = tab.getAttribute('data-tab');
-            document.getElementById(`${tabId}-content`).classList.add('active');
-        });
-    });
+    // Initialize the page
+    init();
 
-    // Edit Profile Modal
-    editProfileBtn.addEventListener('click', () => {
-        // Populate form with current data
-        document.getElementById('editName').value = profileData.name;
-        document.getElementById('editWork').value = profileData.work;
-        document.getElementById('editEducation').value = profileData.education;
-        document.getElementById('editLocation').value = profileData.location;
-        document.getElementById('editHometown').value = profileData.hometown;
-        document.getElementById('editRelationship').value = profileData.relationship;
-        
-        editProfileModal.style.display = 'flex';
-    });
-
-    closeModal.addEventListener('click', () => {
-        editProfileModal.style.display = 'none';
-    });
-
-    cancelEdit.addEventListener('click', () => {
-        editProfileModal.style.display = 'none';
-    });
-
-    profileForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        
-        // Update profile data
-        profileData.name = document.getElementById('editName').value;
-        profileData.work = document.getElementById('editWork').value;
-        profileData.education = document.getElementById('editEducation').value;
-        profileData.location = document.getElementById('editLocation').value;
-        profileData.hometown = document.getElementById('editHometown').value;
-        profileData.relationship = document.getElementById('editRelationship').value;
-        
-        // Update UI
-        profileName.textContent = profileData.name;
-        workInfo.textContent = `Works at ${profileData.work}`;
-        educationInfo.textContent = `Studied at ${profileData.education}`;
-        locationInfo.textContent = `Lives in ${profileData.location}`;
-        hometownInfo.textContent = `From ${profileData.hometown}`;
-        relationshipInfo.textContent = profileData.relationship;
-        
-        editProfileModal.style.display = 'none';
-        alert('Profile updated successfully!');
-    });
-
-    // Edit About Modal
-    editAboutBtn.addEventListener('click', () => {
-        document.getElementById('aboutTextarea').value = profileData.about;
-        editAboutModal.style.display = 'flex';
-    });
-
-    closeAboutModal.addEventListener('click', () => {
-        editAboutModal.style.display = 'none';
-    });
-
-    cancelAboutEdit.addEventListener('click', () => {
-        editAboutModal.style.display = 'none';
-    });
-
-    aboutForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        profileData.about = document.getElementById('aboutTextarea').value;
-        aboutText.textContent = profileData.about;
-        editAboutModal.style.display = 'none';
-        alert('About section updated successfully!');
-    });
-
-    // Image Upload Modal
-    profileCameraIcon.addEventListener('click', () => {
-        imageUploadModal.style.display = 'flex';
-    });
-
-    closeImageModal.addEventListener('click', () => {
-        imageUploadModal.style.display = 'none';
-        resetImageUpload();
-    });
-
-    cancelImageUpload.addEventListener('click', () => {
-        imageUploadModal.style.display = 'none';
-        resetImageUpload();
-    });
-
-    chooseImageBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        profileImageUpload.click();
-    });
-
-    profileImageUpload.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                imagePreview.src = event.target.result;
-                imagePreviewContainer.style.display = 'block';
-                saveImageBtn.disabled = false;
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-
-    saveImageBtn.addEventListener('click', () => {
-        const profilePic = document.querySelector('.profile-pic img');
-        profilePic.src = imagePreview.src;
-        profileData.profileImage = imagePreview.src;
-        imageUploadModal.style.display = 'none';
-        resetImageUpload();
-        alert('Profile picture updated successfully!');
-    });
-
-    function resetImageUpload() {
-        profileImageUpload.value = '';
-        imagePreviewContainer.style.display = 'none';
-        saveImageBtn.disabled = true;
+    async function init() {
+        await updateProfileUI();
+        setupEventListeners();
     }
 
-    // Appointment functionality
-    viewAllAppointments.addEventListener('click', () => {
-        alert('Redirecting to all appointments page...');
-        // In a real app, this would navigate to appointments page
-    });
-
-    appointmentItems.forEach(item => {
-        item.addEventListener('click', () => {
-            const appointmentId = item.getAttribute('data-appointment-id');
-            alert(`Viewing details for appointment #${appointmentId}`);
-            // In a real app, this would show appointment details
-        });
-    });
-
-    // Payment Method Modal
-    addPaymentMethodBtn.addEventListener('click', () => {
-        paymentMethodModal.style.display = 'flex';
-    });
-
-    closePaymentModal.addEventListener('click', () => {
-        paymentMethodModal.style.display = 'none';
-    });
-
-    cancelPayment.addEventListener('click', () => {
-        paymentMethodModal.style.display = 'none';
-    });
-
-    // Payment option selection
-    paymentOptions.forEach(option => {
-        option.addEventListener('click', () => {
-            // Remove active class from all options
-            paymentOptions.forEach(opt => opt.classList.remove('active'));
+    // Fetch user profile from API
+    async function fetchUserProfile() {
+        try {
+            const response = await fetch('/user/api/profile', {
+                method: 'GET',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+                }
+            });
             
-            // Add active class to clicked option
-            option.classList.add('active');
+            if (!response.ok) {
+                throw new Error('Failed to fetch profile data');
+            }
             
-            // Hide all payment forms
-            paymentForms.forEach(form => form.style.display = 'none');
-            
-            // Show the corresponding payment form
-            const paymentType = option.getAttribute('data-type');
-            document.getElementById(`${paymentType}-form`).style.display = 'block';
-        });
-    });
-
-    paymentForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        
-        // Get selected payment method
-        const selectedOption = document.querySelector('.payment-option.active');
-        const paymentType = selectedOption.getAttribute('data-type');
-        
-        // In a real app, this would process the payment method
-        alert(`Adding ${paymentType} payment method...`);
-        
-        paymentMethodModal.style.display = 'none';
-    });
-
-    // Close modals when clicking outside
-    window.addEventListener('click', (e) => {
-        if (e.target === editProfileModal) {
-            editProfileModal.style.display = 'none';
+            return await response.json();
+        } catch (error) {
+            console.error('Error fetching profile:', error);
+            throw error;
         }
-        if (e.target === editAboutModal) {
-            editAboutModal.style.display = 'none';
+    }
+
+    // Update the UI with profile data
+    async function updateProfileUI() {
+        try {
+            const userData = await fetchUserProfile();
+            if (!userData) {
+                throw new Error('No user data received');
+            }
+            
+            // Update profile data object
+            profileData = {
+                first_name: userData.first_name || '',
+                last_name: userData.last_name || '',
+                email: userData.email || '',
+                phone: userData.phone || '',
+                dob: userData.dob || '',
+                gender: userData.gender || '',
+                about: userData.about || '',
+                profile_picture: userData.profile_picture || 'images/profile.jpg',
+                created_at: userData.created_at || ''
+            };
+            
+            // Update UI elements
+            if (profileName) profileName.textContent = `${profileData.first_name} ${profileData.last_name}`;
+            if (aboutText) aboutText.textContent = profileData.about || 'Tell us about yourself...';
+            
+            // Update profile picture
+            const profilePic = document.querySelector('.profile-pic img');
+            if (profilePic) {
+                profilePic.src = profileData.profile_picture.startsWith('uploads/') 
+                    ? `/static/${profileData.profile_picture}`
+                    : `/static/${profileData.profile_picture}`;
+            }
+            
+        } catch (error) {
+            console.error('Error updating profile UI:', error);
+            alert('Failed to load profile data. Please try again.');
         }
-        if (e.target === imageUploadModal) {
+    }
+
+    // Setup all event listeners
+    function setupEventListeners() {
+        // Tab switching functionality
+        profileTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs
+                profileTabs.forEach(t => t.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                tab.classList.add('active');
+                
+                // Hide all tab contents
+                tabContents.forEach(content => content.classList.remove('active'));
+                
+                // Show the corresponding tab content
+                const tabId = tab.getAttribute('data-tab');
+                document.getElementById(`${tabId}-content`).classList.add('active');
+            });
+        });
+
+        // Edit Profile Modal
+        if (editProfileBtn) {
+            editProfileBtn.addEventListener('click', () => {
+                // Populate form with current data
+                document.getElementById('editFirstName').value = profileData.first_name;
+                document.getElementById('editLastName').value = profileData.last_name;
+                document.getElementById('editPhone').value = profileData.phone;
+                document.getElementById('editDob').value = profileData.dob ? 
+                    new Date(profileData.dob).toISOString().split('T')[0] : '';
+                document.getElementById('editGender').value = profileData.gender;
+                
+                editProfileModal.style.display = 'flex';
+            });
+        }
+
+        // Close modal handlers
+        if (closeModal) closeModal.addEventListener('click', () => editProfileModal.style.display = 'none');
+        if (cancelEdit) cancelEdit.addEventListener('click', () => editProfileModal.style.display = 'none');
+        if (closeAboutModal) closeAboutModal.addEventListener('click', () => editAboutModal.style.display = 'none');
+        if (cancelAboutEdit) cancelAboutEdit.addEventListener('click', () => editAboutModal.style.display = 'none');
+        if (closeImageModal) closeImageModal.addEventListener('click', () => {
             imageUploadModal.style.display = 'none';
             resetImageUpload();
+        });
+        if (cancelImageUpload) cancelImageUpload.addEventListener('click', () => {
+            imageUploadModal.style.display = 'none';
+            resetImageUpload();
+        });
+        if (closePasswordModal) closePasswordModal.addEventListener('click', () => changePasswordModal.style.display = 'none');
+        if (cancelPasswordChange) cancelPasswordChange.addEventListener('click', () => changePasswordModal.style.display = 'none');
+
+        // Profile Form Submission
+        if (profileForm) {
+            profileForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                try {
+                    const formData = {
+                        first_name: document.getElementById('editFirstName').value,
+                        last_name: document.getElementById('editLastName').value,
+                        phone: document.getElementById('editPhone').value,
+                        dob: document.getElementById('editDob').value,
+                        gender: document.getElementById('editGender').value
+                    };
+                    
+                    const response = await fetch('/user/api/profile', {
+                        method: 'PUT',
+                        credentials: 'include',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+                        },
+                        body: JSON.stringify(formData)
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (!response.ok) {
+                        throw new Error(data.error || 'Failed to update profile');
+                    }
+                    
+                    await updateProfileUI();
+                    editProfileModal.style.display = 'none';
+                    alert('Profile updated successfully!');
+                } catch (error) {
+                    console.error('Error updating profile:', error);
+                    alert(error.message || 'Failed to update profile');
+                }
+            });
         }
-        if (e.target === paymentMethodModal) {
-            paymentMethodModal.style.display = 'none';
+
+        // About Form Submission
+        if (aboutForm) {
+            aboutForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                try {
+                    const response = await fetch('/user/api/profile', {
+                        method: 'PUT',
+                        credentials: 'include',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+                        },
+                        body: JSON.stringify({
+                            about: document.getElementById('aboutTextarea').value
+                        })
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to update about section');
+                    }
+                    
+                    await updateProfileUI();
+                    editAboutModal.style.display = 'none';
+                    alert('About section updated successfully!');
+                } catch (error) {
+                    console.error('Error updating about section:', error);
+                    alert('Failed to update about section');
+                }
+            });
         }
-    });
+
+        // Image Upload Modal
+        if (profileCameraIcon) {
+            profileCameraIcon.addEventListener('click', () => {
+                imageUploadModal.style.display = 'flex';
+            });
+        }
+
+        if (chooseImageBtn) {
+            chooseImageBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                profileImageUpload.click();
+            });
+        }
+
+        if (profileImageUpload) {
+            profileImageUpload.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        imagePreview.src = event.target.result;
+                        imagePreviewContainer.style.display = 'block';
+                        saveImageBtn.disabled = false;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+           // Image Upload Handler
+    if (saveImageBtn) {
+        saveImageBtn.addEventListener('click', async () => {
+            const file = profileImageUpload.files[0];
+            if (!file) return;
+            
+            const formData = new FormData();
+            formData.append('profile_picture', file);
+            
+            try {
+                const response = await fetch('/user/api/profile/picture', {
+                    method: 'POST',
+                    credentials: 'include',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to update profile picture');
+                }
+                
+                await updateProfileUI();
+                imageUploadModal.style.display = 'none';
+                resetImageUpload();
+                alert('Profile picture updated successfully!');
+            } catch (error) {
+                console.error('Error updating profile picture:', error);
+                alert(error.message || 'Failed to update profile picture');
+            }
+        });
+    }
+
+        // Password Change
+        if (changePasswordBtn) {
+            changePasswordBtn.addEventListener('click', () => {
+                changePasswordModal.style.display = 'flex';
+            });
+        }
+
+        if (passwordForm) {
+            passwordForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const currentPassword = document.getElementById('currentPassword').value;
+                const newPassword = document.getElementById('newPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                
+                if (newPassword !== confirmPassword) {
+                    alert('New passwords do not match');
+                    return;
+                }
+                
+                try {
+                    const response = await fetch('/user/api/change-password', {
+                        method: 'POST',
+                        credentials: 'include',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+                        },
+                        body: JSON.stringify({
+                            current_password: currentPassword,
+                            new_password: newPassword
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (!response.ok) {
+                        throw new Error(data.error || 'Failed to change password');
+                    }
+                    
+                    alert('Password changed successfully');
+                    changePasswordModal.style.display = 'none';
+                    passwordForm.reset();
+                } catch (error) {
+                    console.error('Error changing password:', error);
+                    alert(error.message || 'Failed to change password');
+                }
+            });
+        }
+
+        // Close modals when clicking outside
+        window.addEventListener('click', (e) => {
+            if (editProfileModal && e.target === editProfileModal) {
+                editProfileModal.style.display = 'none';
+            }
+            if (editAboutModal && e.target === editAboutModal) {
+                editAboutModal.style.display = 'none';
+            }
+            if (imageUploadModal && e.target === imageUploadModal) {
+                imageUploadModal.style.display = 'none';
+                resetImageUpload();
+            }
+            if (changePasswordModal && e.target === changePasswordModal) {
+                changePasswordModal.style.display = 'none';
+            }
+        });
+    }
+
+    function resetImageUpload() {
+        if (profileImageUpload) profileImageUpload.value = '';
+        if (imagePreviewContainer) imagePreviewContainer.style.display = 'none';
+        if (saveImageBtn) saveImageBtn.disabled = true;
+    }
 });

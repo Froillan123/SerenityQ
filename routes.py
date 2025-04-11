@@ -4,6 +4,8 @@ from imports import *
 from werkzeug.security import check_password_hash
 from controllers import *
 from auth_utils import login_required
+from flask import request
+from flask_jwt_extended import get_jwt_identity, set_access_cookies, unset_jwt_cookies
 
 # Initialize Blueprints
 auth_bp = Blueprint('auth', __name__)
@@ -34,16 +36,33 @@ def verify_otp_api():
 
 @auth_bp.route('/login', methods=['POST'])
 def login_api():
-    return handle_login()
+    response, status_code = handle_login()
+    if status_code == 200:
+        resp = jsonify(response)
+        set_access_cookies(resp, response['access_token'])
+        return resp, status_code
+    return jsonify(response), status_code
 
 @auth_bp.route('/logout', methods=['POST'])
 def logout_api():
-    return handle_logout()
+    response, status_code = handle_logout()
+    return response, status_code
 
 # Routes for the user side (e.g., /user)
+@user_bp.context_processor
+def inject_current_user():
+    try:
+        current_user_id = get_jwt_identity()
+        user = User.query.get(current_user_id)
+        return {'current_user': user}
+    except:
+        return {'current_user': None}
+
+
+
 @user_bp.route('/ai')
 @login_required
-def ai():  # Changed function name to match route
+def ai():
     return render_template('user/ai.html')
 
 @user_bp.route('/dashboard')
@@ -74,21 +93,117 @@ def sessions():
 @user_bp.route('/user-profile')
 @login_required
 def user_profile():
-    return render_template('user/user-profile.html')
+    current_user_id = get_jwt_identity()
+    user_data = get_user_profile(current_user_id)
+    return render_template('user/user-profile.html', user=user_data)
+
+@user_bp.route('/api/profile', methods=['GET', 'PUT'])
+@login_required
+def user_profile_api():
+    current_user_id = get_jwt_identity()
+    
+    if request.method == 'GET':
+        try:
+            user_data = get_user_profile(current_user_id)
+            return jsonify(user_data), 200
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+    
+    elif request.method == 'PUT':
+        data = request.get_json()
+        try:
+            result = update_user_profile(current_user_id, data)
+            return jsonify(result), 200
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+
+@user_bp.route('/api/profile/picture', methods=['POST'])
+@login_required
+def update_profile_picture_api():
+    current_user_id = get_jwt_identity()
+    if 'profile_picture' not in request.files:
+        return jsonify({'error': 'No file uploaded'}), 400
+    
+    try:
+        result = update_profile_picture(current_user_id, request.files['profile_picture'])
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @user_bp.route('/notifications')
 @login_required
 def notifications():
     return render_template('user/notifications.html')
 
-# Routes for admin side (e.g., /admin)
+@user_bp.route('/api/change-password', methods=['POST'])
+@login_required
+def change_password_api():
+    current_user_id = get_jwt_identity()
+    data = request.get_json()
+    if not data or 'current_password' not in data or 'new_password' not in data:
+        return jsonify({'error': 'Current and new password are required'}), 400
+    result, status = change_password(current_user_id, data['current_password'], data['new_password'])
+    return jsonify(result), status
+
+# Admin routes
+@admin_bp.route('/register', methods=['GET'])
+def admin_register_page():
+    return render_template('admin/admin_register.html')
+
+@admin_bp.route('/login', methods=['GET'])
+def admin_login_page():
+    return render_template('admin/admin_login.html')
+
+@admin_bp.route('/register', methods=['POST'])
+def admin_register_api():
+    data = request.get_json()
+    try:
+        response, status_code = register_admin(data)
+        return jsonify(response), status_code
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@admin_bp.route('/login', methods=['POST'])
+def admin_login_api():
+    data = request.get_json()
+    try:
+        response, status_code = login_admin(data)
+        resp = jsonify(response)
+        if status_code == 200:
+            set_access_cookies(resp, response['access_token'])
+        return resp, status_code
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@admin_bp.route('/api/admin/count', methods=['GET'])
+def admin_count():
+    try:
+        count = Admin.query.count()
+        return jsonify({'count': count}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@admin_bp.route('/logout', methods=['POST'])
+def admin_logout_api():
+    response = jsonify({'msg': 'Admin logout successful'})
+    unset_jwt_cookies(response)
+    return response
+
 @admin_bp.route('/dashboard')
 def admin_dashboard():
     return render_template('admin/dashboard.html')
 
 @admin_bp.route('/users')
 def admin_users():
-    return render_template('admin/users.html')
+    return render_template('admin/admin_user.html')
+
+@admin_bp.route('/psychologists')
+def admin_psychologists():
+    return render_template('admin/admin_psychologist.html')
+
+@admin_bp.route('/settings')
+def admin_settings():
+    return render_template('admin/admin_settings.html')
 
 # Psychologist Routes
 @psychologist_bp.route('/login')

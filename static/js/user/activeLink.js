@@ -92,29 +92,3 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
-
-document.getElementById('logout-btn').addEventListener('click', async () => {
-    try {
-        const response = await fetch('/auth/logout', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        
-        const data = await response.json();
-        if (response.ok) {
-            // Clear client-side storage
-            localStorage.clear();
-            sessionStorage.clear();
-            
-            // Prevent back button
-            window.history.replaceState(null, null, window.location.href);
-            
-            // Redirect to landing page
-            window.location.href = data.redirect || '/auth';
-        }
-    } catch (error) {
-        console.error('Logout failed:', error);
-    }
-});

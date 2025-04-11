@@ -255,6 +255,40 @@
             }
         });
 
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    
+    try {
+        const response = await fetch('/admin/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username,
+                password
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            // Save token to localStorage or cookies
+            localStorage.setItem('adminToken', data.access_token);
+            // Redirect to dashboard
+            window.location.href = '/admin/dashboard';
+        } else {
+            alert(data.error || 'Login failed');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred during login');
+    }
+});
+
         // Form validation
         const form = document.getElementById('loginForm');
         const usernameError = document.getElementById('username-error');
