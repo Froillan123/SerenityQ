@@ -84,5 +84,12 @@
     </footer>
 
     <script src="{{ url_for('static', filename='js/landing/script.js') }}"></script>
+    <script>
+        // Prevent going back after logout
+        history.pushState(null, null, location.href);
+        window.onpopstate = function() {
+            history.go(1);
+        };
+        </script>
 </body>
 </html>

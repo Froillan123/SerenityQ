@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SerenityQ Admin Dashboard</title>
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/admindashboard.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  {% block extra_css %}{% endblock %}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <!-- Loader -->
+  <div class="loader-overlay" id="loader">
+    <div class="dna-loader">
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <div class="loader-text">Loading Dashboard...</div>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <i class='bx bx-brain'></i>
+      <h3>SerenityQ</h3>
+    </div>
+    <ul class="sidebar-menu">
+        <li>
+            <a href="{{ url_for('admin.admin_dashboard') }}" 
+               class="{% if request.endpoint == 'admin.admin_dashboard' %}active{% endif %}">
+               <i class='bx bx-bar-chart-alt-2'></i> Dashboard
+            </a>
+        </li>
+        <li>
+            <a href="{{ url_for('admin.admin_psychologists') }}"
+               class="{% if request.endpoint == 'admin.admin_psychologists' %}active{% endif %}">  <!-- Added active class check -->
+               <i class='bx bx-user-voice'></i> Psychologists
+            </a>
+        </li>
+        <li>
+            <a href="{{ url_for('admin.admin_users') }}" 
+               class="{% if request.endpoint == 'admin.admin_users' %}active{% endif %}">
+               <i class='bx bx-group'></i> Users
+            </a>
+        </li>
+        <li>
+            <a href="{{ url_for('admin.admin_settings') }}" 
+               class="{% if request.endpoint == 'admin.admin_settings' %}active{% endif %}">  <!-- Added active class check -->
+               <i class='bx bx-cog'></i> Settings
+            </a>
+        </li>
+      <li><a href="" id="logout-btn"><i class='bx bx-log-out'></i> Logout</a></li>
+    </ul>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="navbar-left">
+        <button class="hamburger" id="toggleSidebar">
+          <i class='bx bx-menu' id="menuIcon"></i>
+        </button>
+      </div>
+      <div class="user-profile">
+        <div class="user-info">
+          <p>Admin User</p>
+          <small>Super Admin</small>
+        </div>
+        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile" class="user-avatar">
+      </div>
+    </nav>
+
+    <!-- Content Block -->
+    <div class="content-wrapper">
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+
+  <script>
+    // Loader timeout
+    setTimeout(() => {
+      document.getElementById('loader').style.display = 'none';
+    }, 2000);
+
+    // Toggle sidebar
+    const sidebar = document.getElementById('sidebar');
+    const toggleSidebar = document.getElementById('toggleSidebar');
+    const menuIcon = document.getElementById('menuIcon');
+
+    toggleSidebar.addEventListener('click', function() {
+      sidebar.classList.toggle('active');
+      if (sidebar.classList.contains('active')) {
+        menuIcon.classList.remove('bx-menu');
+        menuIcon.classList.add('bx-x');
+      } else {
+        menuIcon.classList.remove('bx-x');
+        menuIcon.classList.add('bx-menu');
+      }
+    });
+  </script>
+  
+  {% block scripts %}
+  <script src="{{ url_for('static', filename='js/logout/admin_logout.js') }}"></script>
+
+  {% endblock %}
+</body>
+</html>

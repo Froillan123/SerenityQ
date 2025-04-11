@@ -36,7 +36,9 @@
                 </ul>
                 
                 <div class="profile" id="profileDropdown">
-                    <img src="{{ url_for('static', filename='images/profile.jpg') }}" class="profile-img" alt="Profile">
+                    <img src="{{ url_for('static', filename=current_user.profile_picture) if current_user else url_for('static', filename='images/profile.jpg') }}" 
+                         class="profile-img" 
+                         alt="Profile">
                     <div class="dropdown-menu">
                         <a href="{{ url_for('user.user_profile') }}" class="dropdown-item"><i class="fas fa-user"></i> Profile</a>
                         <a href="{{ url_for('user.notifications') }}" class="dropdown-item"><i class="fas fa-bell"></i> Notifications</a>
@@ -76,6 +78,7 @@
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="{{ url_for('static', filename='js/user/activeLink.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/logout/logout.js') }}"></script>
     {% endblock %}
 </body>
 </html>

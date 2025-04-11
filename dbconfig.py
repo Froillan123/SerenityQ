@@ -18,4 +18,3 @@ if not database_url:
 
 SQLALCHEMY_DATABASE_URI = database_url
 SQLALCHEMY_TRACK_MODIFICATIONS = False
-JWT_SECRET_KEY = 'Tidert'  # Change this to a secure secret key
