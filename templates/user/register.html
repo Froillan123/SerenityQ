@@ -485,8 +485,10 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        let registrationData = {}; // Store registration data
-        let otpSent = false; // Flag to track if OTP has been sent
+        let registrationData = {};
+        let otpSent = false;
+        let resendAttempts = 0;
+        let lastResendTime = null;
         
         // Initialize the form with saved data if available
         document.addEventListener('DOMContentLoaded', function() {
@@ -750,7 +752,10 @@
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(registrationData)
+                body: JSON.stringify({
+                    ...registrationData,
+                    resend_attempt: resendAttempts > 0 ? resendAttempts : undefined
+                })
             })
             .then(response => {
                 if (!response.ok) {
@@ -760,41 +765,56 @@
             })
             .then(data => {
                 otpSent = true;
-                saveProgress(3); // Save that OTP has been sent
+                resendAttempts++;
+                lastResendTime = new Date();
+                saveProgress(3);
+                
                 Swal.fire({
-                    title: 'OTP Sent!',
-                    text: 'We have sent a 6-digit verification code to your email address.',
-                    icon: 'success',
-                    confirmButtonColor: '#5D5FEF'
-                });
+                title: 'OTP Sent!',
+                text: 'A 6-digit verification code has been sent to your email address. Please check your inbox (and spam folder).',
+                icon: 'success',
+                confirmButtonText: 'Got it!',
+                confirmButtonColor: '#5D5FEF',
+                backdrop: true,
+                position: 'center',
+                timer: 5000,
+                showCloseButton: true
+            });
             })
             .catch(error => {
                 console.error('Error:', error);
+                
+                let errorMessage = error.error || 'Failed to send OTP. Please try again.';
+                if (error.cooldown) {
+                    errorMessage = `Too many attempts. Please wait ${error.cooldown} minutes before trying again.`;
+                }
+                
                 Swal.fire({
                     title: 'Error',
-                    text: error.error || 'Failed to send OTP. Please try again.',
+                    text: errorMessage,
                     icon: 'error',
                     confirmButtonColor: '#5D5FEF'
                 }).then(() => {
-                    prevStep(3);
+                    if (error.cooldown) {
+                        // Disable resend button for cooldown period
+                        document.querySelector('.resend-link').style.pointerEvents = 'none';
+                        document.querySelector('.resend-link').style.opacity = '0.5';
+                        
+                        // Re-enable after cooldown
+                        setTimeout(() => {
+                            document.querySelector('.resend-link').style.pointerEvents = '';
+                            document.querySelector('.resend-link').style.opacity = '';
+                        }, error.cooldown * 60 * 1000);
+                    } else {
+                        prevStep(3);
+                    }
                 });
             });
         }
         
         function resendOTP() {
-            Swal.fire({
-                title: 'Resend OTP',
-                text: 'Are you sure you want to resend the verification code?',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#5D5FEF',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Yes, resend'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    sendOTP();
-                }
-            });
+            // Simple resend without confirmation
+            sendOTP();
         }
         
         function verifyOTP() {
@@ -837,14 +857,14 @@
                 return response.json();
             })
             .then(data => {
-                clearProgress(); // Clear saved data after successful verification
+                clearProgress();
                 Swal.fire({
                     title: 'Verification Successful!',
                     text: 'Your account has been successfully verified.',
                     icon: 'success',
                     confirmButtonColor: '#5D5FEF'
                 }).then(() => {
-                    nextStep(3); // Move to success step
+                    nextStep(3);
                 });
             })
             .catch(error => {

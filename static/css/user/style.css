@@ -229,7 +229,7 @@ nav {
     padding: 40px;
     border-radius: 10px;
     width: 100%;
-    max-width: 500px;
+    max-width: 900px;
     position: relative;
     box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
     animation: modalFadeIn 0.3s ease;
@@ -1234,7 +1234,7 @@ footer {
 
 /* Login Selection Modal Styles */
 .login-selection-modal {
-    max-width: 500px;
+    max-width: 900px;
     padding: 0;
     border-radius: 16px;
     height: 80vh;
@@ -1280,6 +1280,7 @@ footer {
 .login-selection-options {
     padding: 20px;
     display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 20px;
 }
 

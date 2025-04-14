@@ -15,6 +15,8 @@
             --gray: #8D99AE;
             --success: #4CAF50;
             --error: #F44336;
+            --warning: #FF9800;
+            --info: #2196F3;
             --modal-bg: rgba(0, 0, 0, 0.5);
         }
 
@@ -29,6 +31,7 @@
             background-color: var(--light);
             color: var(--dark);
             line-height: 1.6;
+            position: relative;
         }
 
         .container {
@@ -41,6 +44,7 @@
             background-color: white;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             margin-bottom: 10px;
+            animation: slideDown 0.5s ease-out;
         }
 
         .header-content {
@@ -76,6 +80,9 @@
             margin: 0 auto;
             max-height: 90vh;
             overflow-y: auto;
+            position: relative;
+            animation: fadeInUp 0.6s ease-out;
+            transform-origin: top center;
         }
 
         .login-header {
@@ -100,6 +107,14 @@
 
         .form-group {
             margin-bottom: 20px;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .form-group:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+        .form-group:nth-child(2) {
+            animation-delay: 0.2s;
         }
 
         label {
@@ -129,6 +144,8 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            animation: fadeIn 0.8s ease-out;
+            animation-delay: 0.3s;
         }
 
         .checkbox-group {
@@ -151,10 +168,12 @@
             color: var(--primary);
             text-decoration: none;
             font-weight: 600;
+            transition: all 0.2s;
         }
 
         .forgot-password:hover {
             text-decoration: underline;
+            transform: translateX(2px);
         }
 
         .btn {
@@ -166,6 +185,8 @@
             border: none;
             font-size: 1rem;
             width: 100%;
+            animation: fadeIn 0.8s ease-out;
+            animation-delay: 0.4s;
         }
 
         .btn-primary {
@@ -180,11 +201,18 @@
             box-shadow: 0 4px 10px rgba(93, 95, 239, 0.3);
         }
 
+        .btn-primary:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(93, 95, 239, 0.3);
+        }
+
         .divider {
             display: flex;
             align-items: center;
             margin: 20px 0;
             color: var(--gray);
+            animation: fadeIn 0.8s ease-out;
+            animation-delay: 0.5s;
         }
 
         .divider::before, .divider::after {
@@ -203,6 +231,8 @@
             gap: 10px;
             margin-bottom: 20px;
             width: 100%;
+            animation: fadeIn 0.8s ease-out;
+            animation-delay: 0.6s;
         }
 
         .social-btn {
@@ -238,16 +268,218 @@
             text-align: center;
             margin-top: 20px;
             color: var(--gray);
+            animation: fadeIn 0.8s ease-out;
+            animation-delay: 0.7s;
         }
 
         .login-footer a {
             color: var(--primary);
             text-decoration: none;
             font-weight: 600;
+            transition: all 0.2s;
         }
 
         .login-footer a:hover {
             text-decoration: underline;
+            transform: translateX(2px);
+        }
+
+        /* Enhanced Cool Alert Styles */
+        .cool-alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 350px;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            transform: translateX(calc(100% + 20px));
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            z-index: 1000;
+            background: white;
+            overflow: hidden;
+            opacity: 0;
+        }
+
+        .cool-alert.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .cool-alert.hide {
+            transform: translateX(calc(100% + 20px));
+            opacity: 0;
+        }
+
+        .cool-alert::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 6px;
+        }
+
+        .cool-alert.success::before {
+            background-color: var(--success);
+        }
+
+        .cool-alert.error::before {
+            background-color: var(--error);
+        }
+
+        .cool-alert.warning::before {
+            background-color: var(--warning);
+        }
+
+        .cool-alert.info::before {
+            background-color: var(--info);
+        }
+
+        .cool-alert.loading::before {
+            background-color: var(--primary);
+            width: 100%;
+            height: 4px;
+            bottom: 0;
+            top: auto;
+            animation: loadingBar 2s linear infinite;
+        }
+
+        .cool-alert-icon {
+            font-size: 24px;
+            margin-right: 15px;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+        }
+
+        .cool-alert:hover .cool-alert-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .cool-alert.success .cool-alert-icon {
+            color: var(--success);
+        }
+
+        .cool-alert.error .cool-alert-icon {
+            color: var(--error);
+        }
+
+        .cool-alert.warning .cool-alert-icon {
+            color: var(--warning);
+        }
+
+        .cool-alert.info .cool-alert-icon {
+            color: var(--info);
+        }
+
+        .cool-alert.loading .cool-alert-icon {
+            color: var(--primary);
+            animation: spin 1s linear infinite;
+        }
+
+        .cool-alert-content {
+            flex-grow: 1;
+        }
+
+        .cool-alert-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+
+        .cool-alert-message {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .cool-alert-close {
+            margin-left: 15px;
+            cursor: pointer;
+            color: var(--gray);
+            font-size: 18px;
+            transition: all 0.2s;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+        .cool-alert-close:hover {
+            color: var(--dark);
+            transform: scale(1.2);
+        }
+
+        /* Progress bar for timed alerts */
+        .cool-alert-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .cool-alert-progress::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .cool-alert.success .cool-alert-progress::after {
+            background-color: var(--success);
+        }
+
+        .cool-alert.error .cool-alert-progress::after {
+            background-color: var(--error);
+        }
+
+        .cool-alert.warning .cool-alert-progress::after {
+            background-color: var(--warning);
+        }
+
+        .cool-alert.info .cool-alert-progress::after {
+            background-color: var(--info);
+        }
+
+        .cool-alert.show .cool-alert-progress::after {
+            animation: progressBar linear forwards;
+            animation-duration: var(--progress-duration);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes loadingBar {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        @keyframes progressBar {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(0); }
+        }
+
+        /* Animation Keyframes */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* Responsive Styles */
@@ -258,6 +490,21 @@
 
             .login-header h1 {
                 font-size: 1.5rem;
+            }
+
+            .cool-alert {
+                width: calc(100% - 40px);
+                right: 20px;
+                left: 20px;
+                transform: translateY(calc(-100% - 20px));
+            }
+
+            .cool-alert.show {
+                transform: translateY(0);
+            }
+
+            .cool-alert.hide {
+                transform: translateY(calc(-100% - 20px));
             }
         }
 
@@ -298,8 +545,8 @@
 
             <form id="loginForm" class="login-form">
                 <div class="form-group">
-                    <label for="email">Email Address</label>
-                    <input type="email" id="email" required>
+                    <label for="login">Username or Email</label>
+                    <input type="text" id="login" required>
                 </div>
 
                 <div class="form-group">
@@ -312,7 +559,7 @@
                         <input type="checkbox" id="remember">
                         <label for="remember">Remember me</label>
                     </div>
-                    <a href="forgot-password.html" class="forgot-password">Forgot password?</a>
+                    <a href="" class="forgot-password">Forgot password?</a>
                 </div>
 
                 <button type="submit" class="btn btn-primary">Sign In</button>
@@ -320,39 +567,165 @@
         </div>
     </div>
 
+    <!-- Cool Alert Container -->
+    <div id="coolAlertContainer"></div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const loginForm = document.getElementById('loginForm');
             
-            loginForm.addEventListener('submit', function(e) {
+            loginForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
-                const email = document.getElementById('email').value.trim();
+                const login = document.getElementById('login').value.trim();
                 const password = document.getElementById('password').value;
+                const remember = document.getElementById('remember').checked;
                 
-                // Basic validation
-                if (!email || !password) {
-                    alert('Please enter both email and password');
+                // Input validation
+                if (!login || !password) {
+                    showCoolAlert('error', 'Validation Error', 'Please enter both username/email and password');
                     return;
                 }
                 
-                // In a real application, you would send this data to your server
-                console.log('Login attempt with:', { email, password });
+                try {
+                    // Show loading alert
+                    const loadingAlertId = showCoolAlert('loading', 'Authenticating', 'Please wait while we verify your credentials...', true);
+                    
+                    // Simulate API call delay (replace with actual fetch in production)
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    
+                    // Actual API call to your backend (preserved your route)
+                    const response = await fetch('/psychologist/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            login: login,
+                            password: password,
+                            remember: remember
+                        }),
+                        credentials: 'include'
+                    });
+                    
+                    const data = await response.json();
+                    
+                    // Remove loading alert
+                    removeCoolAlert(loadingAlertId);
+                    
+                    if (response.ok) {
+                        showCoolAlert('success', 'Login Successful', 'Redirecting to your dashboard...');
+                        // Redirect after delay
+                        setTimeout(() => {
+                            window.location.href = data.redirect || '/psychologist/dashboard';
+                        }, 1500);
+                    } else {
+                        showCoolAlert('error', 'Login Failed', data.error || 'Invalid credentials. Please try again.');
+                        // Shake animation for error
+                        document.getElementById('password').style.animation = 'shake 0.5s';
+                        setTimeout(() => {
+                            document.getElementById('password').style.animation = '';
+                        }, 500);
+                    }
+                } catch (error) {
+                    showCoolAlert('error', 'Connection Error', 'Failed to connect to the server. Please check your internet connection and try again.');
+                    console.error('Login error:', error);
+                }
+            });
+            
+            // Enhanced Cool Alert System
+            let alertCounter = 0;
+            const alertDuration = 5000; // 5 seconds
+            
+            function showCoolAlert(type, title, message, persistent = false) {
+                const alertId = 'alert-' + alertCounter++;
+                const alertContainer = document.getElementById('coolAlertContainer');
                 
-                // Simulate successful login
-                // In a real app, you would redirect after successful authentication
-                alert('Login successful! Redirecting to dashboard...');
-                // window.location.href = 'psychologistDashboard.html';
-            });
+                const alertEl = document.createElement('div');
+                alertEl.className = `cool-alert ${type}`;
+                alertEl.id = alertId;
+                alertEl.style.setProperty('--progress-duration', `${alertDuration}ms`);
+                
+                // Set icon based on type
+                let iconClass;
+                switch(type) {
+                    case 'success':
+                        iconClass = 'fas fa-check-circle';
+                        break;
+                    case 'error':
+                        iconClass = 'fas fa-exclamation-circle';
+                        break;
+                    case 'warning':
+                        iconClass = 'fas fa-exclamation-triangle';
+                        break;
+                    case 'info':
+                        iconClass = 'fas fa-info-circle';
+                        break;
+                    case 'loading':
+                        iconClass = 'fas fa-circle-notch';
+                        break;
+                    default:
+                        iconClass = 'fas fa-info-circle';
+                }
+                
+                alertEl.innerHTML = `
+                    <i class="cool-alert-icon ${iconClass}"></i>
+                    <div class="cool-alert-content">
+                        <div class="cool-alert-title">${title}</div>
+                        <div class="cool-alert-message">${message}</div>
+                    </div>
+                    ${persistent ? '' : '<button class="cool-alert-close">&times;</button>'}
+                    ${persistent ? '' : '<div class="cool-alert-progress"></div>'}
+                `;
+                
+                alertContainer.appendChild(alertEl);
+                
+                // Trigger the show animation
+                setTimeout(() => {
+                    alertEl.classList.add('show');
+                }, 10);
+                
+                // Add click handler for close button
+                const closeBtn = alertEl.querySelector('.cool-alert-close');
+                if (closeBtn) {
+                    closeBtn.addEventListener('click', () => {
+                        removeCoolAlert(alertId);
+                    });
+                }
+                
+                // Auto-remove if not persistent
+                if (!persistent) {
+                    setTimeout(() => {
+                        removeCoolAlert(alertId);
+                    }, alertDuration);
+                }
+                
+                return alertId;
+            }
             
-            // Social login handlers
-            document.querySelector('.social-btn.google').addEventListener('click', function() {
-                alert('Google login would be implemented here');
-            });
+            function removeCoolAlert(alertId) {
+                const alertEl = document.getElementById(alertId);
+                if (alertEl) {
+                    alertEl.classList.remove('show');
+                    alertEl.classList.add('hide');
+                    
+                    // Wait for animation to complete before removing
+                    setTimeout(() => {
+                        alertEl.remove();
+                    }, 500);
+                }
+            }
             
-            document.querySelector('.social-btn.facebook').addEventListener('click', function() {
-                alert('Facebook login would be implemented here');
-            });
+            // Add shake animation for errors
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes shake {
+                    0%, 100% { transform: translateX(0); }
+                    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+                    20%, 40%, 60%, 80% { transform: translateX(5px); }
+                }
+            `;
+            document.head.appendChild(style);
         });
     </script>
 </body>

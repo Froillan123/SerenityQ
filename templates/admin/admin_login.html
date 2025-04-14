@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login</title>
-    <!-- Font Awesome CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -97,11 +96,6 @@
             box-shadow: 0 0 0 3px rgba(93, 95, 239, 0.2);
         }
 
-        .login-form input::placeholder {
-            color: var(--secondary);
-            opacity: 0.6;
-        }
-
         .password-toggle {
             position: absolute;
             right: 12px;
@@ -185,11 +179,135 @@
             display: none;
         }
 
-        /* Responsive adjustments */
+        /* Enhanced Alert System */
+        .alert-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            max-width: 350px;
+            width: 100%;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateX(150%);
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            background: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .alert.show {
+            transform: translateX(0);
+        }
+
+        .alert.hide {
+            transform: translateX(150%);
+        }
+
+        .alert.success {
+            border-left: 4px solid var(--success);
+        }
+
+        .alert.error {
+            border-left: 4px solid var(--error);
+        }
+
+        .alert.warning {
+            border-left: 4px solid var(--warning);
+        }
+
+        .alert.info {
+            border-left: 4px solid var(--info);
+        }
+
+        .alert-icon {
+            margin-right: 15px;
+            font-size: 20px;
+        }
+
+        .success .alert-icon {
+            color: var(--success);
+        }
+
+        .error .alert-icon {
+            color: var(--error);
+        }
+
+        .alert-content {
+            flex: 1;
+        }
+
+        .alert-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .alert-message {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .alert-close {
+            margin-left: 15px;
+            cursor: pointer;
+            color: var(--gray);
+            transition: color 0.2s;
+        }
+
+        .alert-close:hover {
+            color: var(--dark);
+        }
+
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            width: 100%;
+        }
+
+        .success .progress-bar {
+            background-color: rgba(76, 175, 80, 0.3);
+        }
+
+        .error .progress-bar {
+            background-color: rgba(244, 67, 54, 0.3);
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 100%;
+            animation: progress 3s linear forwards;
+        }
+
+        .success .progress-fill {
+            background-color: var(--success);
+        }
+
+        .error .progress-fill {
+            background-color: var(--error);
+        }
+
+        @keyframes progress {
+            0% { width: 100%; }
+            100% { width: 0%; }
+        }
+
         @media (max-width: 480px) {
             .login-container {
                 padding: 1.5rem;
                 margin: 0 1rem;
+            }
+            
+            .alert-container {
+                max-width: calc(100% - 40px);
             }
         }
     </style>
@@ -205,7 +323,7 @@
             <div class="form-group">
                 <label for="username">Username</label>
                 <input type="text" id="username" placeholder="Enter your username" required>
-                <div class="error-message" id="username-error">Please enter a valid username</div>
+                <div class="error-message" id="username-error"></div>
             </div>
 
             <div class="form-group">
@@ -214,7 +332,7 @@
                 <button type="button" class="password-toggle" id="togglePassword">
                     <i class="far fa-eye"></i>
                 </button>
-                <div class="error-message" id="password-error">Password must be at least 8 characters</div>
+                <div class="error-message" id="password-error"></div>
             </div>
 
             <div class="remember-forgot">
@@ -235,6 +353,9 @@
         </div>
     </div>
 
+    <!-- Alert Container -->
+    <div class="alert-container" id="alertContainer"></div>
+
     <script>
         // Toggle password visibility
         const togglePassword = document.querySelector('#togglePassword');
@@ -245,7 +366,6 @@
             const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
             password.setAttribute('type', type);
             
-            // Toggle eye icon
             if (type === 'password') {
                 eyeIcon.classList.remove('fa-eye-slash');
                 eyeIcon.classList.add('fa-eye');
@@ -255,72 +375,140 @@
             }
         });
 
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-    
-    try {
-        const response = await fetch('/admin/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                username,
-                password
-            })
-        });
-        
-        const data = await response.json();
-        
-        if (response.ok) {
-            // Save token to localStorage or cookies
-            localStorage.setItem('adminToken', data.access_token);
-            // Redirect to dashboard
-            window.location.href = '/admin/dashboard';
-        } else {
-            alert(data.error || 'Login failed');
+        // Enhanced Alert System
+        function showAlert(type, title, message, duration = 3000) {
+            const alertContainer = document.getElementById('alertContainer');
+            const alertId = 'alert-' + Date.now();
+            
+            const alertEl = document.createElement('div');
+            alertEl.className = `alert ${type}`;
+            alertEl.id = alertId;
+            
+            alertEl.innerHTML = `
+                <div class="alert-icon">
+                    <i class="fas ${
+                        type === 'success' ? 'fa-check-circle' : 
+                        type === 'error' ? 'fa-exclamation-circle' :
+                        type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle'
+                    }"></i>
+                </div>
+                <div class="alert-content">
+                    <div class="alert-title">${title}</div>
+                    <div class="alert-message">${message}</div>
+                </div>
+                <div class="alert-close">&times;</div>
+                <div class="progress-bar"><div class="progress-fill"></div></div>
+            `;
+            
+            alertContainer.appendChild(alertEl);
+            
+            // Show alert
+            setTimeout(() => {
+                alertEl.classList.add('show');
+            }, 10);
+            
+            // Close button handler
+            const closeBtn = alertEl.querySelector('.alert-close');
+            closeBtn.addEventListener('click', () => {
+                hideAlert(alertId);
+            });
+            
+            // Auto-hide if duration is set
+            if (duration > 0) {
+                setTimeout(() => {
+                    hideAlert(alertId);
+                }, duration);
+            }
+            
+            return alertId;
         }
-    } catch (error) {
-        console.error('Error:', error);
-        alert('An error occurred during login');
-    }
-});
+        
+        function hideAlert(alertId) {
+            const alertEl = document.getElementById(alertId);
+            if (alertEl) {
+                alertEl.classList.remove('show');
+                alertEl.classList.add('hide');
+                
+                // Remove after animation
+                setTimeout(() => {
+                    alertEl.remove();
+                }, 400);
+            }
+        }
 
-        // Form validation
-        const form = document.getElementById('loginForm');
-        const usernameError = document.getElementById('username-error');
-        const passwordError = document.getElementById('password-error');
-
-        form.addEventListener('submit', function(e) {
+        // Form submission
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            let isValid = true;
-            const username = document.getElementById('username').value;
-            const passwordValue = document.getElementById('password').value;
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const remember = document.getElementById('remember').checked;
             
-            // Validate username
-            if(username.length < 3) {
-                usernameError.style.display = 'block';
-                isValid = false;
-            } else {
-                usernameError.style.display = 'none';
+            // Clear previous errors
+            document.getElementById('username-error').style.display = 'none';
+            document.getElementById('password-error').style.display = 'none';
+            
+            // Validate inputs
+            if (!username) {
+                document.getElementById('username-error').textContent = 'Username is required';
+                document.getElementById('username-error').style.display = 'block';
+                return;
             }
             
-            // Validate password
-            if(passwordValue.length < 8) {
-                passwordError.style.display = 'block';
-                isValid = false;
-            } else {
-                passwordError.style.display = 'none';
+            if (!password) {
+                document.getElementById('password-error').textContent = 'Password is required';
+                document.getElementById('password-error').style.display = 'block';
+                return;
             }
             
-            if(isValid) {
-                // Here you would typically send the data to the server
-                alert('Login successful! Redirecting...');
-                // window.location.href = 'dashboard.html';
+            try {
+                // Show loading state
+                const loginBtn = document.querySelector('.login-button');
+                const originalText = loginBtn.textContent;
+                loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing In...';
+                loginBtn.disabled = true;
+                
+                const response = await fetch('/admin/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username,
+                        password,
+                        remember
+                    }),
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showAlert('success', 'Login Successful', 'Redirecting to dashboard...');
+                    
+                    // Redirect after short delay
+                    setTimeout(() => {
+                        window.location.href = data.redirect || '/admin/dashboard';
+                    }, 1000);
+                } else {
+                    showAlert('error', 'Login Failed', data.error || 'Invalid credentials');
+                    
+                    if (data.field === 'username') {
+                        document.getElementById('username-error').textContent = data.error;
+                        document.getElementById('username-error').style.display = 'block';
+                    } else if (data.field === 'password') {
+                        document.getElementById('password-error').textContent = data.error;
+                        document.getElementById('password-error').style.display = 'block';
+                    }
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showAlert('error', 'Connection Error', 'Failed to connect to server. Please try again.');
+            } finally {
+                // Reset button state
+                const loginBtn = document.querySelector('.login-button');
+                loginBtn.textContent = originalText;
+                loginBtn.disabled = false;
             }
         });
     </script>

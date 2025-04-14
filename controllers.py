@@ -1,17 +1,16 @@
 from flask import jsonify, request, url_for, current_app
 from flask_jwt_extended import (
     create_access_token, 
-    set_access_cookies, 
-    unset_jwt_cookies,
-    get_jwt_identity
+    unset_jwt_cookies
 )
-from models import User, Admin, db
+from models import User, Admin, OTP, db, Psychologist
 from otp import create_otp_record, verify_otp
 from email_service import send_otp_email
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import generate_password_hash
+from werkzeug.utils import secure_filename
 from datetime import datetime, timedelta
 from sqlalchemy.exc import SQLAlchemyError
-from auth_utils import add_security_headers
+from auth_utils import *
 import os
 import logging
 
@@ -46,17 +45,32 @@ def validate_required_fields(data, required_fields):
     if missing_fields:
         raise ValidationError(f"Missing required fields: {', '.join(missing_fields)}")
 
-# User Authentication Controllers
 def handle_registration():
     try:
         data = request.get_json()
         validate_required_fields(data, ['first_name', 'last_name', 'email', 'username', 'password'])
         
-        if User.query.filter_by(email=data['email']).first():
-            raise AlreadyExistsError('Email already registered')
+        # Check if user already exists (including unverified ones)
+        existing_user = User.query.filter_by(email=data['email']).first()
+        
+        if existing_user:
+            # If user exists but is unverified and registration is older than 30 minutes, delete it
+            if not existing_user.is_verified and (datetime.utcnow() - existing_user.created_at) > timedelta(minutes=30):
+                db.session.delete(existing_user)
+                db.session.commit()
+            else:
+                raise AlreadyExistsError('Email already registered')
         
         if User.query.filter_by(username=data['username']).first():
             raise AlreadyExistsError('Username already taken')
+        
+        # Check resend attempts
+        resend_attempt = data.get('resend_attempt', 0)
+        if resend_attempt >= 4:
+            # Check if last attempt was within 5 minutes
+            last_otp = OTP.query.filter_by(email=data['email'], is_used=False).order_by(OTP.created_at.desc()).first()
+            if last_otp and (datetime.utcnow() - last_otp.created_at) < timedelta(minutes=5):
+                return {'error': 'Too many attempts', 'cooldown': 5}, 429
         
         user = User(
             first_name=data['first_name'],
@@ -72,6 +86,10 @@ def handle_registration():
         user.set_password(data['password'])
         
         db.session.add(user)
+        db.session.commit()
+        
+        # Delete any existing OTPs for this email
+        OTP.query.filter_by(email=data['email'], otp_type='registration').delete()
         db.session.commit()
         
         otp_code = create_otp_record(data['email'])
@@ -122,25 +140,34 @@ def verify_otp_controller():
 def handle_login():
     try:
         data = request.get_json()
-        validate_required_fields(data, ['email', 'password'])
-
-        user = User.query.filter_by(email=data['email']).first()
-        if not user or not user.check_password(data['password']):
-            raise InvalidCredentialsError('Invalid email or password')
-
+        validate_required_fields(data, ['login', 'password'])
+        
+        # Check if login is email or username
+        login = data['login'].strip()
+        password = data['password']
+        
+        # Query user by email or username
+        user = User.query.filter(
+            (User.email == login) | (User.username == login)
+        ).first()
+        
+        if not user or not user.check_password(password):
+            raise InvalidCredentialsError('Invalid login credentials')
+            
         if not user.is_verified:
             raise InvalidCredentialsError('Please verify your email first')
-
+            
+        # Create access token
         access_token = create_access_token(
             identity=str(user.id),
             expires_delta=timedelta(days=7),
             additional_claims={
                 'email': user.email,
                 'username': user.username,
-                'role': 'user'
+                'role': user.role
             }
         )
-
+        
         return {
             'message': 'Login successful',
             'access_token': access_token,
@@ -152,7 +179,7 @@ def handle_login():
             },
             'redirect': url_for('user.ai')
         }, 200
-
+        
     except ValidationError as e:
         return {'error': str(e)}, 400
     except InvalidCredentialsError as e:
@@ -226,16 +253,24 @@ def update_profile_picture(current_user_id, file):
         user = User.query.get(current_user_id)
         if not user:
             raise NotFoundError('User not found')
-            
+        
         if not file:
             raise ValidationError('No file uploaded')
-            
-        filename = f"user_{current_user_id}_{file.filename}"
+        
+        # Remove old profile picture if exists
+        if user.profile_picture:
+            old_picture_path = os.path.join(current_app.config['UPLOAD_FOLDER'], user.profile_picture)
+            if os.path.exists(old_picture_path):
+                os.remove(old_picture_path)
+
+        # Set new profile picture name as the user's email with .png extension
+        filename = f"{user.email}.png"
         filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
         
         # Create directory if it doesn't exist
         os.makedirs(os.path.dirname(filepath), exist_ok=True)
         
+        # Save the new file
         file.save(filepath)
         
         # Update profile picture path (relative to static folder)
@@ -246,6 +281,7 @@ def update_profile_picture(current_user_id, file):
             'message': 'Profile picture updated successfully',
             'profile_picture': url_for('static', filename=user.profile_picture, _external=True)
         }
+    
     except ValidationError as e:
         raise
     except NotFoundError as e:
@@ -330,9 +366,10 @@ def login_admin(data):
         if not admin or not admin.check_password(data['password']):
             raise InvalidCredentialsError('Invalid username or password')
         
+        # Create a simple string identity (admin ID as string)
         access_token = create_access_token(
-            identity={
-                'id': admin.id,
+            identity=str(admin.id),  # Changed to string
+            additional_claims={
                 'username': admin.username,
                 'is_super_admin': admin.is_super_admin,
                 'role': 'admin'
@@ -356,11 +393,258 @@ def login_admin(data):
 
 def admin_logout():
     try:
-        response = {
+        # Create response data
+        response_data = {
             'message': 'Admin logout successful',
-            'redirect': url_for('admin.admin_login_page')
+            'redirect': '/admin/login'  # Direct URL instead of url_for to avoid context issues
         }
-        return response, 200
+        
+        # Create the response object
+        response = jsonify(response_data)
+        
+        # Clear JWT cookies
+        unset_jwt_cookies(response)
+        
+        # Add cache prevention headers
+        response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+        
+        return response
+        
     except Exception as e:
         current_app.logger.error(f"Admin logout error: {str(e)}")
-        return {'error': 'Failed to logout'}, 500
+        return jsonify({'error': 'Failed to logout'}), 500
+    
+    
+def verify_psychologist_otp():
+    try:
+        data = request.get_json()
+        validate_required_fields(data, ['email', 'otp_code'])
+            
+        if not verify_otp(data['email'], data['otp_code']):
+            raise InvalidCredentialsError('Invalid or expired OTP')
+            
+        psychologist = Psychologist.query.filter_by(email=data['email']).first()
+        if not psychologist:
+            raise NotFoundError('Psychologist not found')
+            
+        psychologist.is_verified = True
+        db.session.commit()
+        
+        return jsonify({
+            'message': 'Email verified successfully',
+            'redirect': '/psychologist/login'
+        }), 200
+        
+    except ValidationError as e:
+        return jsonify({'error': str(e)}), 400
+    except InvalidCredentialsError as e:
+        return jsonify({'error': str(e)}), 400
+    except NotFoundError as e:
+        return jsonify({'error': str(e)}), 404
+    except SQLAlchemyError:
+        db.session.rollback()
+        return jsonify({'error': 'Database error occurred'}), 500
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+def handle_psychologist_registration():
+    try:
+        # Check if the request contains files
+        if 'license_proof' not in request.files or 'id_proof' not in request.files:
+            raise ValidationError('License proof and ID proof are required')
+
+        # Get form data
+        data = request.form
+        files = request.files
+
+        # Validate required fields
+        required_fields = [
+            'first_name', 'last_name', 'username', 'email', 'phone', 'password',
+            'license_number', 'primary_specialty', 'years_experience', 'bio'
+        ]
+        for field in required_fields:
+            if field not in data or not data[field]:
+                raise ValidationError(f'{field.replace("_", " ").title()} is required')
+
+        # Check if psychologist already exists
+        if Psychologist.query.filter_by(email=data['email']).first():
+            raise AlreadyExistsError('Email already registered')
+        if Psychologist.query.filter_by(username=data['username']).first():
+            raise AlreadyExistsError('Username already taken')
+        if Psychologist.query.filter_by(license_number=data['license_number']).first():
+            raise AlreadyExistsError('License number already registered')
+
+        # Handle file uploads
+        license_proof = files['license_proof']
+        id_proof = files['id_proof']
+
+        # Save files
+        upload_folder = current_app.config['UPLOAD_FOLDER']
+        os.makedirs(upload_folder, exist_ok=True)
+
+        license_filename = f"license_{secure_filename(data['email'])}.{license_proof.filename.split('.')[-1]}"
+        license_path = os.path.join(upload_folder, license_filename)
+        license_proof.save(license_path)
+
+        id_filename = f"id_{secure_filename(data['email'])}.{id_proof.filename.split('.')[-1]}"
+        id_path = os.path.join(upload_folder, id_filename)
+        id_proof.save(id_path)
+
+        # Process specialties
+        specialties = request.form.getlist('specialties')
+
+        # Create psychologist (not verified or approved yet)
+        psychologist = Psychologist(
+            first_name=data['first_name'],
+            last_name=data['last_name'],
+            username=data['username'],
+            email=data['email'],
+            phone=data['phone'],
+            password_hash=generate_password_hash(data['password']),
+            license_number=data['license_number'],
+            license_proof=license_filename,
+            id_proof=id_filename,
+            primary_specialty=data['primary_specialty'],
+            specialties=','.join(specialties),
+            years_experience=int(data['years_experience']),
+            bio=data['bio'],
+            is_verified=False,
+            is_approved=False
+        )
+
+        db.session.add(psychologist)
+
+        # Handle OTP logic
+        OTP.query.filter_by(email=data['email'], otp_type='registration').delete()
+        db.session.commit()
+
+        # Create OTP
+        otp_code = create_otp_record(data['email'], otp_type='registration')
+
+        # Send OTP email
+        if not send_otp_email(data['email'], otp_code):
+            db.session.rollback()
+            raise Exception('Failed to send OTP email')
+
+        db.session.commit()
+
+        return jsonify({
+            'message': 'OTP sent to email',
+            'email': data['email']
+        }), 200
+
+    except ValidationError as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 400
+    except AlreadyExistsError as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Registration error: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+        
+
+def handle_psychologist_login(data):
+    try:
+        validate_required_fields(data, ['login', 'password'])
+
+        # Check if login is email or username
+        login = data['login'].strip()
+        password = data['password']
+        
+        # Query psychologist by email or username
+        psychologist = Psychologist.query.filter(
+            (Psychologist.email == login) | (Psychologist.username == login)
+        ).first()
+        
+        if not psychologist or not psychologist.check_password(password):
+            raise InvalidCredentialsError('Invalid login credentials')
+            
+        if not psychologist.is_verified:
+            raise InvalidCredentialsError('Please verify your email first. Check your inbox for the verification email.')
+            
+            
+        # Create access token
+        access_token = create_access_token(
+            identity=str(psychologist.id),
+            expires_delta=timedelta(days=7),
+            additional_claims={
+                'email': psychologist.email,
+                'username': psychologist.username,
+                'role': 'psychologist'
+            }
+        )
+        
+        return {
+            'message': 'Login successful',
+            'access_token': access_token,
+            'psychologist': psychologist.to_dict(),
+            'redirect': url_for('psychologist.appointments')
+        }, 200
+        
+    except ValidationError as e:
+        return {'error': str(e)}, 400
+    except InvalidCredentialsError as e:
+        return {'error': str(e)}, 401
+    except Exception as e:
+        return {'error': str(e)}, 500
+    
+def handle_psychologist_logout():
+    try:
+        # Create response data
+        response_data = {
+            'message': 'Logout successful',
+            'redirect': url_for('auth.landing_page')  # Redirect to the landing page after logout
+        }
+        
+        # Create the response object
+        response = jsonify(response_data)
+        
+        # Clear JWT cookies
+        unset_jwt_cookies(response)
+        
+        # Add cache prevention headers
+        response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+        
+        return response
+        
+    except Exception as e:
+        current_app.logger.error(f"Psychologist logout error: {str(e)}")
+        return jsonify({'error': 'Failed to logout'}), 500
+    
+    
+def resend_psychologist_otp():
+    try:
+        data = request.get_json()
+        validate_required_fields(data, ['email'])
+        
+        # Check if psychologist exists
+        psychologist = Psychologist.query.filter_by(email=data['email']).first()
+        if not psychologist:
+            raise NotFoundError('Psychologist not found')
+        
+        # Delete existing OTPs
+        OTP.query.filter_by(email=data['email'], otp_type='registration').delete()
+        db.session.commit()
+        
+        # Create new OTP
+        otp_code = create_otp_record(data['email'], otp_type='registration')
+        
+        # Send OTP email
+        if not send_otp_email(data['email'], otp_code):
+            raise Exception('Failed to send OTP email')
+            
+        return jsonify({'message': 'New OTP sent successfully'}), 200
+        
+    except ValidationError as e:
+        return jsonify({'error': str(e)}), 400
+    except NotFoundError as e:
+        return jsonify({'error': str(e)}), 404
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500

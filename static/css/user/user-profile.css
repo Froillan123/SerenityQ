@@ -681,3 +681,61 @@ body {
         gap: 0;
     }
 }
+
+/* Add this to your user-profile.css file */
+/* Custom Alert Styles */
+.custom-alert {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    max-width: 350px;
+    width: 100%;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    transform: translateX(150%);
+    transition: transform 0.3s ease-in-out;
+    z-index: 1000;
+}
+
+.custom-alert.show {
+    transform: translateX(0);
+}
+
+.custom-alert.success {
+    background-color: var(--success);
+    color: white;
+}
+
+.custom-alert.error {
+    background-color: var(--error);
+    color: white;
+}
+
+.custom-alert.info {
+    background-color: var(--primary);
+    color: white;
+}
+
+.custom-alert-icon {
+    margin-right: 15px;
+    font-size: 24px;
+}
+
+.custom-alert-content {
+    flex: 1;
+}
+
+.custom-alert-close {
+    margin-left: 15px;
+    cursor: pointer;
+    font-size: 20px;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.custom-alert-close:hover {
+    opacity: 1;
+}

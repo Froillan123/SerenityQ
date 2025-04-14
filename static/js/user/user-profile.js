@@ -40,6 +40,51 @@ document.addEventListener('DOMContentLoaded', function() {
     async function init() {
         await updateProfileUI();
         setupEventListeners();
+        setupCustomAlert();
+    }
+
+    // Custom Alert System
+    function setupCustomAlert() {
+        const alertContainer = document.createElement('div');
+        alertContainer.id = 'customAlertContainer';
+        document.body.appendChild(alertContainer);
+    }
+
+    function showAlert(message, type = 'info', duration = 5000) {
+        const alertContainer = document.getElementById('customAlertContainer');
+        const alert = document.createElement('div');
+        alert.className = `custom-alert ${type}`;
+        
+        const iconMap = {
+            'success': 'fa-check-circle',
+            'error': 'fa-exclamation-circle',
+            'info': 'fa-info-circle'
+        };
+        
+        alert.innerHTML = `
+            <i class="fas ${iconMap[type]} custom-alert-icon"></i>
+            <div class="custom-alert-content">${message}</div>
+            <div class="custom-alert-close">&times;</div>
+        `;
+        
+        const closeBtn = alert.querySelector('.custom-alert-close');
+        closeBtn.addEventListener('click', () => {
+            alert.remove();
+        });
+        
+        alertContainer.appendChild(alert);
+        
+        // Trigger reflow to enable animation
+        void alert.offsetWidth;
+        
+        alert.classList.add('show');
+        
+        if (duration) {
+            setTimeout(() => {
+                alert.classList.remove('show');
+                setTimeout(() => alert.remove(), 300);
+            }, duration);
+        }
     }
 
     // Fetch user profile from API
@@ -61,6 +106,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return await response.json();
         } catch (error) {
             console.error('Error fetching profile:', error);
+            showAlert('Failed to load profile data', 'error');
             throw error;
         }
     }
@@ -100,7 +146,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
         } catch (error) {
             console.error('Error updating profile UI:', error);
-            alert('Failed to load profile data. Please try again.');
+            showAlert('Failed to load profile data', 'error');
         }
     }
 
@@ -133,7 +179,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('editPhone').value = profileData.phone;
                 document.getElementById('editDob').value = profileData.dob ? 
                     new Date(profileData.dob).toISOString().split('T')[0] : '';
-                document.getElementById('editGender').value = profileData.gender;
+                    const genderSelect = document.getElementById('editGender');
+                    const userGender = profileData.gender
+                    if (userGender) {
+                        // Normalize the case for comparison
+                        const normalizedUserGender = userGender.trim().toLowerCase();
+                        
+                        // Find matching option (case-insensitive)
+                        for (let option of genderSelect.options) {
+                            if (option.value.trim().toLowerCase() === normalizedUserGender) {
+                                option.selected = true;
+                                break;
+                            }
+                        }
+                    } else {
+                        genderSelect.value = '';
+                    }
                 
                 editProfileModal.style.display = 'flex';
             });
@@ -185,12 +246,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         throw new Error(data.error || 'Failed to update profile');
                     }
                     
-                    await updateProfileUI();
                     editProfileModal.style.display = 'none';
-                    alert('Profile updated successfully!');
+                    showAlert('Profile updated successfully!', 'success');
+                    setTimeout(() => location.reload(), 1500);
                 } catch (error) {
                     console.error('Error updating profile:', error);
-                    alert(error.message || 'Failed to update profile');
+                    showAlert(error.message || 'Failed to update profile', 'error');
                 }
             });
         }
@@ -217,12 +278,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         throw new Error('Failed to update about section');
                     }
                     
-                    await updateProfileUI();
                     editAboutModal.style.display = 'none';
-                    alert('About section updated successfully!');
+                    showAlert('About section updated successfully!', 'success');
+                    setTimeout(() => location.reload(), 1500);
                 } catch (error) {
                     console.error('Error updating about section:', error);
-                    alert('Failed to update about section');
+                    showAlert('Failed to update about section', 'error');
                 }
             });
         }
@@ -256,38 +317,38 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
-           // Image Upload Handler
-    if (saveImageBtn) {
-        saveImageBtn.addEventListener('click', async () => {
-            const file = profileImageUpload.files[0];
-            if (!file) return;
-            
-            const formData = new FormData();
-            formData.append('profile_picture', file);
-            
-            try {
-                const response = await fetch('/user/api/profile/picture', {
-                    method: 'POST',
-                    credentials: 'include',
-                    body: formData
-                });
+        // Image Upload Handler
+        if (saveImageBtn) {
+            saveImageBtn.addEventListener('click', async () => {
+                const file = profileImageUpload.files[0];
+                if (!file) return;
                 
-                const data = await response.json();
+                const formData = new FormData();
+                formData.append('profile_picture', file);
                 
-                if (!response.ok) {
-                    throw new Error(data.error || 'Failed to update profile picture');
+                try {
+                    const response = await fetch('/user/api/profile/picture', {
+                        method: 'POST',
+                        credentials: 'include',
+                        body: formData
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (!response.ok) {
+                        throw new Error(data.error || 'Failed to update profile picture');
+                    }
+                    
+                    imageUploadModal.style.display = 'none';
+                    resetImageUpload();
+                    showAlert('Profile picture updated successfully!', 'success');
+                    setTimeout(() => location.reload(), 1500);
+                } catch (error) {
+                    console.error('Error updating profile picture:', error);
+                    showAlert(error.message || 'Failed to update profile picture', 'error');
                 }
-                
-                await updateProfileUI();
-                imageUploadModal.style.display = 'none';
-                resetImageUpload();
-                alert('Profile picture updated successfully!');
-            } catch (error) {
-                console.error('Error updating profile picture:', error);
-                alert(error.message || 'Failed to update profile picture');
-            }
-        });
-    }
+            });
+        }
 
         // Password Change
         if (changePasswordBtn) {
@@ -305,7 +366,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const confirmPassword = document.getElementById('confirmPassword').value;
                 
                 if (newPassword !== confirmPassword) {
-                    alert('New passwords do not match');
+                    showAlert('New passwords do not match', 'error');
                     return;
                 }
                 
@@ -329,12 +390,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         throw new Error(data.error || 'Failed to change password');
                     }
                     
-                    alert('Password changed successfully');
+                    showAlert('Password changed successfully', 'success');
                     changePasswordModal.style.display = 'none';
                     passwordForm.reset();
+                    setTimeout(() => location.reload(), 1500);
                 } catch (error) {
                     console.error('Error changing password:', error);
-                    alert(error.message || 'Failed to change password');
+                    showAlert(error.message || 'Failed to change password', 'error');
                 }
             });
         }
