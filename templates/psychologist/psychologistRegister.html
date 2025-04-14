@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <title>Psychologist Register | SerenityQ</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
         :root {
             --primary: #5D5FEF;
@@ -543,7 +545,7 @@
                 </div>
             </div>
 
-            <form id="registrationForm" class="registration-form">
+            <form id="registrationForm" class="registration-form" enctype="multipart/form-data">
                 <!-- Step 1: Account Information -->
                 <div class="form-step active" id="step1">
                     <div class="form-row">
@@ -560,6 +562,16 @@
                     <div class="form-group">
                         <label for="email">Email Address</label>
                         <input type="email" id="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" required>
                     </div>
 
                     <div class="form-row">
@@ -746,17 +758,19 @@
                 </div>
 
                 <!-- Success Message (hidden initially) -->
-                <div class="form-step" id="successStep">
-                    <div class="success-message">
-                        <i class="fas fa-check-circle"></i>
-                        <h2>Registration Successful!</h2>
-                        <p>Thank you for joining SerenityQ as a mental health professional. Our team will review your application and verify your credentials within 2-3 business days. You'll receive an email once your account is approved.</p>
-                        <button type="button" class="btn btn-primary" onclick="window.location.href='pyschologistLogin.html'">Go to Login</button>
+                    <div class="form-step" id="successStep">
+                        <div class="success-message">
+                            <i class="fas fa-check-circle"></i>
+                            <h2>Registration Submitted Successfully!</h2>
+                            <p>Thank you for joining SerenityQ. Your account is pending admin approval. You'll receive an email once your account is approved. This process typically takes 1-2 business days.</p>
+                            <a href="{{ url_for('psychologist.psychologist_login') }}" class="btn btn-primary">Go to Login</a>
+                        </div>
                     </div>
-                </div>
             </form>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         // Current step tracking
@@ -764,11 +778,7 @@
         const totalSteps = 3;
         
         // Form data object to store all inputs
-        const formData = {
-            account: {},
-            professional: {},
-            verification: {}
-        };
+        const formData = new FormData();
 
         // Initialize the page
         document.addEventListener('DOMContentLoaded', function() {
@@ -855,30 +865,87 @@
 
         // Navigation between steps
         function nextStep(step) {
-            // Validate current step before proceeding
-            if (!validateStep(step)) return;
+    if (!validateStep(step)) return;
+    
+    if (step === 1) {
+        // Collect basic info
+        formData.append('first_name', document.getElementById('firstName').value.trim());
+        formData.append('last_name', document.getElementById('lastName').value.trim());
+        formData.append('username', document.getElementById('username').value.trim());
+        formData.append('email', document.getElementById('email').value.trim());
+        formData.append('phone', document.getElementById('phone').value.trim());
+        formData.append('password', document.getElementById('password').value);
+        
+        // Proceed to step 2
+        document.getElementById(`step${step}`).classList.remove('active');
+        document.getElementById(`step${step}-indicator`).classList.remove('active');
+        currentStep = step + 1;
+        document.getElementById(`step${currentStep}`).classList.add('active');
+        document.getElementById(`step${currentStep}-indicator`).classList.add('active');
+        updateBackButton();
+    } 
+    else if (step === 2) {
+        // Collect professional info
+        formData.append('license_number', document.getElementById('licenseNumber').value.trim());
+        formData.append('primary_specialty', document.getElementById('primarySpecialty').value);
+        formData.append('years_experience', document.getElementById('yearsExperience').value);
+        formData.append('bio', document.getElementById('bio').value.trim());
+        
+        // Collect specialties
+        document.querySelectorAll('input[name="specialties"]:checked').forEach(checkbox => {
+            formData.append('specialties', checkbox.value);
+        });
+        
+        // Add files to formData
+        const licenseProof = document.getElementById('licenseProof').files[0];
+        const idProof = document.getElementById('idProof').files[0];
+        formData.append('license_proof', licenseProof);
+        formData.append('id_proof', idProof);
+        
+        // Submit the form data to the backend
+        submitRegistrationForm();
+    }
+}
+
+
+function submitRegistrationForm() {
+    Swal.fire({
+        title: 'Submitting Registration',
+        html: 'Please wait while we process your information...',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
             
-            // Save current step data
-            saveStepData(step);
-            
-            // Hide current step
-            document.getElementById(`step${step}`).classList.remove('active');
-            document.getElementById(`step${step}-indicator`).classList.remove('active');
-            
-            // Show next step
-            currentStep = step + 1;
-            document.getElementById(`step${currentStep}`).classList.add('active');
-            document.getElementById(`step${currentStep}-indicator`).classList.add('active');
-            
-            // For verification step, show the email being verified
-            if (currentStep === 3) {
-                document.getElementById('emailToVerify').textContent = formData.account.email;
-                // In a real app, this would send an actual OTP to the email
-            }
-            
-            // Update back button state
-            updateBackButton();
+            fetch('/psychologist/register', {
+                method: 'POST',
+                body: formData  // Send the FormData object directly
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw err; });
+                }
+                return response.json();
+            })
+            .then(data => {
+                Swal.close();
+                if (data.error) {
+                    Swal.fire('Error', data.error, 'error');
+                } else {
+                    // Proceed to verification step
+                    document.getElementById(`step2`).classList.remove('active');
+                    document.getElementById(`step2-indicator`).classList.remove('active');
+                    currentStep = 3;
+                    document.getElementById(`step${currentStep}`).classList.add('active');
+                    document.getElementById(`step${currentStep}-indicator`).classList.add('active');
+                    document.getElementById('emailToVerify').textContent = formData.get('email');
+                }
+            })
+            .catch(error => {
+                Swal.fire('Error', error.error || 'Registration failed. Please try again.', 'error');
+            });
         }
+    });
+}
 
         function prevStep(step) {
             // Hide current step
@@ -907,40 +974,49 @@
             });
         }
 
-        // Validate current step
         function validateStep(step) {
-            if (step === 1) {
-                // Validate account info
-                const firstName = document.getElementById('firstName').value.trim();
-                const lastName = document.getElementById('lastName').value.trim();
-                const email = document.getElementById('email').value.trim();
-                const password = document.getElementById('password').value;
-                const confirmPassword = document.getElementById('confirmPassword').value;
-                
-                if (!firstName || !lastName || !email || !password || !confirmPassword) {
-                    alert('Please fill in all required fields');
-                    return false;
-                }
-                
-                if (password !== confirmPassword) {
-                    alert('Passwords do not match');
-                    return false;
-                }
-                
-                if (password.length < 8) {
-                    alert('Password must be at least 8 characters long');
-                    return false;
-                }
-                
-                // Simple email validation
-                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                    alert('Please enter a valid email address');
-                    return false;
-                }
-                
-                return true;
-            } else if (step === 2) {
-                // Validate professional details
+    if (step === 1) {
+        const firstName = document.getElementById('firstName').value.trim();
+        const lastName = document.getElementById('lastName').value.trim();
+        const username = document.getElementById('username').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        
+        if (!firstName || !lastName || !username || !email || !phone || !password || !confirmPassword) {
+            Swal.fire('Error', 'Please fill in all required fields', 'error');
+            return false;
+        }
+        
+        if (password !== confirmPassword) {
+            Swal.fire('Error', 'Passwords do not match', 'error');
+            return false;
+        }
+        
+        if (password.length < 8) {
+            Swal.fire('Error', 'Password must be at least 8 characters long', 'error');
+            return false;
+        }
+        
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            Swal.fire('Error', 'Please enter a valid email address', 'error');
+            return false;
+        }
+        
+        if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+            Swal.fire('Error', 'Username can only contain letters, numbers and underscores', 'error');
+            return false;
+        }
+        
+        if (!/^\+?[0-9\s\-\(\)]{10,}$/.test(phone)) {
+            Swal.fire('Error', 'Please enter a valid phone number', 'error');
+            return false;
+        }
+        
+        return true;
+    }
+            else if (step === 2) {
                 const licenseNumber = document.getElementById('licenseNumber').value.trim();
                 const licenseProof = document.getElementById('licenseProof').files[0];
                 const idProof = document.getElementById('idProof').files[0];
@@ -948,15 +1024,31 @@
                 const bio = document.getElementById('bio').value.trim();
                 
                 if (!licenseNumber || !licenseProof || !idProof || !primarySpecialty || !bio) {
-                    alert('Please fill in all required fields and upload required documents');
+                    Swal.fire('Error', 'Please fill in all required fields and upload required documents', 'error');
                     return false;
                 }
+                
+                // Add professional data to FormData
+                formData.append('license_number', licenseNumber);
+                formData.append('license_proof', licenseProof);
+                formData.append('id_proof', idProof);
+                formData.append('primary_specialty', primarySpecialty);
+                
+                const specialties = [];
+                document.querySelectorAll('input[name="specialties"]:checked').forEach(checkbox => {
+                    specialties.push(checkbox.value);
+                });
+                formData.append('specialties', specialties.join(','));
+                
+                formData.append('years_experience', document.getElementById('yearsExperience').value);
+                formData.append('bio', bio);
                 
                 return true;
             }
             
             return true;
         }
+
 
         // Save data from current step
         function saveStepData(step) {
@@ -987,40 +1079,121 @@
 
         // Resend OTP
         function resendOTP() {
-            alert('A new verification code has been sent to your email. (Demo purposes only)');
+            sendOTP();
             return false;
         }
 
-        // Verify account and complete registration
         function verifyAccount() {
-            // In a real app, this would verify the OTP against what was sent to the user's email
-            const otpInputs = document.querySelectorAll('.otp-input');
-            let otp = '';
-            otpInputs.forEach(input => {
-                otp += input.value;
+    const otpInputs = document.querySelectorAll('.otp-input');
+    let otp = '';
+    otpInputs.forEach(input => {
+        otp += input.value;
+    });
+    
+    if (otp.length !== 6) {
+        Swal.fire('Error', 'Please enter the complete 6-digit verification code', 'error');
+        return;
+    }
+    
+    // Get the email from form
+    const email = formData.get('email');
+    
+    Swal.fire({
+        title: 'Verifying Account',
+        html: 'Please wait while we verify your account...',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+            
+            fetch('/psychologist/verify-otp', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: email,
+                    otp_code: otp
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw err; });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    Swal.fire('Error', data.error, 'error');
+                } else {
+                    // Hide verification step
+                    document.getElementById('step3').classList.remove('active');
+                    document.getElementById('step3-indicator').classList.remove('active');
+                    
+                    // Show success message
+                    document.getElementById('successStep').classList.add('active');
+                    document.getElementById('step3-indicator').classList.add('completed');
+                    
+                    Swal.fire(
+                        'Verification Successful!',
+                        'You can now login to your account.',
+                        'success'
+                    ).then(() => {
+                        if (data.redirect) {
+                            window.location.href = data.redirect;
+                        }
+                    });
+                }
+            })
+            .catch(error => {
+                Swal.fire('Error', error.error || 'Verification failed. Please try again.', 'error');
             });
-            
-            if (otp.length !== 6) {
-                alert('Please enter the complete 6-digit verification code');
-                return;
-            }
-            
-            // For demo purposes, any 6-digit code will work
-            if (/^\d{6}$/.test(otp)) {
-                // Hide verification step
-                document.getElementById('step3').classList.remove('active');
-                document.getElementById('step3-indicator').classList.remove('active');
-                
-                // Show success message
-                document.getElementById('successStep').classList.add('active');
-                document.getElementById('step3-indicator').classList.add('completed');
-                
-                // In a real app, you would submit the form data to your backend here
-                console.log('Registration data:', formData);
-            } else {
-                alert('Please enter a valid 6-digit verification code');
-            }
         }
+    });
+}
+
+function sendOTP() {
+    const email = formData.get('email');
+    
+    Swal.fire({
+        title: 'Sending OTP',
+        html: 'Please wait while we send a new verification code...',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+            
+            fetch('/psychologist/resend-otp', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: email
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw err; });
+                }
+                return response.json();
+            })
+            .then(data => {
+                Swal.fire(
+                    'OTP Sent!',
+                    'A new verification code has been sent to your email.',
+                    'success'
+                );
+            })
+            .catch(error => {
+                Swal.fire('Error', error.error || 'Failed to resend OTP. Please try again.', 'error');
+            });
+        }
+    });
+}
+
+function resendOTP() {
+    sendOTP();
+    return false;
+}
     </script>
 </body>
 </html>

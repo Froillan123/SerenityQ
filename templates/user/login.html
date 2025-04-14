@@ -42,7 +42,6 @@
             position: relative;
         }
 
-
         .auth-card {
             background: white;
             border-radius: 16px;
@@ -327,19 +326,119 @@
             margin: 16px 0;
         }
 
-        .spinner {
-            width: 24px;
-            height: 24px;
-            border: 3px solid rgba(93, 95, 239, 0.2);
-            border-radius: 50%;
-            border-top-color: var(--primary);
-            animation: spin 1s ease-in-out infinite;
-            display: inline-block;
-            vertical-align: middle;
+
+        /* Custom Alert Styles */
+        .alert-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            max-width: 350px;
+            width: 100%;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .alert {
+            padding: 16px 20px;
+            border-radius: 10px;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+            transform: translateX(150%);
+            transition: transform 0.4s ease;
+            background: white;
+            border-left: 4px solid;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .alert.show {
+            transform: translateX(0);
+        }
+
+        .alert.success {
+            border-left-color: var(--success);
+        }
+
+        .alert.error {
+            border-left-color: var(--error);
+        }
+
+        .alert-icon {
+            margin-right: 12px;
+            font-size: 22px;
+        }
+
+        .alert.success .alert-icon {
+            color: var(--success);
+        }
+
+        .alert.error .alert-icon {
+            color: var(--error);
+        }
+
+        .alert-content {
+            flex: 1;
+        }
+
+        .alert-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+            font-size: 15px;
+        }
+
+        .alert-message {
+            font-size: 14px;
+            color: var(--dark);
+            opacity: 0.9;
+        }
+
+        .alert-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--gray);
+            font-size: 16px;
+            margin-left: 12px;
+            transition: var(--transition);
+        }
+
+        .alert-close:hover {
+            color: var(--dark);
+        }
+
+        .alert-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            width: 100%;
+        }
+
+        .alert-progress::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            height: 100%;
+            width: 100%;
+        }
+
+        .alert.success .alert-progress::before {
+            background-color: var(--success);
+        }
+
+        .alert.error .alert-progress::before {
+            background-color: var(--error);
+        }
+
+        .alert.progressing .alert-progress::before {
+            animation: progress 3s linear forwards;
+        }
+
+        @keyframes progress {
+            0% { width: 100%; }
+            100% { width: 0%; }
         }
 
         @media (max-width: 576px) {
@@ -360,6 +459,12 @@
                 height: 50px;
                 font-size: 20px;
             }
+
+            .alert-container {
+                max-width: calc(100% - 40px);
+                right: 20px;
+                left: 20px;
+            }
         }
 
         /* Animation classes */
@@ -373,11 +478,12 @@
             30%, 50%, 70% { transform: translateX(-4px); }
             40%, 60% { transform: translateX(4px); }
         }
-
-
     </style>
 </head>
 <body>
+    <!-- Alert Container -->
+    <div class="alert-container" id="alert-container"></div>
+
     <div class="auth-card floating">
         <div class="auth-header">
             <div class="logo">SQ</div>
@@ -386,16 +492,15 @@
         </div>
         
         <div class="auth-content">
-            <div class="success-message" id="success-message"></div>
-            
             <form id="login-form" action="{{ url_for('auth.login_api') }}" method="POST" novalidate>
                 <div class="form-group">
-                    <label for="email">Email Address</label>
-                    <i class="fas fa-envelope input-icon"></i>
-                    <input type="email" id="email" name="email" class="input-with-icon" required
-                           placeholder="your@email.com" autocomplete="username">
-                    <div class="error-message" id="email-error"></div>
+                    <label for="login">Email or Username</label>
+                    <i class="fas fa-user input-icon"></i>
+                    <input type="text" id="login" name="login" class="input-with-icon" required
+                           placeholder="your@email.com or username" autocomplete="username">
+                    <div class="error-message" id="login-error"></div>
                 </div>
+                
                 
                 <div class="form-group">
                     <label for="password">Password</label>
@@ -414,7 +519,6 @@
                     <span id="btn-text">Sign In</span>
                     <div class="spinner" id="spinner"></div>
                 </button>
-                
             </form>
         </div>
         
@@ -424,23 +528,71 @@
     </div>
 
     <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const loginForm = document.getElementById('login-form');
+        // Alert system
+        function showAlert(type, title, message, duration = 3000) {
+            const container = document.getElementById('alert-container');
+            const alertId = 'alert-' + Date.now();
+            
+            const alert = document.createElement('div');
+            alert.className = `alert ${type}`;
+            alert.id = alertId;
+            alert.innerHTML = `
+                <div class="alert-icon">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                </div>
+                <div class="alert-content">
+                    <div class="alert-title">${title}</div>
+                    <div class="alert-message">${message}</div>
+                </div>
+                <button class="alert-close" onclick="removeAlert('${alertId}')">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="alert-progress"></div>
+            `;
+            
+            container.appendChild(alert);
+            
+            // Show alert
+            setTimeout(() => {
+                alert.classList.add('show', 'progressing');
+            }, 10);
+            
+            // Auto remove after duration if set
+            if (duration > 0) {
+                setTimeout(() => {
+                    removeAlert(alertId);
+                }, duration);
+            }
+            
+            return alertId;
+        }
+        
+        function removeAlert(id) {
+            const alert = document.getElementById(id);
+            if (alert) {
+                alert.classList.remove('show');
+                setTimeout(() => {
+                    alert.remove();
+                }, 400);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('login-form');
     if (loginForm) {
         loginForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const email = document.getElementById('email').value.trim();
+            const login = document.getElementById('login').value.trim();
             const password = document.getElementById('password').value;
-            const emailError = document.getElementById('email-error');
+            const loginError = document.getElementById('login-error');
             const passwordError = document.getElementById('password-error');
             const submitBtn = document.getElementById('submit-btn');
             const btnText = document.getElementById('btn-text');
             const spinner = document.getElementById('spinner');
-            const successMessage = document.getElementById('success-message');
             
             // Reset UI
-            [emailError, passwordError].forEach(el => {
+            [loginError, passwordError].forEach(el => {
                 el.style.display = 'none';
                 el.textContent = '';
             });
@@ -450,15 +602,10 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Validate inputs
             let isValid = true;
-            if (!email) {
-                emailError.textContent = 'Email is required';
-                emailError.style.display = 'block';
-                document.getElementById('email').classList.add('input-error');
-                isValid = false;
-            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                emailError.textContent = 'Please enter a valid email address';
-                emailError.style.display = 'block';
-                document.getElementById('email').classList.add('input-error');
+            if (!login) {
+                loginError.textContent = 'Email or username is required';
+                loginError.style.display = 'block';
+                document.getElementById('login').classList.add('input-error');
                 isValid = false;
             }
             
@@ -488,7 +635,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ email, password }),
+                    body: JSON.stringify({ login, password }),
                     credentials: 'include'  // Important for cookies
                 });
                 
@@ -498,19 +645,25 @@ document.addEventListener('DOMContentLoaded', function() {
                     throw new Error(data.error || 'Login failed');
                 }
                 
-                // Show success and redirect
-                successMessage.textContent = 'Login successful! Redirecting...';
-                successMessage.style.display = 'block';
+                // Show success alert
+                showAlert('success', 'Login Successful', 'Redirecting to your dashboard...');
                 
                 // Use the redirect URL from the server response
                 if (data.redirect) {
-                    window.location.href = data.redirect;
+                    setTimeout(() => {
+                        window.location.href = data.redirect;
+                    }, 2000);
                 } else {
                     // Fallback redirect
-                    window.location.href = '/user/ai';
+                    setTimeout(() => {
+                        window.location.href = '/user/ai';
+                    }, 2000);
                 }
                 
             } catch (error) {
+                // Show error alert
+                showAlert('error', 'Login Failed', error.message);
+                
                 passwordError.textContent = error.message;
                 passwordError.style.display = 'block';
                 document.getElementById('password').classList.add('input-error');
@@ -525,21 +678,21 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    
-    // Password toggle functionality
-    const togglePassword = document.getElementById('toggle-password');
-    const passwordInput = document.getElementById('password');
-    if (togglePassword && passwordInput) {
-        togglePassword.addEventListener('click', function() {
-            const icon = this.querySelector('i');
-            const isPassword = passwordInput.type === 'password';
-            passwordInput.type = isPassword ? 'text' : 'password';
-            icon.classList.toggle('fa-eye', !isPassword);
-            icon.classList.toggle('fa-eye-slash', isPassword);
-            this.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
+            
+            // Password toggle functionality
+            const togglePassword = document.getElementById('toggle-password');
+            const passwordInput = document.getElementById('password');
+            if (togglePassword && passwordInput) {
+                togglePassword.addEventListener('click', function() {
+                    const icon = this.querySelector('i');
+                    const isPassword = passwordInput.type === 'password';
+                    passwordInput.type = isPassword ? 'text' : 'password';
+                    icon.classList.toggle('fa-eye', !isPassword);
+                    icon.classList.toggle('fa-eye-slash', isPassword);
+                    this.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
+                });
+            }
         });
-    }
-});
     </script>
 </body>
 </html>

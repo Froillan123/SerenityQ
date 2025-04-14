@@ -1,9 +1,10 @@
 from flask import Blueprint, request, jsonify, render_template
 from models import User
 from imports import *
+import secrets
 from werkzeug.security import check_password_hash
 from controllers import *
-from auth_utils import login_required
+from auth_utils import login_required, admin_required, psychologist_required
 from flask import request
 from flask_jwt_extended import get_jwt_identity, set_access_cookies, unset_jwt_cookies
 
@@ -58,8 +59,6 @@ def inject_current_user():
     except:
         return {'current_user': None}
 
-
-
 @user_bp.route('/ai')
 @login_required
 def ai():
@@ -68,7 +67,9 @@ def ai():
 @user_bp.route('/dashboard')
 @login_required
 def dashboard():
-    return render_template('user/dashboard.html')
+    current_user_id = get_jwt_identity()
+    user_data = get_user_profile(current_user_id)
+    return render_template('user/dashboard.html', user=user_data)
 
 @user_bp.route('/appointment')
 @login_required
@@ -185,51 +186,88 @@ def admin_count():
 
 @admin_bp.route('/logout', methods=['POST'])
 def admin_logout_api():
-    response = jsonify({'msg': 'Admin logout successful'})
-    unset_jwt_cookies(response)
-    return response
+    return admin_logout()
 
 @admin_bp.route('/dashboard')
+@admin_required  # Only admins can access
 def admin_dashboard():
     return render_template('admin/dashboard.html')
 
 @admin_bp.route('/users')
+@admin_required  # Only admins can access
 def admin_users():
     return render_template('admin/admin_user.html')
 
 @admin_bp.route('/psychologists')
+@admin_required  # Only admins can access
 def admin_psychologists():
     return render_template('admin/admin_psychologist.html')
 
 @admin_bp.route('/settings')
+@admin_required  # Only admins can access
 def admin_settings():
     return render_template('admin/admin_settings.html')
 
 # Psychologist Routes
-@psychologist_bp.route('/login')
+@psychologist_bp.route('/login', methods=['GET'])
 def psychologist_login():
-    return render_template('psychologist/psychologistLogin.html')
+    return render_template('psychologist/psychologistLogin.html')  # Display the login page
 
-@psychologist_bp.route('/register')
+
+@psychologist_bp.route('/login', methods=['POST'])
+def psychologist_login_api():
+    data = request.get_json()
+    try:
+        response, status_code = handle_psychologist_login(data)  # Pass the data
+        resp = jsonify(response)
+        if status_code == 200:
+            set_access_cookies(resp, response['access_token'])
+        return resp, status_code
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@psychologist_bp.route('/register', methods=['GET', 'POST'])
 def psychologist_register():
-    return render_template('psychologist/psychologistRegister.html')
+    if request.method == 'POST':
+        return handle_psychologist_registration()  # Handle the registration logic
+    return render_template('psychologist/psychologistRegister.html')  # Display the registration form
 
-@psychologist_bp.route('/appointments')
+@psychologist_bp.route('/verify-otp', methods=['POST'])
+def psychologist_otp_verification():
+    return verify_psychologist_otp()
+
+@psychologist_bp.route('/resend-otp', methods=['POST'])
+def psychologist_resend_otp():
+    return resend_psychologist_otp()
+
+@psychologist_bp.route('/appointments', endpoint='appointments')
+@psychologist_required
 def psychologist_appointments():
     return render_template('psychologist/psychologistappointment.html')
 
-@psychologist_bp.route('/dashboard')
+@psychologist_bp.route('/dashboard', endpoint='dashboard')
+@psychologist_required
 def psychologist_dashboard():
     return render_template('psychologist/psychologistdashboard.html')
 
-@psychologist_bp.route('/sessions')
+@psychologist_bp.route('/sessions', endpoint='sessions')
+@psychologist_required
 def psychologist_sessions():
     return render_template('psychologist/psychologistSession.html')
 
-@psychologist_bp.route('/reports')
+@psychologist_bp.route('/reports', endpoint='reports')
+@psychologist_required
 def psychologist_reports():
-    return render_template('psychologist/pyschologistreport.html')
+    return render_template('psychologist/psychologistreport.html')
 
-@psychologist_bp.route('/settings')
+@psychologist_bp.route('/settings', endpoint='settings')
+@psychologist_required
 def psychologist_settings():
     return render_template('psychologist/psychologistsettings.html')
+
+@psychologist_bp.route('/logout')
+@psychologist_required
+def psychologist_logout():
+    response = make_response(redirect(url_for('auth.landing_page')))
+    unset_jwt_cookies(response)
+    return response

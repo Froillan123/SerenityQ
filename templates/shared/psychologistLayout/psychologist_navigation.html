@@ -52,11 +52,12 @@
                     </a>
                 </li>
                 <li>
-                    <a href="{{ url_for('auth.logout') }}">
+                    <a href="{{ url_for('psychologist.psychologist_logout') }}">
                         <i class='bx bx-log-out icon'></i>
                         <span>Log Out</span>
                     </a>
                 </li>
+                
             </ul>
         </div>
 
@@ -101,19 +102,19 @@
         const sidebar = document.getElementById('sidebar');
         const toggleSidebar = document.getElementById('toggleSidebar');
         const closeSidebar = document.getElementById('closeSidebar');
-
+    
         if (toggleSidebar) {
             toggleSidebar.addEventListener('click', () => {
                 sidebar.classList.toggle('active');
             });
         }
-
+    
         if (closeSidebar) {
             closeSidebar.addEventListener('click', () => {
                 sidebar.classList.remove('active');
             });
         }
-
+    
         // Close sidebar when clicking outside on desktop
         document.addEventListener('click', (event) => {
             if (window.innerWidth > 992 && 
@@ -122,7 +123,7 @@
                 sidebar.classList.remove('active');
             }
         });
-
+    
         // Handle window resize
         window.addEventListener('resize', () => {
             if (window.innerWidth > 992) {
@@ -130,7 +131,7 @@
             }
         });
     </script>
-    <script src="{{ url_for('static', filename='js/logout/logout.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/logout/psychologistlogout.js') }}"></script>
     {% endblock %}
 </body>
 </html>

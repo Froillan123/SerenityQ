@@ -306,3 +306,22 @@ body {
         justify-content: space-around;
     }
 }
+
+
+.logout-button {
+    background: none;
+    border: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px;
+    text-align: left;
+}
+
+.logout-button:hover {
+    color: var(--primary-color); /* Use your theme's primary color */
+}

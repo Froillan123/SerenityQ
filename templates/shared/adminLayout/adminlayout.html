@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SerenityQ Admin Dashboard</title>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/admindashboard.css') }}">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -11,22 +14,6 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <!-- Loader -->
-  <div class="loader-overlay" id="loader">
-    <div class="dna-loader">
-      <span></span>
-      <span></span>
-      <span></span>
-      <span></span>
-      <span></span>
-      <span></span>
-      <span></span>
-      <span></span>
-      <span></span>
-      <span></span>
-    </div>
-    <div class="loader-text">Loading Dashboard...</div>
-  </div>
 
   <!-- Sidebar -->
   <div class="sidebar" id="sidebar">
@@ -59,7 +46,7 @@
                <i class='bx bx-cog'></i> Settings
             </a>
         </li>
-      <li><a href="" id="logout-btn"><i class='bx bx-log-out'></i> Logout</a></li>
+        <li><a href="" id="logout-btn"><i class='bx bx-log-out'></i> Logout</a></li>
     </ul>
   </div>
 
@@ -88,10 +75,64 @@
   </div>
 
   <script>
-    // Loader timeout
-    setTimeout(() => {
-      document.getElementById('loader').style.display = 'none';
-    }, 2000);
+
+document.addEventListener('DOMContentLoaded', function() {
+    const logoutBtn = document.getElementById('logout-btn');
+    
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', async function(e) {
+            e.preventDefault();
+            
+            try {
+                const response = await fetch('/admin/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+                    },
+                    credentials: 'include'  // Important for cookies
+                });
+
+                // Check if response is OK before trying to parse JSON
+                if (response.ok) {
+                    // Clear client-side storage
+                    localStorage.removeItem('admin_token');
+                    sessionStorage.removeItem('admin_token');
+                    
+                    // Get the redirect URL from response if available
+                    let redirectUrl = '/admin/login';
+                    try {
+                        const data = await response.json();
+                        if (data.redirect) {
+                            redirectUrl = data.redirect;
+                        }
+                    } catch (e) {
+                        console.log('No JSON in response, using default redirect');
+                    }
+                    
+                    // Force redirect with cache busting
+                    window.location.href = redirectUrl + '?timestamp=' + new Date().getTime();
+                    
+                    // Prevent any further execution
+                    return;
+                } else {
+                    // Handle non-OK responses
+                    try {
+                        const errorData = await response.json();
+                        console.error('Logout failed:', errorData.error || 'Unknown error');
+                        alert(errorData.error || 'Logout failed. Please try again.');
+                    } catch (e) {
+                        console.error('Logout failed:', response.statusText);
+                        alert('Logout failed. Please try again.');
+                    }
+                }
+            } catch (error) {
+                console.error('Error during logout:', error);
+                alert('An error occurred during logout.');
+            }
+        });
+    }
+});
 
     // Toggle sidebar
     const sidebar = document.getElementById('sidebar');
@@ -108,6 +149,13 @@
         menuIcon.classList.add('bx-menu');
       }
     });
+
+      // Prevent back button after logout
+      window.history.pushState(null, null, window.location.href);
+    window.onpopstate = function() {
+        window.history.pushState(null, null, window.location.href);
+    };
+
   </script>
   
   {% block scripts %}
