@@ -6,49 +6,77 @@
     <title>{% block title %}SerenityQ AI{% endblock %}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/user/navbar.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/user/userdashboard.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css">
     {% block extra_css %}{% endblock %}
 </head>
 <body>
     <!-- Header with Navigation -->
-    <header class="header">
-        <a href="{{ url_for('user.ai') }}" class="logo">
-            <i class="fas fa-brain"></i>
-            SerenityQ
-        </a>
-        <div>
-            <nav class="navbar">
-                <ul class="nav-links">
-                    <li><a href="{{ url_for('user.ai') }}" class="nav-link {% if request.path == url_for('user.ai') %}active{% endif %}">
-                        <i class="fas fa-robot"></i><span>AI</span></a></li>
-                    <li><a href="{{ url_for('user.dashboard') }}" class="nav-link {% if request.path == url_for('user.dashboard') %}active{% endif %}">
-                        <i class="fas fa-home"></i><span>Stats</span></a></li>
-                    <li><a href="{{ url_for('user.appointment') }}" class="nav-link {% if request.path == url_for('user.appointment') %}active{% endif %}">
-                        <i class="fas fa-calendar-alt"></i><span>Appointments</span></a></li>
-                    <li><a href="{{ url_for('user.therapist') }}" class="nav-link {% if request.path == url_for('user.therapist') %}active{% endif %}">
-                        <i class="fas fa-user-md"></i><span>Therapists</span></a></li>
-                    <li><a href="{{ url_for('user.booking_history') }}" class="nav-link {% if request.path == url_for('user.booking_history') %}active{% endif %}">
-                        <i class="fas fa-history"></i><span>Booking History</span></a></li>
-                    <li><a href="{{ url_for('user.sessions') }}" class="nav-link {% if request.path == url_for('user.sessions') %}active{% endif %}">
-                        <i class="fas fa-clock"></i><span>Sessions</span></a></li>
-                </ul>
-                
-                <div class="profile" id="profileDropdown">
-                    <img src="{{ url_for('static', filename=current_user.profile_picture) if current_user else url_for('static', filename='images/profile.jpg') }}" 
-                         class="profile-img" 
-                         alt="Profile">
-                    <div class="dropdown-menu">
-                        <a href="{{ url_for('user.user_profile') }}" class="dropdown-item"><i class="fas fa-user"></i> Profile</a>
-                        <a href="{{ url_for('user.notifications') }}" class="dropdown-item"><i class="fas fa-bell"></i> Notifications</a>
-                        <div class="divider"></div>
-                        <a href="" id="logout-btn" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                    </div>
-                </div>
-            </nav>
+<header class="header">
+    <a href="{{ url_for('user.ai') }}" class="logo">
+        <i class="fas fa-brain"></i>
+        SerenityQ
+    </a>
+    
+    <nav class="navbar">
+        <ul class="nav-links">
+            <li>
+                <a href="{{ url_for('user.ai') }}" class="nav-link {% if request.path == url_for('user.ai') %}active{% endif %}">
+                    <i class="fas fa-robot"></i>
+                    <span class="nav-text">AI</span>
+                    <span class="nav-indicator"></span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('user.dashboard') }}" class="nav-link {% if request.path == url_for('user.dashboard') %}active{% endif %}">
+                    <i class="fas fa-home"></i>
+                    <span class="nav-text">Stats</span>
+                    <span class="nav-indicator"></span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('user.appointment') }}" class="nav-link {% if request.path == url_for('user.appointment') %}active{% endif %}">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span class="nav-text">Appointments</span>
+                    <span class="nav-indicator"></span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('user.therapist') }}" class="nav-link {% if request.path == url_for('user.therapist') %}active{% endif %}">
+                    <i class="fas fa-user-md"></i>
+                    <span class="nav-text">Therapists</span>
+                    <span class="nav-indicator"></span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('user.booking_history') }}" class="nav-link {% if request.path == url_for('user.booking_history') %}active{% endif %}">
+                    <i class="fas fa-history"></i>
+                    <span class="nav-text">History</span>
+                    <span class="nav-indicator"></span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('user.sessions') }}" class="nav-link {% if request.path == url_for('user.sessions') %}active{% endif %}">
+                    <i class="fas fa-clock"></i>
+                    <span class="nav-text">Sessions</span>
+                    <span class="nav-indicator"></span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    
+    <div class="profile" id="profileDropdown">
+        <img src="{{ url_for('static', filename=current_user.profile_picture) if current_user else url_for('static', filename='images/profile.jpg') }}" 
+             class="profile-img" 
+             alt="Profile">
+        <div class="dropdown-menu">
+            <a href="{{ url_for('user.user_profile') }}" class="dropdown-item"><i class="fas fa-user"></i> Profile</a>
+            <a href="{{ url_for('user.notifications') }}" class="dropdown-item"><i class="fas fa-bell"></i> Notifications</a>
+            <div class="divider"></div>
+            <a href="" id="logout-btn" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </div>
-    </header>
+    </div>
+</header>
 
     <!-- Bottom Navigation (Mobile Only) -->
     <nav class="bottom-nav">

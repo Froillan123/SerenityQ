@@ -3,6 +3,7 @@ from models import User
 from imports import *
 import secrets
 from werkzeug.security import check_password_hash
+from sqlalchemy import extract, func
 from controllers import *
 from auth_utils import login_required, admin_required, psychologist_required
 from flask import request
@@ -191,13 +192,135 @@ def admin_logout_api():
 @admin_bp.route('/dashboard')
 @admin_required  # Only admins can access
 def admin_dashboard():
-    return render_template('admin/dashboard.html')
+    user_count = User.query.count()
+    return render_template('admin/dashboard.html', user_count=user_count)
 
 @admin_bp.route('/users')
 @admin_required  # Only admins can access
 def admin_users():
     return render_template('admin/admin_user.html')
 
+
+@admin_bp.route('/api/users', methods=['GET'])
+@admin_required
+def get_users():
+    return fetch_user_from_admin()
+    
+    
+@admin_bp.route('/api/users', methods=['POST'])
+@admin_required
+def create_user():
+    return admin_create_user()
+    
+
+@admin_bp.route('/api/users/<int:user_id>', methods=['GET'])
+@admin_required
+def get_user(user_id):
+   return fetch_userbyid_admin(user_id)
+
+@admin_bp.route('/api/users/<int:user_id>', methods=['PUT'])
+@admin_required
+def update_user(user_id):
+    return update_user_controller(user_id)
+
+@admin_bp.route('/api/users/<int:user_id>', methods=['DELETE'])
+@admin_required
+def delete_user(user_id):
+    return delete_user_controller(user_id)
+
+
+@admin_bp.route('/api/users/registration-stats', methods=['GET'])
+@admin_required
+def get_user_registration_stats():
+    try:
+        period = request.args.get('period', 'week')
+        today = datetime.now()
+
+        if period == 'week':
+            # Weekly stats: Mon–Sun of current week
+            monday = today - timedelta(days=today.weekday())
+            days = [(monday + timedelta(days=i)) for i in range(7)]
+
+            labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+            data = []
+
+            for day in days:
+                start = day.replace(hour=0, minute=0, second=0, microsecond=0)
+                end = day.replace(hour=23, minute=59, second=59, microsecond=999999)
+                count = User.query.filter(User.created_at >= start, User.created_at <= end).count()
+                data.append(count)
+
+            return jsonify({
+                'labels': labels,
+                'data': data,
+                'period': 'week',
+                'week_range': f"{days[0].strftime('%b %d')} - {days[-1].strftime('%b %d')}"
+            }), 200
+
+        elif period == 'month':
+            # Monthly stats by week count in current month
+            first_day = today.replace(day=1)
+            last_day = (first_day.replace(day=28) + timedelta(days=4)).replace(day=1) - timedelta(days=1)
+
+            weeks = []
+            current_date = first_day
+            week_num = 1
+            while current_date <= last_day:
+                week_start = current_date
+                week_end = week_start + timedelta(days=6)
+                if week_end > last_day:
+                    week_end = last_day
+                weeks.append((week_num, week_start, week_end))
+                current_date = week_end + timedelta(days=1)
+                week_num += 1
+
+            labels = []
+            data = []
+            for i, start, end in weeks:
+                count = User.query.filter(User.created_at >= start, User.created_at <= end).count()
+                labels.append(f"Week {i}")
+                data.append(count)
+
+            return jsonify({
+                'labels': labels,
+                'data': data,
+                'period': 'month',
+                'month': today.strftime('%B %Y')
+            }), 200
+
+        elif period == 'year':
+            # Yearly stats: Jan–Dec
+            current_year = today.year
+            monthly_counts = db.session.query(
+                extract('month', User.created_at).label('month'),
+                func.count(User.id).label('count')
+            ).filter(
+                extract('year', User.created_at) == current_year
+            ).group_by(
+                extract('month', User.created_at)
+            ).order_by(
+                extract('month', User.created_at)
+            ).all()
+
+            stats = {month: 0 for month in range(1, 13)}
+            for month, count in monthly_counts:
+                stats[int(month)] = count
+
+            return jsonify({
+                'labels': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                           'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                'data': [stats[m] for m in range(1, 13)],
+                'period': 'year',
+                'current_year': current_year
+            }), 200
+
+    except Exception as e:
+        current_app.logger.error(f"Error getting registration stats: {str(e)}")
+        return jsonify({'error': 'Failed to get registration statistics'}), 500
+
+
+
+    
 @admin_bp.route('/psychologists')
 @admin_required  # Only admins can access
 def admin_psychologists():

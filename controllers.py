@@ -417,6 +417,170 @@ def admin_logout():
         return jsonify({'error': 'Failed to logout'}), 500
     
     
+def admin_create_user():
+    try:
+        data = request.get_json()
+        
+        # Validate required fields
+        required_fields = ['first_name', 'last_name', 'email', 'username', 'password']
+        for field in required_fields:
+            if not data.get(field):
+                return jsonify({'error': f'{field} is required'}), 400
+        
+        # Check for existing users
+        if User.query.filter_by(email=data['email']).first():
+            return jsonify({'error': 'Email already registered'}), 400
+            
+        if User.query.filter_by(username=data['username']).first():
+            return jsonify({'error': 'Username already taken'}), 400
+        
+        # Create the user (automatically verified since admin is creating)
+        user = User(
+            first_name=data['first_name'],
+            last_name=data['last_name'],
+            email=data['email'],
+            username=data['username'],
+            phone=data.get('phone'),
+            dob=datetime.strptime(data['dob'], '%Y-%m-%d').date() if data.get('dob') else None,
+            gender=data.get('gender', 'Prefer not to say'),
+            profile_picture=data.get('profile_picture', 'images/profile.jpg'),
+            is_verified=True  # Automatically verified for admin-created users
+        )
+        user.set_password(data['password'])
+        
+        db.session.add(user)
+        db.session.commit()
+        
+        # Return the created user data
+        user_data = {
+            'id': user.id,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'username': user.username,
+            'email': user.email,
+            'phone': user.phone,
+            'dob': user.dob.strftime('%Y-%m-%d') if user.dob else None,
+            'gender': user.gender,
+            'is_verified': user.is_verified,
+            'created_at': user.created_at.strftime('%B %d, %Y')
+        }
+        
+        return jsonify(user_data), 201
+        
+    except ValueError as e:
+        db.session.rollback()
+        return jsonify({'error': 'Invalid date format. Use YYYY-MM-DD'}), 400
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Error creating user: {str(e)}")
+        return jsonify({'error': 'Internal server error'}), 500
+    
+
+def fetch_user_from_admin():
+    try:
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 5, type=int)
+        
+        users = User.query.paginate(page=page, per_page=per_page, error_out=False)
+        
+        users_data = []
+        for user in users.items:
+            users_data.append({
+                'id': user.id,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'username': user.username,
+                'email': user.email,
+                'phone': user.phone,
+                'dob': user.dob.strftime('%Y-%m-%d') if user.dob else None,
+                'gender': user.gender,
+                'created_at': user.created_at.strftime('%B %d, %Y'),
+                'is_verified': user.is_verified,
+                'profile_picture': url_for('static', filename=user.profile_picture)
+            })
+        
+        return jsonify({
+            'users': users_data,
+            'total': users.total,
+            'pages': users.pages,
+            'current_page': users.page
+        }), 200
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+
+def fetch_userbyid_admin(user_id):
+    try:
+        user = User.query.get_or_404(user_id)
+
+        user_data = {
+            'id': user.id,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'middle_name': '',  # Add if you have this field
+            'username': user.username,
+            'email': user.email,
+            'phone': user.phone,
+            'dob': user.dob.strftime('%Y-%m-%d') if user.dob else None,
+            'gender': user.gender,
+            'created_at': user.created_at.strftime('%B %d, %Y'),
+            'is_verified': user.is_verified,
+            'profile_picture': url_for('static', filename=user.profile_picture)
+        }
+
+        return jsonify(user_data), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+def update_user_controller(user_id):
+    try:
+        user = User.query.get_or_404(user_id)
+        data = request.get_json()
+        
+        if 'first_name' in data:
+            user.first_name = data['first_name']
+        if 'last_name' in data:
+            user.last_name = data['last_name']
+        if 'username' in data:
+            if User.query.filter(User.username == data['username'], User.id != user_id).first():
+                return jsonify({'error': 'Username already taken'}), 400
+            user.username = data['username']
+        if 'email' in data:
+            if User.query.filter(User.email == data['email'], User.id != user_id).first():
+                return jsonify({'error': 'Email already registered'}), 400
+            user.email = data['email']
+        if 'phone' in data:
+            user.phone = data['phone']
+        if 'dob' in data:
+            user.dob = datetime.strptime(data['dob'], '%Y-%m-%d').date() if data['dob'] else None
+        if 'gender' in data:
+            user.gender = data['gender']
+        
+        db.session.commit()
+        
+        return jsonify({'message': 'User updated successfully'}), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+    
+
+def delete_user_controller(user_id):
+    try:
+        user = User.query.get_or_404(user_id)
+        
+        db.session.delete(user)
+        db.session.commit()
+        
+        return jsonify({'message': 'User deleted successfully'}), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+    
 def verify_psychologist_otp():
     try:
         data = request.get_json()

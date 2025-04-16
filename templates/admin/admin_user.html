@@ -50,17 +50,17 @@
       </div>
       <div class="modal-body">
         <div class="profile-header">
-          <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Profile Photo" class="profile-avatar" id="modalUserAvatar">
+          <img src="" alt="Profile Photo" class="profile-avatar" id="modalUserAvatar">
           <div class="profile-info">
-            <h3 id="modalUserName">John Doe</h3>
-            <p id="modalUserUsername">johndoe</p>
-            <p id="modalUserStatus"><span class="status active">Active</span></p>
+            <h3 id="modalUserName"></h3>
+            <p id="modalUserUsername"></p>
+            <p id="modalUserStatus"><span class="status active"></span></p>
           </div>
         </div>
 
         <div class="detail-row">
           <div class="detail-label">Email:</div>
-          <div class="detail-value" id="modalUserEmail">john@example.com</div>
+          <div class="detail-value" id="modalUserEmail"></div>
         </div>
         <div class="detail-row">
           <div class="detail-label">First Name:</div>
@@ -68,27 +68,23 @@
         </div>
         <div class="detail-row">
           <div class="detail-label">Last Name:</div>
-          <div class="detail-value" id="modalUserLastName">Doe</div>
-        </div>
-        <div class="detail-row">
-          <div class="detail-label">Middle Name:</div>
-          <div class="detail-value" id="modalUserMiddleName">Michael</div>
+          <div class="detail-value" id="modalUserLastName"></div>
         </div>
         <div class="detail-row">
           <div class="detail-label">Phone:</div>
-          <div class="detail-value" id="modalUserPhone">+1 (555) 123-4567</div>
+          <div class="detail-value" id="modalUserPhone"></div>
         </div>
         <div class="detail-row">
           <div class="detail-label">Date of Birth:</div>
-          <div class="detail-value" id="modalUserDob">January 15, 1990</div>
+          <div class="detail-value" id="modalUserDob"></div>
         </div>
         <div class="detail-row">
           <div class="detail-label">Gender:</div>
-          <div class="detail-value" id="modalUserGender">Male</div>
+          <div class="detail-value" id="modalUserGender"></div>
         </div>
         <div class="detail-row">
           <div class="detail-label">Registration Date:</div>
-          <div class="detail-value" id="modalUserRegDate">March 10, 2023</div>
+          <div class="detail-value" id="modalUserRegDate"></div>
         </div>
       </div>
       <div class="modal-footer">
@@ -123,12 +119,6 @@
           <div class="detail-label">Last Name:</div>
           <div class="detail-value">
             <input type="text" id="editUserLastNameInput" placeholder="Last Name">
-          </div>
-        </div>
-        <div class="detail-row">
-          <div class="detail-label">Middle Name:</div>
-          <div class="detail-value">
-            <input type="text" id="editUserMiddleNameInput" placeholder="Middle Name">
           </div>
         </div>
         <div class="detail-row">
@@ -209,12 +199,6 @@
             </div>
           </div>
           <div class="detail-row">
-            <div class="detail-label">Middle Name:</div>
-            <div class="detail-value">
-              <input type="text" id="addUserMiddleName" placeholder="Middle Name">
-            </div>
-          </div>
-          <div class="detail-row">
             <div class="detail-label">Username:</div>
             <div class="detail-value">
               <input type="text" id="addUserUsername" placeholder="Username" required>
@@ -262,6 +246,23 @@
         <button class="action-btn edit-btn" onclick="addNewUser()">Add User</button>
       </div>
     </div>
+
+
+    <!-- Custom Alert Modal -->
+<div class="modal" id="customAlertModal">
+  <div class="modal-content" style="max-width: 400px;">
+    <div class="modal-header" id="alertModalHeader">
+      <h3 id="alertModalTitle">Alert</h3>
+      <button class="close-modal" onclick="closeModal('customAlertModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p id="alertModalMessage">This is an alert message.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="action-btn view-btn" onclick="closeModal('customAlertModal')">OK</button>
+    </div>
+  </div>
+</div>
 
 
     {% endblock %}
