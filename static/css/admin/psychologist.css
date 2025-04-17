@@ -1,4 +1,19 @@
-
+:root {
+  --primary: #5D5FEF;
+  --primary-light: #A5A6F6;
+  --primary-dark: #4B4DCA;
+  --secondary: #6C757D;
+  --success: #4CAF50;
+  --warning: #FFC107;
+  --error: #F44336;
+  --accent: #FFD166;
+  --light: #F8F9FA;
+  --dark: #212529;
+  --gray: #6C757D;
+  --border: #e0e0e0;
+  --sidebar-width: 260px;
+}
+    
     /* Hero Section */
     .hero {
         padding: 30px;
@@ -185,57 +200,62 @@
         display: flex;
         align-items: center;
         margin-bottom: 20px;
-        padding-bottom: 20px;
-        border-bottom: 1px solid var(--border);
+        padding: 20px;
+        background-color: #f5f5f5;
+        border-radius: 8px;
       }
   
       .profile-avatar {
         width: 100px;
         height: 100px;
         border-radius: 50%;
-        object-fit: cover;
         margin-right: 20px;
-        border: 3px solid var(--primary-light);
+        object-fit: cover;
       }
   
       .profile-info h3 {
-        margin: 0 0 5px;
-        color: var(--dark);
+        margin: 0 0 5px 0;
+        color: #333;
       }
   
       .profile-info p {
         margin: 0;
-        color: var(--secondary);
+        color: #666;
+      }
+  
+      .details-section {
+        padding: 20px;
       }
   
       .detail-row {
         display: flex;
         margin-bottom: 15px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 15px;
       }
   
       .detail-label {
         width: 150px;
-        font-weight: 600;
-        color: var(--dark);
+        font-weight: bold;
+        color: #666;
       }
   
       .detail-value {
         flex: 1;
-        color: var(--secondary);
       }
   
       .specialties-list {
         display: flex;
         flex-wrap: wrap;
-        gap: 10px;
+        gap: 8px;
       }
   
       .specialty-badge {
-        background-color: var(--primary-light);
-        color: var(--primary-dark);
-        padding: 5px 10px;
-        border-radius: 20px;
-        font-size: 0.8rem;
+        background-color: #e3f2fd;
+        color: #1976d2;
+        padding: 4px 12px;
+        border-radius: 15px;
+        font-size: 0.9em;
       }
   
       .modal-footer {
@@ -464,8 +484,7 @@
         }
   
         .profile-avatar {
-          margin-right: 0;
-          margin-bottom: 15px;
+          margin: 0 0 15px 0;
         }
       }
   
@@ -481,3 +500,687 @@
           margin-right: 0;
         }
       }
+  
+      .action-header {
+        margin: 20px 0;
+        display: flex;
+        justify-content: flex-end;
+      }
+  
+      .add-btn {
+        background-color: #4CAF50;
+        color: white;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+  
+      .add-btn i {
+        font-size: 1.2em;
+      }
+  
+      /* Modal size adjustments for details view */
+      #psychologistDetailsModal .modal-content {
+        max-width: 800px;
+        width: 90%;
+      }
+  
+      /* Edit Profile Modal Styles */
+      .edit-profile-grid {
+        display: grid;
+        gap: 2rem;
+        padding: 1rem;
+      }
+  
+      .profile-picture-section {
+        text-align: center;
+      }
+  
+      .profile-picture-container {
+        position: relative;
+        width: 150px;
+        height: 150px;
+        margin: 0 auto;
+        border-radius: 50%;
+        overflow: hidden;
+      }
+  
+      .profile-picture-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+  
+      .profile-picture-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(0, 0, 0, 0.7);
+        padding: 8px;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+  
+      .profile-picture-container:hover .profile-picture-overlay {
+        opacity: 1;
+      }
+  
+      .upload-btn {
+        color: white;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+      }
+  
+      .form-section {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 8px;
+      }
+  
+      .form-section h4 {
+        margin: 0 0 1rem 0;
+        color: #333;
+        font-size: 1.1rem;
+      }
+  
+
+  
+      .document-preview {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        background: #e9ecef;
+        border-radius: 4px;
+        color: #666;
+      }
+  
+      .document-preview i {
+        font-size: 1.5rem;
+        color: #6c757d;
+      }
+  
+      /* Form Controls */
+      .form-group {
+        margin-bottom: 1rem;
+      }
+  
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #495057;
+        font-weight: 500;
+      }
+  
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        background: white;
+      }
+  
+      .form-group input:disabled {
+        background: #e9ecef;
+        cursor: not-allowed;
+      }
+  
+      .form-group select[multiple] {
+        height: 120px;
+      }
+  
+      /* Buttons */
+      .save-btn {
+        background-color: #28a745;
+        color: white;
+      }
+  
+      .cancel-btn {
+        background-color: #6c757d;
+        color: white;
+      }
+  
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .edit-profile-grid {
+          grid-template-columns: 1fr;
+        }
+  
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+
+      /* Action Buttons */
+.action-btns {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.3s ease;
+}
+
+.action-btn i {
+  font-size: 16px;
+}
+
+.edit-btn {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.edit-btn:hover {
+  background-color: #45a049;
+}
+
+.view-btn {
+  background-color: #2196F3;
+  color: white;
+}
+
+.view-btn:hover {
+  background-color: #1976D2;
+}
+
+.deactivate-btn {
+  background-color: #FF9800;
+  color: white;
+}
+
+.deactivate-btn:hover {
+  background-color: #F57C00;
+}
+
+.delete-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+.delete-btn:hover {
+  background-color: #d32f2f;
+}
+/* Toast Notifications */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 12px 24px;
+  border-radius: 4px;
+  color: white;
+  font-size: 14px;
+  z-index: 1000;
+  transform: translateY(100px);
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.toast.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.toast-success {
+  background-color: #4CAF50;
+}
+
+.toast-error {
+  background-color: #f44336;
+}
+
+/* Edit Modal Specific Styles */
+#editPsychologistModal .modal-content.large-modal {
+    max-width: 900px;
+    width: 90%;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    background: #f8fafc;
+}
+
+#editPsychologistModal .modal-header {
+    padding: 20px 24px;
+    background: var(--primary);
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: none;
+}
+
+#editPsychologistModal .modal-header h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+#editPsychologistModal .close-modal {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+#editPsychologistModal .close-modal:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(90deg);
+}
+
+#editPsychologistModal .modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e0 #f8fafc;
+}
+
+#editPsychologistModal .modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+#editPsychologistModal .modal-body::-webkit-scrollbar-track {
+    background: #f8fafc;
+}
+
+#editPsychologistModal .modal-body::-webkit-scrollbar-thumb {
+    background-color: #cbd5e0;
+    border-radius: 20px;
+    border: 2px solid #f8fafc;
+}
+
+/* Edit Modal Specific Styles - Optimized Version */
+#editPsychologistModal .modal-content.large-modal {
+  max-width: min(900px, 95vw);
+  width: 95vw;
+  max-height: 95vh;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  background: #f8fafc;
+  margin: 2vh auto;
+}
+
+#editPsychologistModal .modal-header {
+  padding: 18px 24px;
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: none;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+#editPsychologistModal .modal-header h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: clamp(1.2rem, 2vw, 1.5rem);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#editPsychologistModal .close-modal {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+#editPsychologistModal .close-modal:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+#editPsychologistModal .modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e0 #f8fafc;
+  overscroll-behavior: contain;
+}
+
+#editPsychologistModal .modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+#editPsychologistModal .modal-body::-webkit-scrollbar-track {
+  background: #f8fafc;
+}
+
+#editPsychologistModal .modal-body::-webkit-scrollbar-thumb {
+  background-color: #cbd5e0;
+  border-radius: 20px;
+  border: 2px solid #f8fafc;
+}
+
+/* Profile Upload Section */
+#editPsychologistModal .profile-upload-section {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 20px;
+  text-align: center;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+#editPsychologistModal .profile-preview {
+  width: clamp(120px, 20vw, 160px);
+  height: clamp(120px, 20vw, 160px);
+  margin: 0 auto 12px;
+  position: relative;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid #ffffff;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+#editPsychologistModal .profile-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+#editPsychologistModal .upload-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  cursor: pointer;
+  color: white;
+  font-size: 0.8rem;
+}
+
+#editPsychologistModal .profile-preview:hover .upload-overlay {
+  opacity: 1;
+}
+
+#editPsychologistModal .profile-preview:hover img {
+  transform: scale(1.05);
+}
+
+/* Form Sections */
+#editPsychologistModal .form-section {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#editPsychologistModal .form-section h3 {
+  color: #2c3e50;
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#editPsychologistModal .form-section h3 i {
+  color: #4CAF50;
+  font-size: 1.2em;
+}
+
+#editPsychologistModal .input-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  width: 100%;
+}
+
+/* Form Controls */
+#editPsychologistModal .form-group {
+  margin-bottom: 16px;
+  width: 100%;
+}
+
+#editPsychologistModal .form-group label {
+  display: block;
+  margin-bottom: 6px;
+  color: #34495e;
+  font-weight: 500;
+  font-size: clamp(0.8rem, 1vw, 0.9rem);
+}
+
+#editPsychologistModal .form-group input,
+#editPsychologistModal .form-group select,
+#editPsychologistModal .form-group textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: clamp(0.85rem, 1vw, 0.95rem);
+  transition: all 0.3s ease;
+  background: white;
+  box-sizing: border-box;
+}
+
+#editPsychologistModal .form-group textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+#editPsychologistModal .form-group input:focus,
+#editPsychologistModal .form-group select:focus,
+#editPsychologistModal .form-group textarea:focus {
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
+  outline: none;
+}
+
+#editPsychologistModal .form-group input:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+  color: #666;
+}
+
+/* Specialties Section */
+#editPsychologistModal .specialty-checkboxes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 10px;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  max-height: 280px;
+  overflow-y: auto;
+  width: 100%;
+}
+
+#editPsychologistModal .checkbox-group {
+  background: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  border: 1px solid #e0e0e0;
+  min-width: 0;
+}
+
+#editPsychologistModal .checkbox-group:hover {
+  background: #f0f9f0;
+  border-color: #4CAF50;
+}
+
+#editPsychologistModal .checkbox-group input[type="checkbox"] {
+  flex-shrink: 0;
+}
+
+#editPsychologistModal .checkbox-group label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 0;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+/* Modal Footer */
+#editPsychologistModal .modal-footer {
+  padding: 16px 20px;
+  background: white;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+}
+
+#editPsychologistModal .action-btn {
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: clamp(0.85rem, 1vw, 0.95rem);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: none;
+  white-space: nowrap;
+}
+
+#editPsychologistModal .cancel-btn {
+  background: #f5f5f5;
+  color: #666;
+  border: 1px solid #ddd;
+}
+
+#editPsychologistModal .cancel-btn:hover {
+  background: #eeeeee;
+}
+
+#editPsychologistModal .save-btn {
+  background: #4CAF50;
+  color: white;
+}
+
+#editPsychologistModal .save-btn:hover {
+  background: #45a049;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  #editPsychologistModal .modal-content.large-modal {
+      max-width: 98vw;
+      max-height: 98vh;
+      margin: 1vh auto;
+  }
+
+  #editPsychologistModal .modal-body {
+      padding: 16px;
+  }
+
+  #editPsychologistModal .input-grid {
+      grid-template-columns: 1fr;
+  }
+
+  #editPsychologistModal .specialty-checkboxes {
+      grid-template-columns: 1fr 1fr;
+  }
+
+  #editPsychologistModal .modal-footer {
+      padding: 12px 16px;
+      flex-wrap: wrap;
+  }
+
+  #editPsychologistModal .action-btn {
+      padding: 8px 16px;
+      flex-grow: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  #editPsychologistModal .modal-content.large-modal {
+      border-radius: 0;
+      max-height: 100vh;
+      max-width: 100vw;
+      margin: 0;
+  }
+
+  #editPsychologistModal .specialty-checkboxes {
+      grid-template-columns: 1fr;
+  }
+
+  #editPsychologistModal .profile-preview {
+      width: 100px;
+      height: 100px;
+  }
+
+  #editPsychologistModal .upload-overlay span {
+      display: none;
+  }
+}
+
+/* Animation for better UX */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+#editPsychologistModal .modal-content {
+  animation: fadeIn 0.3s ease-out forwards;
+}

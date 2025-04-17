@@ -812,3 +812,166 @@ def resend_psychologist_otp():
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
+        
+
+def fetch_psychologists_controller():
+    try:
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 10, type=int)
+        
+        psychologists = Psychologist.query.paginate(page=page, per_page=per_page, error_out=False)
+        
+        psychologists_data = []
+        for psychologist in psychologists.items:
+            psychologists_data.append({
+                'id': psychologist.id,
+                'first_name': psychologist.first_name,
+                'last_name': psychologist.last_name,
+                'email': psychologist.email,
+                'phone': psychologist.phone,
+                'primary_specialty': psychologist.primary_specialty,
+                'specialties': psychologist.specialties.split(',') if psychologist.specialties else [],
+                'years_experience': psychologist.years_experience,
+                'is_verified': psychologist.is_verified,
+                'is_approved': psychologist.is_approved,
+                'created_at': psychologist.created_at.strftime('%B %d, %Y'),
+                'profile_picture': url_for('static', filename=psychologist.profile_picture)
+            })
+        
+        return jsonify({
+            'psychologists': psychologists_data,
+            'total': psychologists.total,
+            'pages': psychologists.pages,
+            'current_page': psychologists.page
+        }), 200
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+def create_psychologist_controller():
+    try:
+        data = request.get_json()
+        
+        # Validate required fields
+        required_fields = ['first_name', 'last_name', 'email', 'phone', 'password',
+                         'license_number', 'primary_specialty', 'years_experience', 'bio']
+        for field in required_fields:
+            if not data.get(field):
+                return jsonify({'error': f'{field} is required'}), 400
+        
+        # Check for existing psychologist
+        if Psychologist.query.filter_by(email=data['email']).first():
+            return jsonify({'error': 'Email already registered'}), 400
+        if Psychologist.query.filter_by(license_number=data['license_number']).first():
+            return jsonify({'error': 'License number already registered'}), 400
+        
+        # Create username from email
+        username = data['email'].split('@')[0]
+        base_username = username
+        counter = 1
+        while Psychologist.query.filter_by(username=username).first():
+            username = f"{base_username}{counter}"
+            counter += 1
+        
+        psychologist = Psychologist(
+            first_name=data['first_name'],
+            last_name=data['last_name'],
+            username=username,
+            email=data['email'],
+            phone=data['phone'],
+            license_number=data['license_number'],
+            primary_specialty=data['primary_specialty'],
+            specialties=','.join(data.get('specialties', [])),
+            years_experience=data['years_experience'],
+            bio=data['bio'],
+            is_verified=True,  # Auto-verify when created by admin
+            is_approved=True,  # Auto-approve when created by admin
+            profile_picture='images/profile.jpg'
+        )
+        psychologist.set_password(data['password'])
+        
+        db.session.add(psychologist)
+        db.session.commit()
+        
+        return jsonify(psychologist.to_dict()), 201
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+def fetch_psychologist_by_id_controller(psychologist_id):
+    try:
+        psychologist = Psychologist.query.get_or_404(psychologist_id)
+        return jsonify(psychologist.to_dict()), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+def update_psychologist_controller(psychologist_id):
+    try:
+        psychologist = Psychologist.query.get_or_404(psychologist_id)
+        data = request.get_json()
+        
+        # Update fields if provided
+        if 'first_name' in data:
+            psychologist.first_name = data['first_name']
+        if 'last_name' in data:
+            psychologist.last_name = data['last_name']
+        if 'email' in data:
+            if Psychologist.query.filter(
+                Psychologist.email == data['email'],
+                Psychologist.id != psychologist_id
+            ).first():
+                return jsonify({'error': 'Email already registered'}), 400
+            psychologist.email = data['email']
+        if 'phone' in data:
+            psychologist.phone = data['phone']
+        if 'license_number' in data:
+            if Psychologist.query.filter(
+                Psychologist.license_number == data['license_number'],
+                Psychologist.id != psychologist_id
+            ).first():
+                return jsonify({'error': 'License number already registered'}), 400
+            psychologist.license_number = data['license_number']
+        if 'primary_specialty' in data:
+            psychologist.primary_specialty = data['primary_specialty']
+        if 'specialties' in data:
+            psychologist.specialties = ','.join(data['specialties'])
+        if 'years_experience' in data:
+            psychologist.years_experience = data['years_experience']
+        if 'bio' in data:
+            psychologist.bio = data['bio']
+        if 'password' in data:
+            psychologist.set_password(data['password'])
+        
+        db.session.commit()
+        return jsonify(psychologist.to_dict()), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+def delete_psychologist_controller(psychologist_id):
+    try:
+        psychologist = Psychologist.query.get_or_404(psychologist_id)
+        db.session.delete(psychologist)
+        db.session.commit()
+        return jsonify({'message': 'Psychologist deleted successfully'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+def update_psychologist_status_controller(psychologist_id):
+    try:
+        psychologist = Psychologist.query.get_or_404(psychologist_id)
+        data = request.get_json()
+        
+        if 'is_approved' in data:
+            psychologist.is_approved = data['is_approved']
+        if 'is_verified' in data:
+            psychologist.is_verified = data['is_verified']
+            
+        db.session.commit()
+        return jsonify(psychologist.to_dict()), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500

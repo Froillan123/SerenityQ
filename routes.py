@@ -326,6 +326,37 @@ def get_user_registration_stats():
 def admin_psychologists():
     return render_template('admin/admin_psychologist.html')
 
+    
+@admin_bp.route('/psychologists/list', methods=['GET'])
+@admin_required
+def get_psychologists():
+    return fetch_psychologists_controller()
+
+@admin_bp.route('/psychologists/create', methods=['POST'])
+@admin_required
+def create_psychologist():
+    return create_psychologist_controller()
+
+@admin_bp.route('/psychologists/<int:psychologist_id>', methods=['GET'])
+@admin_required
+def get_psychologist(psychologist_id):
+    return fetch_psychologist_by_id_controller(psychologist_id)
+
+@admin_bp.route('/psychologists/<int:psychologist_id>/update', methods=['PUT'])
+@admin_required
+def update_psychologist(psychologist_id):
+    return update_psychologist_controller(psychologist_id)
+
+@admin_bp.route('/psychologists/<int:psychologist_id>/delete', methods=['DELETE'])
+@admin_required
+def delete_psychologist(psychologist_id):
+    return delete_psychologist_controller(psychologist_id)
+
+@admin_bp.route('/psychologists/<int:psychologist_id>/status', methods=['PUT'])
+@admin_required
+def update_psychologist_status(psychologist_id):
+    return update_psychologist_status_controller(psychologist_id)
+
 @admin_bp.route('/settings')
 @admin_required  # Only admins can access
 def admin_settings():
@@ -394,3 +425,34 @@ def psychologist_logout():
     response = make_response(redirect(url_for('auth.landing_page')))
     unset_jwt_cookies(response)
     return response
+
+@psychologist_bp.route('/profile/update', methods=['POST'])
+@psychologist_required
+def update_profile():
+    try:
+        psychologist = Psychologist.query.get_or_404(get_jwt_identity())
+        
+        # Handle profile picture upload
+        if 'profile_picture' in request.files:
+            file = request.files['profile_picture']
+            if file and allowed_file(file.filename):
+                filename = secure_filename(f"profile_{psychologist.id}_{int(time.time())}.{file.filename.rsplit('.', 1)[1].lower()}")
+                file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
+                psychologist.profile_picture = f"uploads/{filename}"
+
+        # Update other fields
+        form_data = request.form
+        psychologist.first_name = form_data.get('first_name', psychologist.first_name)
+        psychologist.last_name = form_data.get('last_name', psychologist.last_name)
+        psychologist.email = form_data.get('email', psychologist.email)
+        psychologist.phone = form_data.get('phone', psychologist.phone)
+        psychologist.primary_specialty = form_data.get('primary_specialty', psychologist.primary_specialty)
+        psychologist.specialties = ','.join(request.form.getlist('specialties'))
+        psychologist.bio = form_data.get('bio', psychologist.bio)
+
+        db.session.commit()
+        return jsonify({'message': 'Profile updated successfully'}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500

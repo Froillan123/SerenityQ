@@ -1,231 +1,5 @@
-  
-      // Modal functions
-      function openModal(modalId) {
-        document.getElementById(modalId).style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-      }
-  
-      function closeModal(modalId) {
-        document.getElementById(modalId).style.display = 'none';
-        document.body.style.overflow = 'auto';
-      }
-  
-      // Psychologist data (in a real app, this would come from an API)
-      const psychologists = [
-        {
-          id: 1,
-          name: "Dr. Alice Rivera",
-          specialty: "Cognitive Behavioral Therapy",
-          email: "alice@serenityq.com",
-          phone: "+1 (555) 123-4567",
-          license: "PSY-1234567",
-          experience: "8 years",
-          rate: "$150/hour",
-          specialties: ["Anxiety", "Depression", "Stress Management"],
-          bio: "Dr. Alice Rivera is a licensed clinical psychologist with over 8 years of experience in treating anxiety, depression, and stress-related disorders. She specializes in cognitive behavioral therapy and mindfulness-based approaches.",
-          lastActive: "2 days ago",
-          patients: "142",
-          status: "active",
-          avatar: "https://randomuser.me/api/portraits/women/44.jpg"
-        },
-        {
-          id: 2,
-          name: "Dr. John Lin",
-          specialty: "Mindfulness & Stress Relief",
-          email: "john@serenityq.com",
-          phone: "+1 (555) 987-6543",
-          license: "PSY-7654321",
-          experience: "6 years",
-          rate: "$135/hour",
-          specialties: ["Stress", "Trauma", "Mindfulness"],
-          bio: "Dr. John Lin specializes in mindfulness-based stress reduction and trauma therapy. With 6 years of clinical experience, he has helped hundreds of clients manage stress and recover from traumatic experiences.",
-          lastActive: "1 day ago",
-          patients: "98",
-          status: "active",
-          avatar: "https://randomuser.me/api/portraits/men/32.jpg"
-        },
-        {
-          id: 3,
-          name: "Dr. Maria Gonzalez",
-          specialty: "Child Psychology",
-          email: "maria@serenityq.com",
-          phone: "+1 (555) 456-7890",
-          license: "PSY-9876543",
-          experience: "10 years",
-          rate: "$175/hour",
-          specialties: ["Child Development", "ADHD", "Autism"],
-          bio: "Dr. Maria Gonzalez has dedicated her career to helping children and adolescents with developmental challenges. She is particularly skilled in working with ADHD and autism spectrum disorders.",
-          lastActive: "Today",
-          patients: "210",
-          status: "active",
-          avatar: "https://randomuser.me/api/portraits/women/65.jpg"
-        },
-        {
-          id: 4,
-          name: "Dr. Robert Chen",
-          specialty: "Marriage Counseling",
-          email: "robert@serenityq.com",
-          phone: "+1 (555) 789-0123",
-          license: "PSY-5678901",
-          experience: "12 years",
-          rate: "$160/hour",
-          specialties: ["Relationships", "Family Therapy", "Couples Counseling"],
-          bio: "Dr. Robert Chen is a relationship expert with over 12 years of experience helping couples and families improve their communication and resolve conflicts.",
-          lastActive: "3 months ago",
-          patients: "185",
-          status: "inactive",
-          avatar: "https://randomuser.me/api/portraits/men/75.jpg"
-        },
-        {
-          id: 5,
-          name: "Dr. Sarah Johnson",
-          specialty: "Clinical Psychology",
-          email: "sarah@serenityq.com",
-          phone: "+1 (555) 234-5678",
-          license: "PSY-3456789",
-          experience: "9 years",
-          rate: "$155/hour",
-          specialties: ["Depression", "PTSD", "Anxiety Disorders"],
-          bio: "Dr. Sarah Johnson specializes in treating mood disorders and trauma-related conditions. She uses evidence-based approaches to help clients recover and thrive.",
-          lastActive: "1 week ago",
-          patients: "176",
-          status: "active",
-          avatar: "https://randomuser.me/api/portraits/women/33.jpg"
-        }
-      ];
-  
-      // Current psychologist ID for actions
-      let currentPsychologistId = null;
-  
-  
-          // View psychologist details
-          function viewPsychologistDetails(id) {
-        const psychologist = psychologists.find(p => p.id === id);
-        if (psychologist) {
-          document.getElementById('modalPsychologistName').textContent = psychologist.name;
-          document.getElementById('modalPsychologistSpecialty').textContent = psychologist.specialty;
-          document.getElementById('modalPsychologistEmail').textContent = psychologist.email;
-          document.getElementById('modalPsychologistPhone').textContent = psychologist.phone;
-          document.getElementById('modalPsychologistLicense').textContent = psychologist.license;
-          document.getElementById('modalPsychologistExperience').textContent = psychologist.experience;
-          document.getElementById('modalPsychologistRate').textContent = psychologist.rate;
-          document.getElementById('modalPsychologistBio').textContent = psychologist.bio;
-          document.getElementById('modalPsychologistLastActive').textContent = psychologist.lastActive;
-          document.getElementById('modalPsychologistPatients').textContent = psychologist.patients;
-          
-          // Update status
-          const statusElement = document.getElementById('modalPsychologistStatus');
-          statusElement.innerHTML = '';
-          const statusSpan = document.createElement('span');
-          statusSpan.className = `status ${psychologist.status}`;
-          statusSpan.textContent = psychologist.status === 'active' ? 'Active' : 'Inactive';
-          statusElement.appendChild(statusSpan);
-          
-          // Update specialties
-          const specialtiesContainer = document.getElementById('modalPsychologistSpecialties');
-          specialtiesContainer.innerHTML = '';
-          psychologist.specialties.forEach(specialty => {
-            const badge = document.createElement('span');
-            badge.className = 'specialty-badge';
-            badge.textContent = specialty;
-            specialtiesContainer.appendChild(badge);
-          });
-          
-          // Update avatar
-          const avatar = document.querySelector('#psychologistModal .profile-avatar');
-          avatar.src = psychologist.avatar;
-          
-          openModal('psychologistModal');
-        }
-      }
-  
-      // Show deactivate modal
-      function showDeactivateModal(id) {
-        currentPsychologistId = id;
-        openModal('deactivateModal');
-      }
-  
-      // Show delete modal
-      function showDeleteModal(id) {
-        currentPsychologistId = id;
-        openModal('deleteModal');
-      }
-  
-      // Deactivate psychologist
-      function deactivatePsychologist() {
-        if (currentPsychologistId) {
-          // In a real app, you would make an API call here
-          const psychologist = psychologists.find(p => p.id === currentPsychologistId);
-          if (psychologist) {
-            psychologist.status = 'inactive';
-            
-            // Update the table row
-            updatePsychologistRow(psychologist);
-            
-            // Show success message
-            showToast('Psychologist deactivated successfully', 'success');
-          }
-        }
-        closeModal('deactivateModal');
-      }
-  
-      // Delete psychologist
-      function deletePsychologist() {
-        if (currentPsychologistId) {
-          // In a real app, you would make an API call here
-          const index = psychologists.findIndex(p => p.id === currentPsychologistId);
-          if (index !== -1) {
-            psychologists.splice(index, 1);
-            
-            // Remove the row from the table
-            const table = document.querySelector('.table-container table tbody');
-            const rows = table.querySelectorAll('tr');
-            rows.forEach(row => {
-              if (row.getAttribute('data-id') == currentPsychologistId) {
-                row.remove();
-              }
-            });
-            
-            // Show success message
-            showToast('Psychologist deleted successfully', 'success');
-          }
-        }
-        closeModal('deleteModal');
-      }
-  
-      // Update psychologist row in table
-      function updatePsychologistRow(psychologist) {
-        const table = document.querySelector('.table-container table tbody');
-        const rows = table.querySelectorAll('tr');
-        
-        rows.forEach(row => {
-          if (row.getAttribute('data-id') == psychologist.id) {
-            // Update status
-            const statusCell = row.querySelector('.status');
-            statusCell.className = `status ${psychologist.status}`;
-            statusCell.textContent = psychologist.status === 'active' ? 'Active' : 'Inactive';
-            
-            // Update action buttons
-            const actionBtns = row.querySelector('.action-btns');
-            actionBtns.innerHTML = '';
-            
-            if (psychologist.status === 'active') {
-              actionBtns.innerHTML = `
-                <button class="action-btn view-btn" onclick="viewPsychologistDetails(${psychologist.id})">View</button>
-                <button class="action-btn deactivate-btn" onclick="showDeactivateModal(${psychologist.id})">Deactivate</button>
-              `;
-            } else {
-              actionBtns.innerHTML = `
-                <button class="action-btn view-btn" onclick="viewPsychologistDetails(${psychologist.id})">View</button>
-                <button class="action-btn delete-btn" onclick="showDeleteModal(${psychologist.id})">Delete</button>
-              `;
-            }
-          }
-        });
-      }
-  
-      // Show toast notification
-      function showToast(message, type) {
+// Utility functions
+function showToast(message, type = 'success') {
         const toast = document.createElement('div');
         toast.className = `toast toast-${type}`;
         toast.textContent = message;
@@ -243,124 +17,290 @@
         }, 3000);
       }
   
-      // Add psychologist button click handler
-      document.getElementById('addPsychologistBtn').addEventListener('click', function() {
-        openModal('addPsychologistModal');
-      });
-  
-      // Add psychologist form submission
-      function addPsychologist() {
-        const form = document.getElementById('addPsychologistForm');
-        const inputs = form.querySelectorAll('input, select');
-        let isValid = true;
-        
-        // Simple validation
-        inputs.forEach(input => {
-          if (!input.value.trim()) {
-            isValid = false;
-            input.style.borderColor = 'var(--error)';
-          } else {
-            input.style.borderColor = '';
-          }
-        });
-        
-        if (!isValid) {
-          showToast('Please fill all required fields', 'error');
-          return;
-        }
-        
-        // In a real app, you would send this data to the server
-        const newId = psychologists.length > 0 ? Math.max(...psychologists.map(p => p.id)) + 1 : 1;
-        
-        const newPsychologist = {
-          id: newId,
-          name: `Dr. ${inputs[0].value.trim()} ${inputs[1].value.trim()}`,
-          specialty: inputs[3].options[inputs[3].selectedIndex].text,
-          email: inputs[2].value.trim(),
-          phone: "+1 (555) 000-0000", // Default phone
-          license: inputs[4].value.trim(),
-          experience: "0 years", // Default experience
-          rate: "$120/hour", // Default rate
-          specialties: ["General Counseling"], // Default specialties
-          bio: "New psychologist joining our team.", // Default bio
-          lastActive: "Never", // Default last active
-          patients: "0", // Default patients
-          status: "active",
-          avatar: `https://randomuser.me/api/portraits/${Math.random() > 0.5 ? 'men' : 'women'}/${Math.floor(Math.random() * 100)}.jpg`
-        };
-        
-        psychologists.push(newPsychologist);
-        
-        // Add to table
-        const tableBody = document.querySelector('.table-container table tbody');
-        const newRow = document.createElement('tr');
-        newRow.setAttribute('data-id', newId);
-        newRow.innerHTML = `
-          <td>
-            <div class="profile-info">
-              <strong>${newPsychologist.name}</strong>
-              <small>${newPsychologist.specialty}</small>
-            </div>
-          </td>
-          <td>${newPsychologist.specialties.join(', ')}</td>
-          <td>${newPsychologist.email}</td>
-          <td><span class="status active">Active</span></td>
-          <td>
-            <div class="action-btns">
-              <button class="action-btn view-btn" onclick="viewPsychologistDetails(${newId})">View</button>
-              <button class="action-btn deactivate-btn" onclick="showDeactivateModal(${newId})">Deactivate</button>
-            </div>
-          </td>
+function handleApiError(error) {
+    console.error('API Error:', error);
+    const errorMessage = error.response?.data?.error || 'An error occurred';
+    showToast(errorMessage, 'error');
+}
+
+// Modal functions
+function openModal(modalId) {
+    document.getElementById(modalId).style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+    document.body.style.overflow = 'auto';
+}
+
+// API functions
+async function fetchPsychologists(page = 1) {
+    try {
+        const response = await axios.get(`/admin/psychologists/list?page=${page}`);
+        return response.data;
+    } catch (error) {
+        handleApiError(error);
+        return null;
+    }
+}
+
+async function updatePsychologist(id, data) {
+    try {
+        const response = await axios.put(`/admin/psychologists/${id}/update`, data);
+        showToast('Psychologist updated successfully');
+        return response.data;
+    } catch (error) {
+        handleApiError(error);
+        return null;
+    }
+}
+
+async function deletePsychologist(id) {
+    try {
+        await axios.delete(`/admin/psychologists/${id}/delete`);
+        showToast('Psychologist deleted successfully');
+        return true;
+    } catch (error) {
+        handleApiError(error);
+        return false;
+    }
+}
+
+async function updatePsychologistStatus(id, status) {
+    try {
+        const response = await axios.put(`/admin/psychologists/${id}/status`, status);
+        showToast('Status updated successfully');
+        return response.data;
+    } catch (error) {
+        handleApiError(error);
+        return null;
+    }
+}
+
+// UI functions
+function renderPsychologistRow(psychologist) {
+    return `
+        <tr data-id="${psychologist.id}">
+            <td>
+                <div class="profile-info">
+                    <strong>Dr. ${psychologist.first_name} ${psychologist.last_name}</strong>
+                </div>
+            </td>
+            <td>${psychologist.email}</td>
+            <td>${psychologist.phone || 'Not provided'}</td>
+            <td>
+                <span class="status ${psychologist.is_approved ? 'active' : 'inactive'}">
+                    ${psychologist.is_approved ? 'Active' : 'Inactive'}
+                </span>
+            </td>
+            <td>
+                <div class="action-btns">
+                    <button class="action-btn edit-btn" onclick="showEditPsychologistModal(${psychologist.id})">
+                        <i class='bx bx-edit'></i> Edit
+                    </button>
+                    <button class="action-btn view-btn" onclick="viewPsychologistDetails(${psychologist.id})">
+                        <i class='bx bx-show'></i> View
+                    </button>
+                    ${psychologist.is_approved ? 
+                        `<button class="action-btn deactivate-btn" onclick="showDeactivateModal(${psychologist.id})">
+                            <i class='bx bx-power-off'></i> Deactivate
+                        </button>` :
+                        `<button class="action-btn delete-btn" onclick="showDeleteModal(${psychologist.id})">
+                            <i class='bx bx-trash'></i> Delete
+                        </button>`
+                    }
+                </div>
+            </td>
+        </tr>
+    `;
+}
+
+async function loadPsychologists(page = 1) {
+    const data = await fetchPsychologists(page);
+    if (!data) return;
+
+    const tableBody = document.querySelector('.table-container table tbody');
+    tableBody.innerHTML = data.psychologists.map(renderPsychologistRow).join('');
+    
+    updatePagination(data.current_page, data.pages);
+}
+
+function updatePagination(currentPage, totalPages) {
+    const pagination = document.querySelector('.pagination');
+    let html = `
+        <button ${currentPage === 1 ? 'disabled' : ''} onclick="loadPsychologists(${currentPage - 1})">
+            <i class='bx bx-chevron-left'></i> Previous
+        </button>
+    `;
+    
+    for (let i = 1; i <= totalPages; i++) {
+        html += `
+            <button class="${i === currentPage ? 'active' : ''}" onclick="loadPsychologists(${i})">${i}</button>
         `;
-        tableBody.appendChild(newRow);
+    }
+    
+    html += `
+        <button ${currentPage === totalPages ? 'disabled' : ''} onclick="loadPsychologists(${currentPage + 1})">
+            Next <i class='bx bx-chevron-right'></i>
+        </button>
+    `;
+    
+    pagination.innerHTML = html;
+}
+
+// Event handlers
+let currentPsychologistId = null;
+
+function showDeleteModal(id) {
+    currentPsychologistId = id;
+    openModal('deleteModal');
+}
+
+function showDeactivateModal(id) {
+    currentPsychologistId = id;
+    openModal('deactivateModal');
+}
+
+async function viewPsychologistDetails(id) {
+    try {
+        const response = await axios.get(`/admin/psychologists/${id}`);
+        const psychologist = response.data;
         
-        // Reset form
-        form.reset();
-        closeModal('addPsychologistModal');
-        showToast('Psychologist added successfully', 'success');
-      }
-  
-      // Initialize table rows with data attributes
-      document.addEventListener('DOMContentLoaded', function() {
-        const tableBody = document.querySelector('.table-container table tbody');
-        const rows = tableBody.querySelectorAll('tr');
+        document.getElementById('modalPsychologistName').textContent = 
+            `Dr. ${psychologist.first_name} ${psychologist.last_name}`;
+        document.getElementById('modalPsychologistSpecialty').textContent = 
+            psychologist.primary_specialty;
+        document.getElementById('modalPsychologistEmail').textContent = 
+            psychologist.email;
+        document.getElementById('modalPsychologistPhone').textContent = 
+            psychologist.phone;
+        document.getElementById('modalPsychologistLicense').textContent = 
+            psychologist.license_number;
+        document.getElementById('modalPsychologistExperience').textContent = 
+            `${psychologist.years_experience} years`;
+        document.getElementById('modalPsychologistBio').textContent = 
+            psychologist.bio;
+
+        const avatarElement = document.getElementById('modalPsychologistAvatar');
+        avatarElement.src = psychologist.profile_picture || '/static/images/profile.jpg';
+        avatarElement.onerror = function() {
+            this.src = '/static/images/profile.jpg';
+        };
+
+        const statusElement = document.getElementById('modalPsychologistStatus');
+        statusElement.innerHTML = `
+            <span class="status ${psychologist.is_approved ? 'active' : 'inactive'}">
+                ${psychologist.is_approved ? 'Active' : 'Inactive'}
+            </span>
+        `;
+
+        const specialtiesContainer = document.getElementById('modalPsychologistSpecialties');
+        specialtiesContainer.innerHTML = psychologist.specialties
+            .map(specialty => `<span class="specialty-badge">${specialty}</span>`)
+            .join('');
+
+        openModal('psychologistDetailsModal');
+    } catch (error) {
+        handleApiError(error);
+    }
+}
+
+async function showEditPsychologistModal(id) {
+    try {
+        const response = await axios.get(`/admin/psychologists/${id}`);
+        const psychologist = response.data;
         
-        rows.forEach((row, index) => {
-          if (index < psychologists.length) {
-            row.setAttribute('data-id', psychologists[index].id);
-          }
+        // Set form data
+        document.getElementById('editFirstName').value = psychologist.first_name;
+        document.getElementById('editLastName').value = psychologist.last_name;
+        document.getElementById('editEmail').value = psychologist.email;
+        document.getElementById('editPhone').value = psychologist.phone;
+        document.getElementById('editLicenseNumber').value = psychologist.license_number;
+        document.getElementById('editPrimarySpecialty').value = psychologist.primary_specialty;
+        document.getElementById('editYearsExperience').value = psychologist.years_experience;
+        document.getElementById('editBio').value = psychologist.bio;
+
+        // Set profile picture
+        const profilePreview = document.getElementById('editProfilePreview');
+        profilePreview.src = psychologist.profile_picture || '/static/images/profile.jpg';
+        profilePreview.onerror = function() {
+            this.src = '/static/images/profile.jpg';
+        };
+
+        // Handle specialties checkboxes
+        const specialties = psychologist.specialties || [];
+        document.querySelectorAll('input[name="specialties"]').forEach(checkbox => {
+            checkbox.checked = specialties.includes(checkbox.value);
         });
-      });
-  
-      // Add some CSS for toast notifications
-      const toastCSS = document.createElement('style');
-      toastCSS.textContent = `
-        .toast {
-          position: fixed;
-          bottom: 20px;
-          right: 20px;
-          background-color: var(--dark);
-          color: white;
-          padding: 15px 25px;
-          border-radius: 5px;
-          box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-          transform: translateY(100px);
-          opacity: 0;
-          transition: all 0.3s ease;
-          z-index: 1000;
-        }
-        
-        .toast.show {
-          transform: translateY(0);
-          opacity: 1;
-        }
-        
-        .toast-success {
-          background-color: var(--success);
-        }
-        
-        .toast-error {
-          background-color: var(--error);
-        }
-      `;
-      document.head.appendChild(toastCSS);
+
+        // Set form ID for submission
+        document.getElementById('editPsychologistForm').dataset.psychologistId = psychologist.id;
+
+        openModal('editPsychologistModal');
+    } catch (error) {
+        handleApiError(error);
+    }
+}
+
+// Handle profile picture preview
+document.getElementById('editProfilePicture')?.addEventListener('change', function(e) {
+    if (this.files && this.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('editProfilePreview').src = e.target.result;
+        };
+        reader.readAsDataURL(this.files[0]);
+    }
+});
+
+// Handle profile picture upload click
+document.querySelector('.profile-preview')?.addEventListener('click', function() {
+    document.getElementById('editProfilePicture').click();
+});
+
+async function handleUpdatePsychologist(event) {
+    event.preventDefault();
+    const form = event.target;
+    const psychologistId = form.dataset.psychologistId;
+    
+    const formData = new FormData(form);
+    const data = {
+        first_name: formData.get('first_name'),
+        last_name: formData.get('last_name'),
+        email: formData.get('email'),
+        phone: formData.get('phone'),
+        primary_specialty: formData.get('primary_specialty'),
+        specialties: formData.getAll('specialties'),
+        years_experience: parseInt(formData.get('years_experience')),
+        bio: formData.get('bio')
+    };
+    
+    const result = await updatePsychologist(psychologistId, data);
+    if (result) {
+        closeModal('editPsychologistModal');
+        loadPsychologists();
+    }
+}
+
+async function handleDeletePsychologist() {
+    if (await deletePsychologist(currentPsychologistId)) {
+        closeModal('deleteModal');
+        loadPsychologists();
+    }
+}
+
+async function handleStatusUpdate(status) {
+    if (await updatePsychologistStatus(currentPsychologistId, status)) {
+        closeModal('deactivateModal');
+        loadPsychologists();
+    }
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    loadPsychologists();
+    
+    // Add form submit handlers
+    document.getElementById('editPsychologistForm')?.addEventListener('submit', handleUpdatePsychologist);
+});
