@@ -10,6 +10,7 @@ from flask import request
 from datetime import time
 from flask_jwt_extended import get_jwt_identity, set_access_cookies, unset_jwt_cookies
 from datetime import datetime
+import time as systime
 import time as time_module  # Rename the time module to avoid conflict
 
 # Initialize Blueprints
@@ -177,11 +178,16 @@ def admin_login_api():
     data = request.get_json()
     try:
         response, status_code = login_admin(data)
-        resp = jsonify(response)
         if status_code == 200:
+            resp = jsonify(response)
             set_access_cookies(resp, response['access_token'])
-        return resp, status_code
+            current_app.logger.info(f"Admin login successful for: {data.get('username')}")
+            return resp, status_code
+        else:
+            current_app.logger.warning(f"Admin login failed for: {data.get('username')}")
+            return jsonify(response), status_code
     except Exception as e:
+        current_app.logger.error(f"Error in admin login: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 @admin_bp.route('/api/admin/count', methods=['GET'])
@@ -384,8 +390,20 @@ def update_psychologist_status(psychologist_id):
 @admin_bp.route('/settings')
 @admin_required
 def admin_settings():
-    current_admin = Admin.query.get(get_jwt_identity())
-    return render_template('admin/admin_settings.html', current_admin=current_admin)
+    try:
+        admin_id = get_jwt_identity()
+        current_app.logger.info(f"Admin ID from JWT: {admin_id}")
+        
+        admin = Admin.query.get(admin_id)
+        if not admin:
+            current_app.logger.error(f"Admin not found for ID: {admin_id}")
+            return redirect(url_for('admin.admin_login_page'))
+            
+        current_app.logger.info(f"Admin found: {admin.username}")
+        return render_template('admin/admin_settings.html', current_admin=admin)
+    except Exception as e:
+        current_app.logger.error(f"Error in admin_settings: {str(e)}")
+        return redirect(url_for('admin.admin_login_page'))
 
 @admin_bp.route('/profile', methods=['GET', 'PUT'])
 @admin_required
@@ -413,9 +431,6 @@ def admin_profile():
             if 'email' not in data or not data['email'].strip():
                 return jsonify({'success': False, 'error': 'Email is required'}), 400
 
-            if 'username' not in data or not data['username'].strip():
-                return jsonify({'success': False, 'error': 'Username is required'}), 400
-                
             # Check if email is already taken by another admin
             existing_admin = Admin.query.filter(
                 Admin.email == data['email'],
@@ -424,23 +439,9 @@ def admin_profile():
             if existing_admin:
                 return jsonify({'success': False, 'error': 'Email is already in use'}), 400
 
-            # Check if username is already taken by another admin
-            existing_username = Admin.query.filter(
-                Admin.username == data['username'],
-                Admin.id != admin_id
-            ).first()
-            if existing_username:
-                return jsonify({'success': False, 'error': 'Username is already in use'}), 400
-
             # Update fields
             admin.fullname = data['fullname'].strip()
             admin.email = data['email'].strip()
-            admin.username = data['username'].strip()
-            
-            if 'phone' in data:
-                admin.phone = data['phone'].strip()
-            if 'bio' in data:
-                admin.bio = data['bio'].strip()
             
             db.session.commit()
             
@@ -452,8 +453,6 @@ def admin_profile():
                     'username': admin.username,
                     'fullname': admin.fullname,
                     'email': admin.email,
-                    'phone': admin.phone,
-                    'bio': admin.bio,
                     'profile_picture': url_for('static', filename=admin.profile_picture) if admin.profile_picture else None
                 }
             }), 200
@@ -467,45 +466,49 @@ def admin_profile():
 def update_admin_profile_picture():
     admin_id = get_jwt_identity()
     admin = Admin.query.get_or_404(admin_id)
-    
+
     if 'profile_picture' not in request.files:
         return jsonify({'success': False, 'error': 'No file uploaded'}), 400
-    
+
     file = request.files['profile_picture']
     if file.filename == '':
         return jsonify({'success': False, 'error': 'No selected file'}), 400
-    
+
     if file and allowed_file(file.filename):
         try:
-            # Delete old profile picture if it exists and is not the default
+            # Delete old profile picture (if not the default)
             if admin.profile_picture and admin.profile_picture != 'images/profile.jpg':
-                try:
-                    old_file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], admin.profile_picture)
-                    if os.path.exists(old_file_path):
-                        os.remove(old_file_path)
-                except Exception as e:
-                    current_app.logger.error(f"Error deleting old profile picture: {str(e)}")
-            
+                # Remove "uploads/" from stored path to avoid duplicate path segments
+                stored_filename = admin.profile_picture.replace("uploads/", "")
+                old_file_path = os.path.join(
+                    current_app.config['UPLOAD_FOLDER'],
+                    stored_filename
+                )
+                if os.path.exists(old_file_path):
+                    os.remove(old_file_path)
+                    current_app.logger.info(f"Deleted old profile picture: {old_file_path}")
+
             # Generate unique filename
-            filename = secure_filename(f"admin_{admin_id}_{int(time_module.time())}.{file.filename.rsplit('.', 1)[1].lower()}")
+            file_ext = file.filename.rsplit('.', 1)[1].lower()
+            filename = secure_filename(f"admin_{admin_id}_{int(systime.time())}.{file_ext}")
             filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
-            
-            # Create directory if it doesn't exist
+
+            # Create folder if it doesn't exist
             os.makedirs(os.path.dirname(filepath), exist_ok=True)
-            
+
             # Save the file
             file.save(filepath)
-            
-            # Update database record
+
+            # Update admin profile_picture (relative to static folder)
             admin.profile_picture = f"uploads/{filename}"
             db.session.commit()
-            
+
             return jsonify({
                 'success': True,
                 'message': 'Profile picture updated successfully',
                 'profile_picture': url_for('static', filename=admin.profile_picture)
             }), 200
-            
+
         except Exception as e:
             db.session.rollback()
             current_app.logger.error(f"Error updating profile picture: {str(e)}")

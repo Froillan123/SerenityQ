@@ -1,40 +1,61 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Toast notification system
+    function showToast(message, type = 'success', duration = 3000) {
+        const toastContainer = document.getElementById('toast-container');
+        if (!toastContainer) return;
+
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        
+        const messageSpan = document.createElement('span');
+        messageSpan.textContent = message;
+        
+        const closeButton = document.createElement('button');
+        closeButton.className = 'toast-close';
+        closeButton.innerHTML = '&times;';
+        closeButton.addEventListener('click', () => {
+            toast.remove();
+        });
+        
+        toast.appendChild(messageSpan);
+        toast.appendChild(closeButton);
+        toastContainer.appendChild(toast);
+        
+        // Auto-remove after duration
+        setTimeout(() => {
+            toast.style.animation = 'fadeOut 0.5s ease-in forwards';
+            setTimeout(() => {
+                toast.remove();
+            }, 500);
+        }, duration);
+    }
+
     // Tab switching functionality
     const tabs = document.querySelectorAll('.settings-tab');
     const tabContents = document.querySelectorAll('.tab-content');
 
     tabs.forEach(tab => {
         tab.addEventListener('click', () => {
-            // Remove active class from all tabs and contents
             tabs.forEach(t => t.classList.remove('active'));
             tabContents.forEach(c => c.classList.remove('active'));
-            
-            // Add active class to clicked tab and corresponding content
             tab.classList.add('active');
             const tabId = tab.getAttribute('data-tab');
             document.getElementById(`${tabId}-tab`).classList.add('active');
         });
     });
 
-    // Load admin profile data via API
+    // Load admin profile data
     function loadAdminProfile() {
         fetch('/admin/profile', {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getJWTToken()}`
-            }
+            credentials: 'include'
         })
         .then(response => {
             if (!response.ok) {
-                if (response.status === 401) {
-                    window.location.href = '/admin/login';
-                }
-                throw new Error('Network response was not ok');
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
             return response.json();
         })
         .then(data => {
-            // Set profile picture
             const profileImg = document.getElementById('profile-image-preview');
             if (data.profile_picture) {
                 profileImg.src = data.profile_picture;
@@ -42,30 +63,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 profileImg.src = '/static/images/profile.jpg';
             }
             
-            // Set other profile data
             document.getElementById('fullName').value = data.fullname || '';
             document.getElementById('email').value = data.email || '';
             document.getElementById('username').value = data.username || '';
             document.getElementById('account-username').value = data.username || '';
             
-            // Set account tab fields
-            const languageSelect = document.getElementById('language');
-            if (languageSelect) {
-                languageSelect.value = data.language || 'en';
-            }
-            
-            const timezoneSelect = document.getElementById('timezone');
-            if (timezoneSelect) {
-                timezoneSelect.value = data.timezone || '-05:00';
-            }
-            
-            document.getElementById('role').value = data.is_super_admin ? 'Super Admin' : 'Admin';
-            document.getElementById('joined').value = data.created_at ? 
-                new Date(data.created_at).toLocaleDateString('en-US', { 
+            if (data.created_at) {
+                const date = new Date(data.created_at);
+                document.getElementById('joined').value = date.toLocaleDateString('en-US', {
                     year: 'numeric', 
                     month: 'long', 
-                    day: 'numeric' 
-                }) : 'N/A';
+                    day: 'numeric'
+                });
+            }
         })
         .catch(error => {
             console.error('Error loading profile:', error);
@@ -81,175 +91,147 @@ document.addEventListener('DOMContentLoaded', function() {
     const profilePictureInput = document.getElementById('profile-picture-input');
     const profileImagePreview = document.getElementById('profile-image-preview');
 
-    changePhotoBtn.addEventListener('click', () => {
-        profilePictureInput.click();
-    });
+    if (changePhotoBtn) {
+        changePhotoBtn.addEventListener('click', () => {
+            profilePictureInput.click();
+        });
+    }
 
-    profilePictureInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            if (file.size > 2 * 1024 * 1024) {
-                showToast('File size should be less than 2MB', 'error');
+    if (profilePictureInput) {
+        profilePictureInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 2 * 1024 * 1024) {
+                    showToast('File size should be less than 2MB', 'error');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    if (profileImagePreview) {
+                        profileImagePreview.src = event.target.result;
+                    }
+                    
+                    const formData = new FormData();
+                    formData.append('profile_picture', file);
+
+                    fetch('/admin/profile/picture', {
+                        method: 'POST',
+                        body: formData,
+                        credentials: 'include'
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(err => { throw err; });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            showToast('Profile picture updated successfully!', 'success');
+                            if (data.profile_picture && profileImagePreview) {
+                                profileImagePreview.src = data.profile_picture;
+                            }
+                        } else {
+                            loadAdminProfile();
+                            showToast(data.error || 'Failed to update profile picture', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        loadAdminProfile();
+                        showToast(error.error || 'Failed to upload image', 'error');
+                    });
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    // Save profile changes
+    const saveProfileBtn = document.getElementById('save-profile-btn');
+    if (saveProfileBtn) {
+        saveProfileBtn.addEventListener('click', () => {
+            const fullName = document.getElementById('fullName')?.value.trim();
+            const email = document.getElementById('email')?.value.trim();
+
+            if (!fullName || !email) {
+                showToast('Full name and email are required', 'error');
                 return;
             }
 
-            // Show loading state
-            const originalText = changePhotoBtn.textContent;
-            changePhotoBtn.textContent = 'Uploading...';
-            changePhotoBtn.disabled = true;
-
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                // Show preview immediately
-                profileImagePreview.src = event.target.result;
-                
-                // Upload the image
-                const formData = new FormData();
-                formData.append('profile_picture', file);
-
-                fetch('/admin/profile/picture', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'Authorization': `Bearer ${getJWTToken()}`
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(err => { throw err; });
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        showToast('Profile picture updated successfully', 'success');
-                        // Update the image with the new URL from server
-                        if (data.profile_picture) {
-                            profileImagePreview.src = data.profile_picture;
-                        }
-                        // Refresh the page after 2 seconds
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 2000);
-                    } else {
-                        throw new Error(data.error || 'Failed to update profile picture');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    // Revert to previous image on error
-                    loadAdminProfile();
-                    showToast(error.error || 'An error occurred while uploading the image', 'error');
-                })
-                .finally(() => {
-                    // Reset button state
-                    changePhotoBtn.textContent = originalText;
-                    changePhotoBtn.disabled = false;
-                });
+            const data = {
+                fullname: fullName,
+                email: email
             };
-            reader.readAsDataURL(file);
-        }
-    });
 
-    // Save profile changes
-    document.getElementById('save-profile-btn').addEventListener('click', () => {
-        const data = {
-            fullname: document.getElementById('fullName').value.trim(),
-            email: document.getElementById('email').value.trim(),
-            username: document.getElementById('username').value.trim()
-        };
-
-        // Basic validation
-        if (!data.fullname) {
-            showToast('Full name is required', 'error');
-            return;
-        }
-
-        if (!data.email) {
-            showToast('Email is required', 'error');
-            return;
-        }
-
-        if (!data.username) {
-            showToast('Username is required', 'error');
-            return;
-        }
-
-        // Show loading state
-        const saveBtn = document.getElementById('save-profile-btn');
-        const originalText = saveBtn.textContent;
-        saveBtn.textContent = 'Saving...';
-        saveBtn.disabled = true;
-
-        fetch('/admin/profile', {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getJWTToken()}`
-            },
-            body: JSON.stringify(data)
-        })
-        .then(response => {
-            if (!response.ok) {
-                return response.json().then(err => { throw err; });
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.success) {
-                showToast('Profile updated successfully!', 'success');
-                // Refresh the page after 2 seconds
-                setTimeout(() => {
-                    window.location.reload();
-                }, 2000);
-            } else {
-                throw new Error(data.error || 'Failed to update profile');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showToast(error.error || 'Failed to update profile. Please try again.', 'error');
-        })
-        .finally(() => {
-            // Reset button state
-            saveBtn.textContent = originalText;
-            saveBtn.disabled = false;
+            fetch('/admin/profile', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data),
+                credentials: 'include'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw err; });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    showToast('Profile updated successfully!', 'success');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    showToast(data.error || 'Failed to update profile', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast(error.error || 'Failed to update profile', 'error');
+            });
         });
-    });
+    }
 
     // Update account settings
-    document.getElementById('update-account-btn').addEventListener('click', () => {
-        const data = {
-            language: document.getElementById('language').value,
-            timezone: document.getElementById('timezone').value
-        };
+    const updateAccountBtn = document.getElementById('update-account-btn');
+    if (updateAccountBtn) {
+        updateAccountBtn.addEventListener('click', () => {
+            const data = {
+                language: document.getElementById('language')?.value || 'en',
+                timezone: document.getElementById('timezone')?.value || '+00:00'
+            };
 
-        fetch('/api/admin/account', {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getJWTToken()}`
-            },
-            body: JSON.stringify(data)
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.success) {
-                showToast('Account settings updated successfully');
-            } else {
-                showToast(data.error || 'Failed to update account settings', 'error');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showToast('An error occurred while updating account settings', 'error');
+            fetch('/admin/account', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data),
+                credentials: 'include'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw err; });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    showToast('Account settings updated successfully!', 'success');
+                } else {
+                    showToast(data.error || 'Failed to update account settings', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast(error.error || 'Failed to update account settings', 'error');
+            });
         });
-    });
+    }
 
     // Password change modal
     const passwordModal = document.getElementById('password-modal');
@@ -257,17 +239,23 @@ document.addEventListener('DOMContentLoaded', function() {
     const closeModal = document.querySelector('.close');
     const cancelPasswordChange = document.getElementById('cancel-password-change');
 
-    changePasswordBtn.addEventListener('click', () => {
-        passwordModal.style.display = 'block';
-    });
+    if (changePasswordBtn && passwordModal) {
+        changePasswordBtn.addEventListener('click', () => {
+            passwordModal.style.display = 'block';
+        });
+    }
 
-    closeModal.addEventListener('click', () => {
-        passwordModal.style.display = 'none';
-    });
+    if (closeModal) {
+        closeModal.addEventListener('click', () => {
+            if (passwordModal) passwordModal.style.display = 'none';
+        });
+    }
 
-    cancelPasswordChange.addEventListener('click', () => {
-        passwordModal.style.display = 'none';
-    });
+    if (cancelPasswordChange) {
+        cancelPasswordChange.addEventListener('click', () => {
+            if (passwordModal) passwordModal.style.display = 'none';
+        });
+    }
 
     window.addEventListener('click', (event) => {
         if (event.target === passwordModal) {
@@ -276,105 +264,60 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Submit password change
-    document.getElementById('submit-password-change').addEventListener('click', () => {
-        const currentPassword = document.getElementById('current-password').value;
-        const newPassword = document.getElementById('new-password').value;
-        const confirmPassword = document.getElementById('confirm-password').value;
+    const submitPasswordChange = document.getElementById('submit-password-change');
+    if (submitPasswordChange) {
+        submitPasswordChange.addEventListener('click', () => {
+            const currentPassword = document.getElementById('current-password')?.value || '';
+            const newPassword = document.getElementById('new-password')?.value || '';
+            const confirmPassword = document.getElementById('confirm-password')?.value || '';
 
-        if (!currentPassword || !newPassword || !confirmPassword) {
-            showToast('All fields are required', 'error');
-            return;
-        }
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                showToast('All fields are required', 'error');
+                return;
+            }
 
-        if (newPassword !== confirmPassword) {
-            showToast('New passwords do not match', 'error');
-            return;
-        }
+            if (newPassword !== confirmPassword) {
+                showToast('New passwords do not match', 'error');
+                return;
+            }
 
-        if (newPassword.length < 8) {
-            showToast('Password must be at least 8 characters', 'error');
-            return;
-        }
+            if (newPassword.length < 8) {
+                showToast('Password must be at least 8 characters', 'error');
+                return;
+            }
 
-        fetch('/api/admin/password', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getJWTToken()}`
-            },
-            body: JSON.stringify({
-                current_password: currentPassword,
-                new_password: newPassword
+            fetch('/admin/password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    current_password: currentPassword,
+                    new_password: newPassword
+                }),
+                credentials: 'include'
             })
-        })
-        .then(response => {
-            if (!response.ok) {
-                return response.json().then(err => { throw err; });
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.success) {
-                showToast('Password changed successfully');
-                passwordModal.style.display = 'none';
-                // Clear the password fields
-                document.getElementById('current-password').value = '';
-                document.getElementById('new-password').value = '';
-                document.getElementById('confirm-password').value = '';
-            } else {
-                showToast(data.error || 'Failed to change password', 'error');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showToast(error.error || 'An error occurred while changing password', 'error');
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw err; });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    showToast('Password changed successfully!', 'success');
+                    if (passwordModal) passwordModal.style.display = 'none';
+                    document.getElementById('current-password').value = '';
+                    document.getElementById('new-password').value = '';
+                    document.getElementById('confirm-password').value = '';
+                } else {
+                    showToast(data.error || 'Failed to change password', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast(error.error || 'Failed to change password', 'error');
+            });
         });
-    });
-
-    // Helper function to get JWT token from cookies
-    function getJWTToken() {
-        const cookies = document.cookie.split(';');
-        for (let cookie of cookies) {
-            const [name, value] = cookie.trim().split('=');
-            if (name === 'access_token_cookie') {
-                return value;
-            }
-        }
-        return '';
-    }
-
-    // Helper function to show toast messages
-    function showToast(message, type = 'success') {
-        // Remove any existing toasts
-        const existingToasts = document.querySelectorAll('.toast');
-        existingToasts.forEach(toast => toast.remove());
-
-        const toast = document.createElement('div');
-        toast.className = `toast ${type}`;
-        toast.textContent = message;
-        document.body.appendChild(toast);
-        
-        // Position the toast
-        toast.style.position = 'fixed';
-        toast.style.bottom = '20px';
-        toast.style.right = '20px';
-        toast.style.padding = '12px 24px';
-        toast.style.borderRadius = '4px';
-        toast.style.color = '#fff';
-        toast.style.backgroundColor = type === 'success' ? '#4CAF50' : '#F44336';
-        toast.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
-        toast.style.zIndex = '1000';
-        toast.style.opacity = '0';
-        toast.style.transition = 'opacity 0.3s ease-in-out';
-        
-        setTimeout(() => {
-            toast.style.opacity = '1';
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                setTimeout(() => {
-                    document.body.removeChild(toast);
-                }, 300);
-            }, 3000);
-        }, 100);
     }
 });
