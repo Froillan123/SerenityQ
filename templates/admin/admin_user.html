@@ -1,0 +1,274 @@
+{% extends "shared/adminLayout/adminlayout.html" %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin/user.css') }}">
+{% endblock %}
+
+{% block content %}
+
+    <!-- Hero Section -->
+    <section class="hero light-hero">
+      <h1>User Management Panel</h1>
+      <p>View, edit, or remove user profiles from the system.</p>
+      <button class="cta-btn" id="addUserBtn">+ Add New User</button>
+    </section>
+
+    <!-- User Table -->
+    <section class="section-table">
+      <h2>Registered Users</h2>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="userTableBody">
+            <!-- Users will be loaded here -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination" id="pagination">
+        <button id="prevPage" disabled>Previous</button>
+        <div id="pageNumbers"></div>
+        <button id="nextPage">Next</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- User Details Modal -->
+  <div class="modal" id="userModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>User Details</h3>
+        <button class="close-modal" onclick="closeModal('userModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="profile-header">
+          <img src="" alt="Profile Photo" class="profile-avatar" id="modalUserAvatar">
+          <div class="profile-info">
+            <h3 id="modalUserName"></h3>
+            <p id="modalUserUsername"></p>
+            <p id="modalUserStatus"><span class="status active"></span></p>
+          </div>
+        </div>
+
+        <div class="detail-row">
+          <div class="detail-label">Email:</div>
+          <div class="detail-value" id="modalUserEmail"></div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">First Name:</div>
+          <div class="detail-value" id="modalUserFirstName">John</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Last Name:</div>
+          <div class="detail-value" id="modalUserLastName"></div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Phone:</div>
+          <div class="detail-value" id="modalUserPhone"></div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Date of Birth:</div>
+          <div class="detail-value" id="modalUserDob"></div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Gender:</div>
+          <div class="detail-value" id="modalUserGender"></div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Registration Date:</div>
+          <div class="detail-value" id="modalUserRegDate"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="action-btn view-btn" onclick="closeModal('userModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit User Modal -->
+  <div class="modal" id="editUserModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Edit User Details</h3>
+        <button class="close-modal" onclick="closeModal('editUserModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="profile-header">
+          <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Profile Photo" class="profile-avatar" id="editUserAvatar">
+          <div class="profile-info">
+            <h3 id="editUserName">John Doe</h3>
+            <p id="editUserUsername">johndoe</p>
+          </div>
+        </div>
+
+        <div class="detail-row">
+          <div class="detail-label">First Name:</div>
+          <div class="detail-value">
+            <input type="text" id="editUserFirstNameInput" placeholder="First Name">
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Last Name:</div>
+          <div class="detail-value">
+            <input type="text" id="editUserLastNameInput" placeholder="Last Name">
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Username:</div>
+          <div class="detail-value">
+            <input type="text" id="editUserUsernameInput" placeholder="Username">
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Phone:</div>
+          <div class="detail-value">
+            <input type="tel" id="editUserPhoneInput" placeholder="Phone Number">
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Date of Birth:</div>
+          <div class="detail-value">
+            <input type="date" id="editUserDobInput">
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Gender:</div>
+          <div class="detail-value">
+            <select id="editUserGenderInput">
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+              <option value="Prefer not to say">Prefer not to say</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="action-btn view-btn" onclick="closeModal('editUserModal')">Cancel</button>
+        <button class="action-btn edit-btn" onclick="saveUserChanges()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal confirmation-modal" id="deleteModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Delete User</h3>
+        <button class="close-modal" onclick="closeModal('deleteModal')">&times;</button>
+      </div>
+      <div class="confirmation-body">
+        <i class='bx bx-error-circle'></i>
+        <h3>Delete this user permanently?</h3>
+        <p>This action cannot be undone. All associated data will be removed from the system.</p>
+        <div class="modal-footer">
+          <button class="action-btn view-btn" onclick="closeModal('deleteModal')">Cancel</button>
+          <button class="action-btn delete-btn" onclick="deleteUser()">Delete Permanently</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add User Modal -->
+  <div class="modal" id="addUserModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Add New User</h3>
+        <button class="close-modal" onclick="closeModal('addUserModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="addUserForm">
+          <div class="detail-row">
+            <div class="detail-label">First Name:</div>
+            <div class="detail-value">
+              <input type="text" id="addUserFirstName" placeholder="First Name" required>
+            </div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Last Name:</div>
+            <div class="detail-value">
+              <input type="text" id="addUserLastName" placeholder="Last Name" required>
+            </div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Username:</div>
+            <div class="detail-value">
+              <input type="text" id="addUserUsername" placeholder="Username" required>
+            </div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Email:</div>
+            <div class="detail-value">
+              <input type="email" id="addUserEmail" placeholder="Email Address" required>
+            </div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Password:</div>
+            <div class="detail-value">
+              <input type="password" id="addUserPassword" placeholder="Password" required>
+            </div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Phone:</div>
+            <div class="detail-value">
+              <input type="tel" id="addUserPhone" placeholder="Phone Number">
+            </div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Date of Birth:</div>
+            <div class="detail-value">
+              <input type="date" id="addUserDob">
+            </div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Gender:</div>
+            <div class="detail-value">
+              <select id="addUserGender">
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+                <option value="Prefer not to say">Prefer not to say</option>
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="action-btn view-btn" onclick="closeModal('addUserModal')">Cancel</button>
+        <button class="action-btn edit-btn" onclick="addNewUser()">Add User</button>
+      </div>
+    </div>
+
+
+    <!-- Custom Alert Modal -->
+<div class="modal" id="customAlertModal">
+  <div class="modal-content" style="max-width: 400px;">
+    <div class="modal-header" id="alertModalHeader">
+      <h3 id="alertModalTitle">Alert</h3>
+      <button class="close-modal" onclick="closeModal('customAlertModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p id="alertModalMessage">This is an alert message.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="action-btn view-btn" onclick="closeModal('customAlertModal')">OK</button>
+    </div>
+  </div>
+</div>
+
+
+    {% endblock %}
+
+    {% block scripts %}
+    <script src="{{ url_for('static', filename='js/admin/user.js') }}"></script>
+    {% endblock %}
+
+

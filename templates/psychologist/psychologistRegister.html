@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Psychologist Register | SerenityQ</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <style>
+        :root {
+            --primary: #5D5FEF;
+            --primary-light: #8B8DF2;
+            --secondary: #FF7E5F;
+            --accent: #FFD166;
+            --light: #F7F9FC;
+            --dark: #2B2D42;
+            --gray: #8D99AE;
+            --success: #4CAF50;
+            --error: #F44336;
+            --modal-bg: rgba(0, 0, 0, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .logo i {
+            color: var(--primary);
+            margin-right: 10px;
+            font-size: 1.8rem;
+        }
+
+        .registration-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            padding: 40px;
+            margin-bottom: 40px;
+        }
+
+        .registration-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .registration-header h1 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+
+        .registration-header p {
+            color: var(--gray);
+            max-width: 600px;
+        }
+
+        .registration-steps {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            width: 100%;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            padding: 0 30px;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--gray);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 10px;
+            z-index: 2;
+        }
+
+        .step.active .step-number {
+            background-color: var(--primary);
+        }
+
+        .step.completed .step-number {
+            background-color: var(--success);
+        }
+
+        .step-title {
+            color: var(--gray);
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .step.active .step-title {
+            color: var(--dark);
+            font-weight: 600;
+        }
+
+        .step.completed .step-title {
+            color: var(--dark);
+        }
+
+        .step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: calc(50% + 20px);
+            width: 60px;
+            height: 2px;
+            background-color: var(--gray);
+            z-index: 1;
+        }
+
+        .step.completed:not(:last-child)::after {
+            background-color: var(--success);
+        }
+
+        .registration-form {
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .form-step {
+            display: none;
+        }
+
+        .form-step.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(93, 95, 239, 0.1);
+        }
+
+        .file-upload {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-upload-btn {
+            border: 1px dashed var(--gray);
+            border-radius: 6px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .file-upload-btn:hover {
+            border-color: var(--primary);
+            background-color: rgba(93, 95, 239, 0.05);
+        }
+
+        .file-upload-btn i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .file-upload-btn p {
+            color: var(--gray);
+            margin-bottom: 5px;
+        }
+
+        .file-upload-btn span {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .file-upload input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .upload-preview {
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 6px;
+        }
+
+        .upload-preview img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-right: 15px;
+        }
+
+        .upload-preview-info {
+            flex: 1;
+        }
+
+        .upload-preview-info p {
+            font-size: 0.9rem;
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+
+        .upload-preview-info small {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        .remove-upload {
+            color: var(--error);
+            cursor: pointer;
+            font-size: 1.2rem;
+            margin-left: 15px;
+        }
+
+        .specialty-checkboxes {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+        }
+
+        .checkbox-group input {
+            width: auto;
+            margin-right: 10px;
+        }
+
+        .checkbox-group label {
+            margin-bottom: 0;
+            font-weight: normal;
+            cursor: pointer;
+        }
+
+        .years-slider {
+            margin-top: 15px;
+        }
+
+        .slider-container {
+            padding: 0 10px;
+        }
+
+        .slider-value {
+            text-align: center;
+            margin-top: 10px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .otp-inputs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .otp-input {
+            width: 50px;
+            height: 60px;
+            text-align: center;
+            font-size: 1.5rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+
+        .otp-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(93, 95, 239, 0.2);
+        }
+
+        .resend-otp {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .resend-otp a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .resend-otp a:hover {
+            text-decoration: underline;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(93, 95, 239, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: white;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(93, 95, 239, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .btn-disabled {
+            background-color: var(--gray);
+            color: white;
+            cursor: not-allowed;
+        }
+
+        .btn-disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .success-message {
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        .success-message i {
+            font-size: 4rem;
+            color: var(--success);
+            margin-bottom: 20px;
+        }
+
+        .success-message h2 {
+            color: var(--success);
+            margin-bottom: 15px;
+        }
+
+        .success-message p {
+            color: var(--gray);
+            margin-bottom: 30px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .registration-container {
+                padding: 30px 20px;
+            }
+
+            .registration-steps {
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+
+            .step {
+                padding: 0 15px;
+            }
+
+            .step:not(:last-child)::after {
+                display: none;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .specialty-checkboxes {
+                grid-template-columns: 1fr;
+            }
+
+            .otp-inputs {
+                gap: 5px;
+            }
+
+            .otp-input {
+                width: 40px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .registration-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .btn {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+
+            .form-actions {
+                flex-direction: column-reverse;
+                gap: 10px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <a href="#" class="logo">
+                <i class="fas fa-brain"></i>
+                SerenityQ
+            </a>
+            <div>
+                Already have an account? <a href="{{ url_for('psychologist.psychologist_login')}}" style="color: var(--primary); font-weight: 600;">Sign In</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="registration-container">
+            <div class="registration-header">
+                <h1>Psychologist Registration</h1>
+                <p>Join our network of mental health professionals and help make a difference in people's lives</p>
+            </div>
+
+            <div class="registration-steps">
+                <div class="step active" id="step1-indicator">
+                    <div class="step-number">1</div>
+                    <div class="step-title">Account Info</div>
+                </div>
+                <div class="step" id="step2-indicator">
+                    <div class="step-number">2</div>
+                    <div class="step-title">Professional Details</div>
+                </div>
+                <div class="step" id="step3-indicator">
+                    <div class="step-number">3</div>
+                    <div class="step-title">Verification</div>
+                </div>
+            </div>
+
+            <form id="registrationForm" class="registration-form" enctype="multipart/form-data">
+                <!-- Step 1: Account Information -->
+                <div class="form-step active" id="step1">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">First Name</label>
+                            <input type="text" id="firstName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name</label>
+                            <input type="text" id="lastName" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" required minlength="8">
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm Password</label>
+                            <input type="password" id="confirmPassword" required>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" disabled>Back</button>
+                        <button type="button" class="btn btn-primary" onclick="nextStep(1)">Continue</button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Professional Details -->
+                <div class="form-step" id="step2">
+                    <div class="form-group">
+                        <label for="licenseNumber">Professional License Number</label>
+                        <input type="text" id="licenseNumber" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="licenseProof">Upload License Proof</label>
+                        <div class="file-upload">
+                            <label class="file-upload-btn">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Drag & drop your file here or click to browse</p>
+                                <span>Upload PDF, JPG or PNG (Max 5MB)</span>
+                                <input type="file" id="licenseProof" accept=".pdf,.jpg,.jpeg,.png" required>
+                            </label>
+                        </div>
+                        <div id="licensePreview" class="upload-preview" style="display: none;">
+                            <img id="licensePreviewImg" src="#" alt="License Preview">
+                            <div class="upload-preview-info">
+                                <p id="licenseFileName"></p>
+                                <small id="licenseFileSize"></small>
+                            </div>
+                            <i class="fas fa-times remove-upload" onclick="removeUpload('licenseProof')"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="idProof">Upload Government ID for Verification</label>
+                        <div class="file-upload">
+                            <label class="file-upload-btn">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Drag & drop your file here or click to browse</p>
+                                <span>Upload PDF, JPG or PNG (Max 5MB)</span>
+                                <input type="file" id="idProof" accept=".pdf,.jpg,.jpeg,.png" required>
+                            </label>
+                        </div>
+                        <div id="idPreview" class="upload-preview" style="display: none;">
+                            <img id="idPreviewImg" src="#" alt="ID Preview">
+                            <div class="upload-preview-info">
+                                <p id="idFileName"></p>
+                                <small id="idFileSize"></small>
+                            </div>
+                            <i class="fas fa-times remove-upload" onclick="removeUpload('idProof')"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Primary Specialty</label>
+                        <select id="primarySpecialty" required>
+                            <option value="">Select your primary specialty</option>
+                            <option value="clinical">Clinical Psychologist</option>
+                            <option value="counseling">Counseling Psychologist</option>
+                            <option value="school">School Psychologist</option>
+                            <option value="health">Health Psychologist</option>
+                            <option value="child">Child/Adolescent Psychologist</option>
+                            <option value="neuro">Neuropsychologist</option>
+                            <option value="forensic">Forensic Psychologist</option>
+                            <option value="io">Industrial-Organizational Psychologist</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Additional Specialties (Select all that apply)</label>
+                        <div class="specialty-checkboxes">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="anxiety" name="specialties" value="anxiety">
+                                <label for="anxiety">Anxiety Disorders</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="depression" name="specialties" value="depression">
+                                <label for="depression">Depression</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="trauma" name="specialties" value="trauma">
+                                <label for="trauma">Trauma/PTSD</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="relationships" name="specialties" value="relationships">
+                                <label for="relationships">Relationship Issues</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="stress" name="specialties" value="stress">
+                                <label for="stress">Stress Management</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="adhd" name="specialties" value="adhd">
+                                <label for="adhd">ADHD</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="autism" name="specialties" value="autism">
+                                <label for="autism">Autism Spectrum</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="eating" name="specialties" value="eating">
+                                <label for="eating">Eating Disorders</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="addiction" name="specialties" value="addiction">
+                                <label for="addiction">Addiction</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="ocd" name="specialties" value="ocd">
+                                <label for="ocd">OCD</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="bipolar" name="specialties" value="bipolar">
+                                <label for="bipolar">Bipolar Disorder</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="personality" name="specialties" value="personality">
+                                <label for="personality">Personality Disorders</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="yearsExperience">Years of Experience</label>
+                        <div class="years-slider">
+                            <div class="slider-container">
+                                <input type="range" id="yearsExperience" min="0" max="50" value="5" class="slider">
+                                <div class="slider-value"><span id="yearsValue">5</span> years</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bio">Professional Bio</label>
+                        <textarea id="bio" rows="5" required></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="prevStep(2)">Back</button>
+                        <button type="button" class="btn btn-primary" onclick="nextStep(2)">Continue</button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Verification -->
+                <div class="form-step" id="step3">
+                    <div class="form-group">
+                        <h3 style="text-align: center; margin-bottom: 20px;">Email Verification</h3>
+                        <p style="text-align: center; color: var(--gray); margin-bottom: 30px;">
+                            We've sent a 6-digit verification code to <strong id="emailToVerify">user@example.com</strong>.
+                            Please enter it below to verify your email address.
+                        </p>
+                        
+                        <div class="otp-inputs">
+                            <input type="text" class="otp-input" maxlength="1" pattern="[0-9]">
+                            <input type="text" class="otp-input" maxlength="1" pattern="[0-9]">
+                            <input type="text" class="otp-input" maxlength="1" pattern="[0-9]">
+                            <input type="text" class="otp-input" maxlength="1" pattern="[0-9]">
+                            <input type="text" class="otp-input" maxlength="1" pattern="[0-9]">
+                            <input type="text" class="otp-input" maxlength="1" pattern="[0-9]">
+                        </div>
+                        
+                        <div class="resend-otp">
+                            Didn't receive the code? <a href="#" onclick="resendOTP()">Resend</a>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="prevStep(3)">Back</button>
+                        <button type="button" class="btn btn-primary" onclick="verifyAccount()">Verify & Complete Registration</button>
+                    </div>
+                </div>
+
+                <!-- Success Message (hidden initially) -->
+                    <div class="form-step" id="successStep">
+                        <div class="success-message">
+                            <i class="fas fa-check-circle"></i>
+                            <h2>Registration Submitted Successfully!</h2>
+                            <p>Thank you for joining SerenityQ. Your account is pending admin approval. You'll receive an email once your account is approved. This process typically takes 1-2 business days.</p>
+                            <a href="{{ url_for('psychologist.psychologist_login') }}" class="btn btn-primary">Go to Login</a>
+                        </div>
+                    </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // Current step tracking
+        let currentStep = 1;
+        const totalSteps = 3;
+        
+        // Form data object to store all inputs
+        const formData = new FormData();
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set up file upload previews
+            setupFileUpload('licenseProof', 'licensePreview', 'licensePreviewImg', 'licenseFileName', 'licenseFileSize');
+            setupFileUpload('idProof', 'idPreview', 'idPreviewImg', 'idFileName', 'idFileSize');
+            
+            // Set up years of experience slider
+            const yearsSlider = document.getElementById('yearsExperience');
+            const yearsValue = document.getElementById('yearsValue');
+            
+            yearsSlider.addEventListener('input', function() {
+                yearsValue.textContent = this.value;
+            });
+            
+            // Set up OTP input navigation
+            const otpInputs = document.querySelectorAll('.otp-input');
+            otpInputs.forEach((input, index) => {
+                input.addEventListener('input', function() {
+                    if (this.value.length === 1 && index < otpInputs.length - 1) {
+                        otpInputs[index + 1].focus();
+                    }
+                });
+                
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Backspace' && this.value.length === 0 && index > 0) {
+                        otpInputs[index - 1].focus();
+                    }
+                });
+            });
+        });
+
+        // File upload setup
+        function setupFileUpload(inputId, previewId, previewImgId, fileNameId, fileSizeId) {
+            const input = document.getElementById(inputId);
+            const preview = document.getElementById(previewId);
+            const previewImg = document.getElementById(previewImgId);
+            const fileName = document.getElementById(fileNameId);
+            const fileSize = document.getElementById(fileSizeId);
+            
+            input.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const file = this.files[0];
+                    
+                    // Display file info
+                    fileName.textContent = file.name;
+                    fileSize.textContent = formatFileSize(file.size);
+                    
+                    // Show preview for images
+                    if (file.type.match('image.*')) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            previewImg.src = e.target.result;
+                            preview.style.display = 'flex';
+                        }
+                        reader.readAsDataURL(file);
+                    } else {
+                        // For PDFs or other non-image files
+                        previewImg.src = 'https://cdn-icons-png.flaticon.com/512/337/337946.png'; // Generic document icon
+                        preview.style.display = 'flex';
+                    }
+                }
+            });
+        }
+
+        // Remove uploaded file
+        function removeUpload(inputId) {
+            const input = document.getElementById(inputId);
+            const previewId = inputId === 'licenseProof' ? 'licensePreview' : 'idPreview';
+            const preview = document.getElementById(previewId);
+            
+            input.value = '';
+            preview.style.display = 'none';
+        }
+
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Navigation between steps
+        function nextStep(step) {
+    if (!validateStep(step)) return;
+    
+    if (step === 1) {
+        // Collect basic info
+        formData.append('first_name', document.getElementById('firstName').value.trim());
+        formData.append('last_name', document.getElementById('lastName').value.trim());
+        formData.append('username', document.getElementById('username').value.trim());
+        formData.append('email', document.getElementById('email').value.trim());
+        formData.append('phone', document.getElementById('phone').value.trim());
+        formData.append('password', document.getElementById('password').value);
+        
+        // Proceed to step 2
+        document.getElementById(`step${step}`).classList.remove('active');
+        document.getElementById(`step${step}-indicator`).classList.remove('active');
+        currentStep = step + 1;
+        document.getElementById(`step${currentStep}`).classList.add('active');
+        document.getElementById(`step${currentStep}-indicator`).classList.add('active');
+        updateBackButton();
+    } 
+    else if (step === 2) {
+        // Collect professional info
+        formData.append('license_number', document.getElementById('licenseNumber').value.trim());
+        formData.append('primary_specialty', document.getElementById('primarySpecialty').value);
+        formData.append('years_experience', document.getElementById('yearsExperience').value);
+        formData.append('bio', document.getElementById('bio').value.trim());
+        
+        // Collect specialties
+        document.querySelectorAll('input[name="specialties"]:checked').forEach(checkbox => {
+            formData.append('specialties', checkbox.value);
+        });
+        
+        // Add files to formData
+        const licenseProof = document.getElementById('licenseProof').files[0];
+        const idProof = document.getElementById('idProof').files[0];
+        formData.append('license_proof', licenseProof);
+        formData.append('id_proof', idProof);
+        
+        // Submit the form data to the backend
+        submitRegistrationForm();
+    }
+}
+
+
+function submitRegistrationForm() {
+    Swal.fire({
+        title: 'Submitting Registration',
+        html: 'Please wait while we process your information...',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+            
+            fetch('/psychologist/register', {
+                method: 'POST',
+                body: formData  // Send the FormData object directly
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw err; });
+                }
+                return response.json();
+            })
+            .then(data => {
+                Swal.close();
+                if (data.error) {
+                    Swal.fire('Error', data.error, 'error');
+                } else {
+                    // Proceed to verification step
+                    document.getElementById(`step2`).classList.remove('active');
+                    document.getElementById(`step2-indicator`).classList.remove('active');
+                    currentStep = 3;
+                    document.getElementById(`step${currentStep}`).classList.add('active');
+                    document.getElementById(`step${currentStep}-indicator`).classList.add('active');
+                    document.getElementById('emailToVerify').textContent = formData.get('email');
+                }
+            })
+            .catch(error => {
+                Swal.fire('Error', error.error || 'Registration failed. Please try again.', 'error');
+            });
+        }
+    });
+}
+
+        function prevStep(step) {
+            // Hide current step
+            document.getElementById(`step${step}`).classList.remove('active');
+            document.getElementById(`step${step}-indicator`).classList.remove('active');
+            
+            // Show previous step
+            currentStep = step - 1;
+            document.getElementById(`step${currentStep}`).classList.add('active');
+            document.getElementById(`step${currentStep}-indicator`).classList.add('active');
+            
+            // Update back button state
+            updateBackButton();
+        }
+
+        function updateBackButton() {
+            const backButtons = document.querySelectorAll('.btn-secondary');
+            backButtons.forEach(button => {
+                if (currentStep === 1) {
+                    button.disabled = true;
+                    button.classList.add('btn-disabled');
+                } else {
+                    button.disabled = false;
+                    button.classList.remove('btn-disabled');
+                }
+            });
+        }
+
+        function validateStep(step) {
+    if (step === 1) {
+        const firstName = document.getElementById('firstName').value.trim();
+        const lastName = document.getElementById('lastName').value.trim();
+        const username = document.getElementById('username').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        
+        if (!firstName || !lastName || !username || !email || !phone || !password || !confirmPassword) {
+            Swal.fire('Error', 'Please fill in all required fields', 'error');
+            return false;
+        }
+        
+        if (password !== confirmPassword) {
+            Swal.fire('Error', 'Passwords do not match', 'error');
+            return false;
+        }
+        
+        if (password.length < 8) {
+            Swal.fire('Error', 'Password must be at least 8 characters long', 'error');
+            return false;
+        }
+        
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            Swal.fire('Error', 'Please enter a valid email address', 'error');
+            return false;
+        }
+        
+        if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+            Swal.fire('Error', 'Username can only contain letters, numbers and underscores', 'error');
+            return false;
+        }
+        
+        if (!/^\+?[0-9\s\-\(\)]{10,}$/.test(phone)) {
+            Swal.fire('Error', 'Please enter a valid phone number', 'error');
+            return false;
+        }
+        
+        return true;
+    }
+            else if (step === 2) {
+                const licenseNumber = document.getElementById('licenseNumber').value.trim();
+                const licenseProof = document.getElementById('licenseProof').files[0];
+                const idProof = document.getElementById('idProof').files[0];
+                const primarySpecialty = document.getElementById('primarySpecialty').value;
+                const bio = document.getElementById('bio').value.trim();
+                
+                if (!licenseNumber || !licenseProof || !idProof || !primarySpecialty || !bio) {
+                    Swal.fire('Error', 'Please fill in all required fields and upload required documents', 'error');
+                    return false;
+                }
+                
+                // Add professional data to FormData
+                formData.append('license_number', licenseNumber);
+                formData.append('license_proof', licenseProof);
+                formData.append('id_proof', idProof);
+                formData.append('primary_specialty', primarySpecialty);
+                
+                const specialties = [];
+                document.querySelectorAll('input[name="specialties"]:checked').forEach(checkbox => {
+                    specialties.push(checkbox.value);
+                });
+                formData.append('specialties', specialties.join(','));
+                
+                formData.append('years_experience', document.getElementById('yearsExperience').value);
+                formData.append('bio', bio);
+                
+                return true;
+            }
+            
+            return true;
+        }
+
+
+        // Save data from current step
+        function saveStepData(step) {
+            if (step === 1) {
+                formData.account = {
+                    firstName: document.getElementById('firstName').value.trim(),
+                    lastName: document.getElementById('lastName').value.trim(),
+                    email: document.getElementById('email').value.trim(),
+                    password: document.getElementById('password').value
+                };
+            } else if (step === 2) {
+                const specialties = [];
+                document.querySelectorAll('input[name="specialties"]:checked').forEach(checkbox => {
+                    specialties.push(checkbox.value);
+                });
+                
+                formData.professional = {
+                    licenseNumber: document.getElementById('licenseNumber').value.trim(),
+                    licenseProof: document.getElementById('licenseProof').files[0],
+                    idProof: document.getElementById('idProof').files[0],
+                    primarySpecialty: document.getElementById('primarySpecialty').value,
+                    specialties: specialties,
+                    yearsExperience: document.getElementById('yearsExperience').value,
+                    bio: document.getElementById('bio').value.trim()
+                };
+            }
+        }
+
+        // Resend OTP
+        function resendOTP() {
+            sendOTP();
+            return false;
+        }
+
+        function verifyAccount() {
+    const otpInputs = document.querySelectorAll('.otp-input');
+    let otp = '';
+    otpInputs.forEach(input => {
+        otp += input.value;
+    });
+    
+    if (otp.length !== 6) {
+        Swal.fire('Error', 'Please enter the complete 6-digit verification code', 'error');
+        return;
+    }
+    
+    // Get the email from form
+    const email = formData.get('email');
+    
+    Swal.fire({
+        title: 'Verifying Account',
+        html: 'Please wait while we verify your account...',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+            
+            fetch('/psychologist/verify-otp', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: email,
+                    otp_code: otp
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw err; });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    Swal.fire('Error', data.error, 'error');
+                } else {
+                    // Hide verification step
+                    document.getElementById('step3').classList.remove('active');
+                    document.getElementById('step3-indicator').classList.remove('active');
+                    
+                    // Show success message
+                    document.getElementById('successStep').classList.add('active');
+                    document.getElementById('step3-indicator').classList.add('completed');
+                    
+                    Swal.fire(
+                        'Verification Successful!',
+                        'You can now login to your account.',
+                        'success'
+                    ).then(() => {
+                        if (data.redirect) {
+                            window.location.href = data.redirect;
+                        }
+                    });
+                }
+            })
+            .catch(error => {
+                Swal.fire('Error', error.error || 'Verification failed. Please try again.', 'error');
+            });
+        }
+    });
+}
+
+function sendOTP() {
+    const email = formData.get('email');
+    
+    Swal.fire({
+        title: 'Sending OTP',
+        html: 'Please wait while we send a new verification code...',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+            
+            fetch('/psychologist/resend-otp', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: email
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw err; });
+                }
+                return response.json();
+            })
+            .then(data => {
+                Swal.fire(
+                    'OTP Sent!',
+                    'A new verification code has been sent to your email.',
+                    'success'
+                );
+            })
+            .catch(error => {
+                Swal.fire('Error', error.error || 'Failed to resend OTP. Please try again.', 'error');
+            });
+        }
+    });
+}
+
+function resendOTP() {
+    sendOTP();
+    return false;
+}
+    </script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+{% extends "shared/userLayout/navigationLayout.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/user/ai.css') }}">
+{% endblock %}
+
+{% block content %}
+<!-- Main Chat Container -->
+<div class="chat-container">
+    <!-- Chat History Sidebar -->
+    <div class="chat-history" id="chatHistory">
+        <div class="chat-history-header">
+            <span>SerenityQ AI</span>
+            <i class="fas fa-cog"></i>
+        </div>
+        <button class="new-chat-btn" id="newChatBtn">
+            <i class="fas fa-plus"></i> New Chat
+        </button>
+        <div class="history-title">Recent Chats</div>
+        <div class="history-list" id="historyList">
+            <!-- Chat history items will be added here dynamically -->
+        </div>
+    </div>
+
+    <!-- Main Chat Area -->
+    <div class="chat-area" id="chatArea">
+        <div class="chat-messages" id="chatMessages">
+            <!-- AI Welcome Message -->
+            <div class="message ai-message">
+                <div class="message-content">
+                    <p>Hello! I'm SerenityQ AI. I can help you find the perfect psychologist based on your needs. What
+                        symptoms or concerns would you like to discuss?</p>
+                    <div class="message-time">Just now</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Input Area -->
+        <div class="user-input-container">
+            <div class="user-input-box">
+                <textarea id="userMessage" placeholder="Message SerenityQ..." rows="1"></textarea>
+                <button class="send-btn" id="sendMessageBtn"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Therapist Modal -->
+<div class="modal-overlay" id="therapistModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title">Therapist Details</h3>
+            <button class="modal-close" id="modalClose">&times;</button>
+        </div>
+        <div class="modal-body" id="modalBody">
+            <!-- Modal content will be loaded here -->
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="{{ url_for('static', filename='js/user/ai.js') }}"></script>
+<script src="{{ url_for('static', filename='js/logout/logout.js') }}"></script>
+{% endblock %}

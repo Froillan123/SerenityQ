@@ -1,0 +1,128 @@
+{% extends "shared/adminLayout/adminlayout.html" %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin/dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+
+
+
+  <!-- Stats Grid -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-header">
+        <div>
+          <div class="stat-value">{{ user_count }}</div>
+          <div class="stat-title">Total Users</div>
+          <div class="stat-change {% if user_percent_change >= 0 %}positive{% else %}negative{% endif %}">
+            <i class='bx bx-{% if user_percent_change >= 0 %}up{% else %}down{% endif %}-arrow-alt'></i> 
+            {{ user_percent_change|abs }}% from last month
+          </div>
+        </div>
+        <div class="stat-icon users">
+          <i class='bx bx-group'></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-header">
+        <div>
+          <div class="stat-value">{{ psychologist_count }}</div>
+          <div class="stat-title">Psychologists</div>
+          <div class="stat-change {% if psychologist_percent_change >= 0 %}positive{% else %}negative{% endif %}">
+            <i class='bx bx-{% if psychologist_percent_change >= 0 %}up{% else %}down{% endif %}-arrow-alt'></i> 
+            {{ psychologist_percent_change|abs }}% from last month
+          </div>
+        </div>
+        <div class="stat-icon psychologists">
+          <i class='bx bx-user-voice'></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-header">
+        <div>
+          <div class="stat-value">1,023</div>
+          <div class="stat-title">Active Users</div>
+          <div class="stat-change positive">
+            <i class='bx bx-up-arrow-alt'></i> 8% from last month
+          </div>
+        </div>
+        <div class="stat-icon active">
+          <i class='bx bx-check-circle'></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts Section -->
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-header">
+        <h3>User Registrations</h3>
+        <div class="chart-filter">
+          <button class="filter-btn active" data-period="week">Weekly</button>
+          <button class="filter-btn" data-period="month">Monthly</button>
+          <button class="filter-btn" data-period="year">Yearly</button>
+        </div>
+      </div>
+      <div class="chart-container">
+        <canvas id="userChart"></canvas>
+      </div>
+    </div>
+
+
+    <div class="chart-card">
+      <div class="chart-header">
+        <h3>Psychologist Registrations</h3>
+        <div class="chart-filter">
+          <button class="filter-btn active" data-period="week">Weekly</button>
+          <button class="filter-btn" data-period="month">Monthly</button>
+          <button class="filter-btn" data-period="year">Yearly</button>
+        </div>
+      </div>
+      <div class="chart-container">
+        <canvas id="psychologistChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Active Users Table -->
+  <div class="users-table">
+    <div class="table-header">
+      <h3>Active Users</h3>
+      <button class="filter-btn active">All</button>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Last Active</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>John Doe</td>
+            <td>john.doe@example.com</td>
+            <td>2 hours ago</td>
+            <td><span class="status-badge status-active">Active</span></td>
+            <td>
+              <button class="action-btn view-btn"><i class='bx bx-show'></i> View</button>
+            </td>
+          </tr>
+          <!-- More rows... -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/admin/dashboard.js') }}"></script>
+{% endblock %}

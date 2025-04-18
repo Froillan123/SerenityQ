@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Registration</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/register.css') }}">
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Toast notifications container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <div class="register-container">
+        <div class="register-header">
+            <h1>Admin Registration</h1>
+            <p>Create a new admin account (Max 2 admins allowed)</p>
+        </div>
+
+        <div class="admin-limit-warning" id="adminLimitWarning">
+            <i class="fas fa-exclamation-circle"></i> Maximum number of admins (2) already registered. Cannot create more.
+        </div>
+
+        <form class="register-form" id="registerForm">
+            <div class="form-group">
+                <label for="fullname">Full Name</label>
+                <input type="text" id="fullname" placeholder="Enter your full name" required>
+                <div class="error-message" id="fullname-error">Please enter your full name</div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" placeholder="Enter your email" required>
+                <div class="error-message" id="email-error">Please enter a valid email address</div>
+            </div>
+
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" placeholder="Choose a username" required>
+                <div class="error-message" id="username-error">Username must be at least 4 characters</div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Create a password" required>
+                <button type="button" class="password-toggle" id="togglePassword">
+                    <i class="far fa-eye"></i>
+                </button>
+                <div class="password-strength">
+                    Strength: <span id="strength-text">Weak</span>
+                    <div class="password-strength-meter">
+                        <div class="password-strength-meter-fill" id="strength-meter"></div>
+                    </div>
+                </div>
+                <div class="error-message" id="password-error">Password must be at least 8 characters with uppercase, lowercase, number, and special character</div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirm-password">Confirm Password</label>
+                <input type="password" id="confirm-password" placeholder="Confirm your password" required>
+                <button type="button" class="password-toggle" id="toggleConfirmPassword">
+                    <i class="far fa-eye"></i>
+                </button>
+                <div class="error-message" id="confirm-password-error">Passwords do not match</div>
+            </div>
+
+            <div class="form-group">
+                <label for="secret-key">Admin Secret Key</label>
+                <input type="password" id="secret-key" placeholder="Enter admin secret key" required>
+                <div class="error-message" id="secret-key-error">Invalid admin secret key</div>
+            </div>
+
+            <button type="submit" class="register-button" id="registerButton">Register Admin</button>
+        </form>
+
+        <div class="register-footer">
+            <p>Already have an account? <a href="{{ url_for('admin.admin_login_page') }}">Login Here</a></p>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/admin/register.js') }}"></script>
+</body>
+</html>

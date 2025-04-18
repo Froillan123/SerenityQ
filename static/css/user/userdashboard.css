@@ -1,0 +1,880 @@
+:root {
+    --primary: #5D5FEF;
+    --primary-light: #8B8DF2;
+    --primary-lighter: #E0E1FF;
+    --secondary: #FF7E5F;
+    --secondary-light: #FFB8A8;
+    --accent: #FFD166;
+    --accent-light: #FFE8B3;
+    --light: #F7F9FC;
+    --dark: #2B2D42;
+    --dark-light: #4A4D6B;
+    --gray: #8D99AE;
+    --gray-light: #D1D5DB;
+    --success: #4CAF50;
+    --error: #F44336;
+    --modal-bg: rgba(0, 0, 0, 0.5);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: var(--light);
+    color: var(--dark);
+    line-height: 1.6;
+    padding-top: 80px; /* Add padding to account for fixed navbar */
+}
+
+
+/* Main Content */
+.dashboard-container {
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.welcome-card {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 15px 30px rgba(93, 95, 239, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.welcome-card::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+    border-radius: 50%;
+}
+
+.welcome-card h2 {
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    position: relative;
+}
+
+.welcome-card p {
+    opacity: 0.9;
+    max-width: 600px;
+    position: relative;
+}
+
+.mood-emoji {
+    font-size: 1.5rem;
+    margin-left: 0.5rem;
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background-color: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s;
+    border: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+}
+
+.stat-icon {
+    width: 54px;
+    height: 54px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.stat-title {
+    color: var(--gray);
+    font-weight: 500;
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+}
+
+.progress-container {
+    background-color: var(--light);
+    border-radius: 10px;
+    height: 10px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.progress-bar {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 1s ease-in-out;
+}
+
+.progress-text {
+    color: var(--gray);
+    font-size: 0.85rem;
+}
+
+/* Main Content Layout */
+.content-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1.5rem;
+}
+
+.card {
+    background-color: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.section-title {
+    font-weight: 600;
+    color: var(--dark);
+    margin-bottom: 1.25rem;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+}
+
+.section-title i {
+    margin-right: 0.75rem;
+    color: var(--primary);
+}
+
+/* Appointments List */
+.appointment-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid #f0f0f0;
+    transition: all 0.3s;
+}
+
+.appointment-item:hover {
+    background-color: var(--light);
+}
+
+.appointment-item:last-child {
+    border-bottom: none;
+}
+
+.psychologist-img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 1rem;
+    border: 2px solid var(--primary-lighter);
+}
+
+.appointment-details {
+    flex: 1;
+    min-width: 0; /* Allows text truncation */
+}
+
+.appointment-name {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: var(--dark);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.appointment-time {
+    color: var(--gray);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.appointment-time i {
+    margin-right: 0.5rem;
+    font-size: 0.8em;
+}
+
+.appointment-status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    min-width: 80px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.status-confirmed {
+    background-color: rgba(76, 175, 80, 0.1);
+    color: var(--success);
+}
+
+.status-pending {
+    background-color: rgba(255, 214, 102, 0.1);
+    color: var(--accent);
+}
+
+.status-cancelled {
+    background-color: rgba(244, 67, 54, 0.1);
+    color: var(--error);
+}
+
+/* Activities List */
+.activity-item {
+    display: flex;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f0f0f0;
+    transition: all 0.3s;
+}
+
+.activity-item:hover {
+    transform: translateX(5px);
+}
+
+.activity-item:last-child {
+    border-bottom: none;
+}
+
+.activity-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    margin-right: 1rem;
+    background-color: var(--light);
+    flex-shrink: 0;
+}
+
+.activity-text {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.activity-time {
+    color: var(--gray);
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.activity-time i {
+    margin-right: 0.5rem;
+    font-size: 0.8em;
+}
+
+/* Charts */
+.chart-container {
+    position: relative;
+    height: 250px;
+    width: 100%;
+    margin-top: 1rem;
+}
+
+/* Chatbot Styles */
+.chatbot-toggle {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    box-shadow: 0 10px 30px rgba(93, 95, 239, 0.3);
+    cursor: pointer;
+    z-index: 1000;
+    transition: all 0.3s;
+    border: none;
+}
+
+.chatbot-toggle:hover {
+    transform: scale(1.1) rotate(10deg);
+    box-shadow: 0 15px 35px rgba(93, 95, 239, 0.4);
+}
+
+.chatbot-container {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 380px;
+    height: 520px;
+    background-color: white;
+    border-radius: 18px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    display: none;
+    flex-direction: column;
+    z-index: 1000;
+    transform: translateY(20px);
+    opacity: 0;
+    transition: all 0.3s;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.chatbot-container.show {
+    display: flex;
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.chatbot-header {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    padding: 1.125rem;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chatbot-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.4rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.chatbot-close:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.chatbot-messages {
+    flex: 1;
+    padding: 1.125rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.chatbot-input {
+    display: flex;
+    padding: 0.75rem;
+    border-top: 1px solid #eee;
+    background-color: var(--light);
+}
+
+.chatbot-input input {
+    flex: 1;
+    border: 1px solid #e0e0e0;
+    border-radius: 25px;
+    padding: 0.75rem 1.125rem;
+    outline: none;
+    font-size: 0.95rem;
+    transition: all 0.3s;
+}
+
+.chatbot-input input:focus {
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 3px rgba(93, 95, 239, 0.1);
+}
+
+.chatbot-input button {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    margin-left: 0.75rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 1.1rem;
+}
+
+.chatbot-input button:hover {
+    transform: rotate(15deg);
+    box-shadow: 0 5px 15px rgba(93, 95, 239, 0.3);
+}
+
+.message {
+    margin-bottom: 0.9375rem;
+    max-width: 80%;
+    padding: 0.75rem 1rem;
+    line-height: 1.5;
+    position: relative;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.bot-message {
+    align-self: flex-start;
+    background-color: #f5f5ff;
+    color: var(--dark);
+    border-radius: 18px 18px 18px 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.user-message {
+    align-self: flex-end;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    border-radius: 18px 18px 6px 18px;
+    box-shadow: 0 4px 12px rgba(93, 95, 239, 0.2);
+}
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
+    .dashboard-container {
+        padding: 1.5rem;
+    }
+    
+    .content-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+@media (max-width: 768px) {
+    .dashboard-container {
+        padding: 1rem;
+    }
+    
+    
+    .welcome-card {
+        padding: 1.5rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .chatbot-container {
+        width: 90%;
+        right: 5%;
+        height: 65vh;
+        bottom: 90px;
+    }
+    .chatbot-toggle {
+        bottom: 70px;
+        right: 20px;
+        width: 56px;
+        height: 56px;
+        font-size: 1.4rem;
+    }
+}
+
+@media (max-width: 568px) {
+    .chatbot-container {
+        width: 100%;
+        right: 0;
+        border-radius: 0;
+        bottom: 0;
+        height: 100vh;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .welcome-card h2 {
+        font-size: 1.5rem;
+    }
+    
+    .profile-name {
+        display: none;
+    }
+    
+    .appointment-item {
+        flex-wrap: wrap;
+    }
+    
+    .appointment-status {
+        margin-top: 0.5rem;
+        width: 100%;
+        order: 3;
+    }
+    
+    .appointment-details {
+        flex-basis: calc(100% - 66px);
+    }
+    
+    .activity-text, 
+    .activity-time {
+        white-space: normal;
+    }
+}
+
+@media (max-width: 374px) {
+    .dashboard-container {
+        padding: 0.75rem;
+    }
+    
+    .welcome-card {
+        padding: 1rem;
+    }
+    
+    .stat-card {
+        padding: 1rem;
+    }
+    
+    .card {
+        padding: 1rem;
+    }
+    
+    .section-title {
+        font-size: 1.1rem;
+    }
+    
+    .appointment-name {
+        font-size: 0.95rem;
+    }
+    
+    .appointment-time {
+        font-size: 0.8rem;
+    }
+    
+    .activity-text {
+        font-size: 0.9rem;
+    }
+    
+    .activity-time {
+        font-size: 0.75rem;
+    }
+    
+    .chart-container {
+        height: 200px;
+    }
+}
+
+@media (max-width: 360px) {
+    .dashboard-container {
+        padding: 0.75rem;
+    }
+    
+    .welcome-card {
+        padding: 1rem;
+    }
+    
+    .stat-card {
+        padding: 1rem;
+    }
+    
+    .card {
+        padding: 1rem;
+    }
+    
+    .section-title {
+        font-size: 1.1rem;
+    }
+    
+    .appointment-name {
+        font-size: 0.95rem;
+    }
+    
+    .appointment-time {
+        font-size: 0.8rem;
+    }
+    
+    .activity-text {
+        font-size: 0.9rem;
+    }
+    
+    .activity-time {
+        font-size: 0.75rem;
+    }
+    
+    .chart-container {
+        height: 200px;
+    }
+}
+
+
+/* Mobile-first approach for the problematic sections */
+@media (max-width: 1024px) {
+    .content-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Stack cards vertically on mobile */
+    .left-column, .right-column {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    
+    /* Ensure charts don't overflow */
+    .chart-container {
+        min-height: 200px;
+        overflow: hidden;
+    }
+    
+    /* Appointment items - more compact */
+    .appointment-item {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 0.8rem 0;
+    }
+    
+    .appointment-details {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .appointment-status {
+        margin-top: 0.5rem;
+        align-self: flex-start;
+    }
+    
+    /* Activity items - better text handling */
+    .activity-item {
+        align-items: flex-start;
+    }
+    
+    .activity-text, 
+    .activity-time {
+        white-space: normal;
+        overflow: visible;
+        text-overflow: clip;
+    }
+}
+
+/* Extreme small screen adjustments */
+@media (max-width: 480px) {
+    /* Make everything more compact */
+    .dashboard-container {
+        padding: 1rem;
+    }
+    
+    .card {
+        padding: 1rem;
+    }
+    
+    /* Font size reductions */
+    .section-title {
+        font-size: 1.1rem;
+    }
+    
+    .appointment-name {
+        font-size: 0.9rem;
+    }
+    
+    .appointment-time {
+        font-size: 0.8rem;
+    }
+    
+    .activity-text {
+        font-size: 0.85rem;
+    }
+    
+    .activity-time {
+        font-size: 0.75rem;
+    }
+    
+    /* Smaller chart containers */
+    .chart-container {
+        height: 180px;
+    }
+    
+    /* Psychologist images smaller */
+    .psychologist-img {
+        width: 40px;
+        height: 40px;
+        margin-right: 0.75rem;
+    }
+    
+    /* Activity icons smaller */
+    .activity-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+        margin-right: 0.75rem;
+    }
+}
+
+/* Super small screens (320px range) */
+@media (max-width: 374px) {
+    /* Even more compact layout */
+    .dashboard-container {
+        padding: 0.75rem;
+    }
+    
+    .welcome-card {
+        padding: 1.25rem;
+    }
+    
+    .welcome-card h2 {
+        font-size: 1.2rem;
+    }
+    
+    .welcome-card p {
+        font-size: 0.85rem;
+    }
+    
+    .card {
+        padding: 0.8rem;
+    }
+    
+    /* Tiny text adjustments */
+    .section-title {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .section-title i {
+        margin-right: 0.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .appointment-name {
+        font-size: 0.8rem;
+    }
+    
+    .appointment-time {
+        font-size: 0.75rem;
+    }
+    
+    .activity-text {
+        font-size: 0.8rem;
+    }
+    
+    /* Charts need to be very compact */
+    .chart-container {
+        height: 160px;
+    }
+    
+    /* Force single column for stats */
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Emergency measures for tiny screens */
+@media (max-width: 320px) {
+    /* Minimum font sizes */
+    .section-title {
+        font-size: 0.95rem;
+    }
+    
+    .appointment-name,
+    .activity-text {
+        font-size: 0.75rem;
+    }
+    
+    .appointment-time,
+    .activity-time {
+        font-size: 0.7rem;
+    }
+    
+    /* Hide non-essential decorative elements */
+    .welcome-card::before {
+        display: none;
+    }
+    
+    /* Absolute minimum chart height */
+    .chart-container {
+        height: 140px;
+    }
+    
+    /* Compact appointment status */
+    .appointment-status {
+        font-size: 0.7rem;
+        padding: 0.15rem 0.5rem;
+        min-width: 70px;
+    }
+    
+    /* Reduce image sizes further */
+    .psychologist-img {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .activity-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Special case: When charts might still overflow */
+@media (max-width: 280px) {
+    .chart-container {
+        height: 120px;
+    }
+    
+    /* Force text to wrap */
+    .appointment-name,
+    .appointment-time,
+    .activity-text,
+    .activity-time {
+        white-space: normal;
+        overflow: visible;
+        text-overflow: clip;
+    }
+    
+    /* Remove some padding */
+    .card {
+        padding: 0.6rem;
+    }
+    
+    /* Reduce gaps between items */
+    .appointment-item,
+    .activity-item {
+        padding: 0.5rem 0;
+    }
+}

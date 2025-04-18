@@ -1,0 +1,347 @@
+{% extends "shared/userLayout/navigationLayout.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/user/user-profile.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="profile-header">
+        <div class="profile-pic">
+            <img src="{{ url_for('static', filename=user.profile_picture) if user.profile_picture.startswith('uploads/') else user.profile_picture }}" alt="Profile Picture">
+            <div class="profile-camera-icon" id="profileCameraIcon">
+                <i class="fas fa-camera"></i>
+            </div>
+        </div>
+        <div class="profile-info">
+            <h1 class="profile-name" id="profileName">{{ user.first_name }} {{ user.last_name }}</h1>
+            <button class="profile-edit-btn" id="editProfileBtn">
+                <i class="fas fa-pencil-alt"></i> Edit Profile
+            </button>
+        </div>
+    </div>
+
+    <div class="profile-tabs">
+        <div class="profile-tab active" data-tab="about">About</div>
+        <div class="profile-tab" data-tab="appointments">Appointments</div>
+        <div class="profile-tab" data-tab="settings">Settings</div>
+        <div class="profile-tab" data-tab="billing">Billing</div>
+    </div>
+
+    <div class="profile-content">
+        <div class="left-sidebar">
+            <div class="intro-card">
+                <h2>
+                    Intro
+                    <a href="javascript:void(0);" id="editProfileBtn">
+                        <i class="fas fa-ellipsis-h card-title-icon"></i>
+                    </a>
+                </h2>
+                <div class="intro-item">
+                    <div class="intro-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div>{{ user.email }}</div>
+                </div>
+                <div class="intro-item">
+                    <div class="intro-icon">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <div>{{ user.phone if user.phone else 'Add phone number' }}</div>
+                </div>
+                <div class="intro-item">
+                    <div class="intro-icon">
+                        <i class="fas fa-birthday-cake"></i>
+                    </div>
+                    <div>{% if user.dob %}{{ user.dob.strftime('%B %d, %Y') }}{% else %}Add birth date{% endif %}</div>
+                </div>
+                <div class="intro-item">
+                    <div class="intro-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div>{{ user.gender if user.gender else 'Add gender' }}</div>
+                </div>
+                <div class="intro-item">
+                    <div class="intro-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div>Joined {{ user.created_at.strftime('%B %Y') }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="right-content">
+            <!-- About Content -->
+            <div class="tab-content active" id="about-content">
+                <div class="profile-about">
+                    <h2>
+                        About
+                        <i class="fas fa-ellipsis-h card-title-icon" id="editAboutBtn"></i>
+                    </h2>
+                    <p id="aboutText">
+                        {{ user.about if user.about else 'Tell us about yourself...' }}
+                    </p>
+                </div>
+                
+                <div class="interests-card">
+                    <h2>
+                        Interests
+                        <i class="fas fa-ellipsis-h card-title-icon"></i>
+                    </h2>
+                    <div class="interests-list">
+                        <span class="interest-tag">Technology</span>
+                        <span class="interest-tag">Photography</span>
+                        <span class="interest-tag">Hiking</span>
+                        <span class="interest-tag">Coffee</span>
+                        <span class="interest-tag">Travel</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Appointments Content -->
+            <div class="tab-content" id="appointments-content">
+                <div class="appointments-card">
+                    <h2>
+                        Recent Appointments
+                        <i class="fas fa-ellipsis-h card-title-icon"></i>
+                    </h2>
+                    <div class="appointment-item" data-appointment-id="1">
+                        <div class="appointment-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="appointment-details">
+                            <div class="appointment-title">Therapy Session</div>
+                            <div class="appointment-date">April 10, 2025 • 10:00 AM</div>
+                            <div class="appointment-status status-upcoming">Upcoming</div>
+                        </div>
+                    </div>
+                    <div class="appointment-item" data-appointment-id="2">
+                        <div class="appointment-icon">
+                            <i class="fas fa-stethoscope"></i>
+                        </div>
+                        <div class="appointment-details">
+                            <div class="appointment-title">Counseling Session</div>
+                            <div class="appointment-date">March 25, 2025 • 2:30 PM</div>
+                            <div class="appointment-status status-completed">Completed</div>
+                        </div>
+                    </div>
+                    <div class="view-all-btn" id="viewAllAppointments">
+                        See All Appointments
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Content -->
+            <div class="tab-content" id="settings-content">
+                <div class="settings-card">
+                    <h2>
+                        Account Settings
+                        <i class="fas fa-ellipsis-h card-title-icon"></i>
+                    </h2>
+                    <div class="settings-item">
+                        <div class="settings-icon">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                        <div class="settings-details">
+                            <h3>Password</h3>
+                            <p>Last changed {% if user.last_password_change %}{{ user.last_password_change.strftime('%B %d, %Y') }}{% else %}Never{% endif %}</p>
+                        </div>
+                        <button class="btn btn-outline" id="changePasswordBtn">Change</button>
+                    </div>
+                    <div class="settings-item">
+                        <div class="settings-icon">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <div class="settings-details">
+                            <h3>Notifications</h3>
+                            <p>Manage your notification preferences</p>
+                        </div>
+                        <button class="btn btn-outline">Manage</button>
+                    </div>
+                    <div class="settings-item">
+                        <div class="settings-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="settings-details">
+                            <h3>Security</h3>
+                            <p>Two-factor authentication, login history</p>
+                        </div>
+                        <button class="btn btn-outline">Secure</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Billing Content -->
+            <div class="tab-content" id="billing-content">
+                <div class="billing-card">
+                    <h2>
+                        Payment Methods
+                        <i class="fas fa-ellipsis-h card-title-icon"></i>
+                    </h2>
+                    <div class="payment-methods">
+                        <div class="payment-method active">
+                            <div class="payment-icon">
+                                <i class="fab fa-cc-visa"></i>
+                            </div>
+                            <div class="payment-details">
+                                <h3>Visa ending in 4242</h3>
+                                <p>Expires 05/2026</p>
+                            </div>
+                            <div class="payment-actions">
+                                <button class="btn btn-outline btn-sm">Edit</button>
+                                <button class="btn btn-danger btn-sm">Remove</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-primary" id="addPaymentMethod">
+                        <i class="fas fa-plus"></i> Add Payment Method
+                    </button>
+                </div>
+                
+                <div class="billing-history">
+                    <h2>
+                        Billing History
+                        <i class="fas fa-ellipsis-h card-title-icon"></i>
+                    </h2>
+                    <div class="billing-item">
+                        <div class="billing-icon">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                        </div>
+                        <div class="billing-details">
+                            <h3>Therapy Session - April 10, 2025</h3>
+                            <p>Completed on April 10, 2025</p>
+                        </div>
+                        <div class="billing-amount">
+                            $120.00
+                        </div>
+                    </div>
+                    
+                    <div class="view-all-btn">
+                        View Full Billing History
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Profile Modal -->
+<div class="modal" id="editProfileModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title">Edit Profile</h2>
+            <button class="close-btn" id="closeModal">&times;</button>
+        </div>
+        <form id="profileForm">
+            <div class="form-group">
+                <label for="editFirstName" class="form-label">First Name</label>
+                <input type="text" id="editFirstName" class="form-input" value="{{ user.first_name }}">
+            </div>
+            <div class="form-group">
+                <label for="editLastName" class="form-label">Last Name</label>
+                <input type="text" id="editLastName" class="form-input" value="{{ user.last_name }}">
+            </div>
+            <div class="form-group">
+                <label for="editPhone" class="form-label">Phone</label>
+                <input type="text" id="editPhone" class="form-input" value="{{ user.phone or '' }}">
+            </div>
+            <div class="form-group">
+                <label for="editDob" class="form-label">Date of Birth</label>
+                <input type="date" id="editDob" class="form-input" value="{{ user.dob.strftime('%Y-%m-%d') if user.dob else '' }}">
+            </div>
+            <div class="form-group">
+                <label for="editGender" class="form-label">Gender</label>
+                <select id="editGender" class="form-input">
+                    <option value="">Select gender</option>
+                    <option value="Male" {% if user.gender == 'Male' %}selected{% endif %}>Male</option>
+                    <option value="Female" {% if user.gender == 'Female' %}selected{% endif %}>Female</option>
+                    <option value="Other" {% if user.gender == 'Other' %}selected{% endif %}>Other</option>
+                </select>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" id="cancelEdit">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit About Modal -->
+<div class="modal" id="editAboutModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title">Edit About</h2>
+            <button class="close-btn" id="closeAboutModal">&times;</button>
+        </div>
+        <form id="aboutForm">
+            <div class="form-group">
+                <label for="aboutTextarea" class="form-label">About Me</label>
+                <textarea id="aboutTextarea" class="form-input" rows="6">{{ user.about or '' }}</textarea>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" id="cancelAboutEdit">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Image Upload Modal -->
+<div class="modal" id="imageUploadModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title">Change Profile Picture</h2>
+            <button class="close-btn" id="closeImageModal">&times;</button>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Select an image</label>
+            <input type="file" id="profileImageUpload" accept="image/*" style="display: none;">
+            <button class="btn btn-secondary" id="chooseImageBtn" style="width: 100%; margin-bottom: 15px;">
+                <i class="fas fa-folder-open"></i> Choose Image
+            </button>
+            <div id="imagePreviewContainer" style="text-align: center; margin-bottom: 15px; display: none;">
+                <img id="imagePreview" style="max-width: 100%; max-height: 300px; border-radius: 4px;">
+            </div>
+        </div>
+        <div class="form-actions">
+            <button type="button" class="btn btn-secondary" id="cancelImageUpload">Cancel</button>
+            <button type="button" class="btn btn-primary" id="saveImageBtn" disabled>Save Picture</button>
+        </div>
+    </div>
+</div>
+
+<!-- Change Password Modal -->
+<div class="modal" id="changePasswordModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title">Change Password</h2>
+            <button class="close-btn" id="closePasswordModal">&times;</button>
+        </div>
+        <form id="passwordForm">
+            <div class="form-group">
+                <label for="currentPassword" class="form-label">Current Password</label>
+                <input type="password" id="currentPassword" class="form-input" required>
+            </div>
+            <div class="form-group">
+                <label for="newPassword" class="form-label">New Password</label>
+                <input type="password" id="newPassword" class="form-input" required minlength="8">
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                <input type="password" id="confirmPassword" class="form-input" required minlength="8">
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" id="cancelPasswordChange">Cancel</button>
+                <button type="submit" class="btn btn-primary">Change Password</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="{{ url_for('static', filename='js/user/user-profile.js') }}"></script>
+{% endblock %}

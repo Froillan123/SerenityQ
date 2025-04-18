@@ -1,0 +1,162 @@
+{% extends "shared/adminLayout/adminlayout.html" %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin/settings.css') }}">
+{% endblock %}
+
+{% block content %}
+    <!-- Settings Container -->
+    <div class="settings-container">
+      <div class="settings-header">
+        <h2>Account Settings</h2>
+        <p>Manage your account settings and preferences</p>
+      </div>
+
+      <div class="settings-tabs">
+        <div class="settings-tab active" data-tab="profile">Profile</div>
+        <div class="settings-tab" data-tab="account">Account</div>
+        <div class="settings-tab" data-tab="security">Security</div>
+      </div>
+
+      <div class="settings-content">
+        <!-- Profile Tab -->
+        <div class="tab-content active" id="profile-tab">
+            <div class="profile-section">
+              <div class="profile-picture">
+                <img id="profile-image-preview" src="/static/images/profile.jpg" alt="Profile Picture">
+                <input type="file" id="profile-picture-input" accept="image/*" style="display: none;">
+                <button class="btn" id="change-photo-btn">Change Photo</button>
+                <small style="display: block; margin-top: 10px; color: var(--secondary);">JPG, GIF or PNG. Max size 2MB</small>
+              </div>
+              <div class="profile-form">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="firstName">Full Name</label>
+                    <input type="text" id="fullName" class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" class="form-control" disabled>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="email">Email</label>
+                  <input type="email" id="email" class="form-control">
+                </div>
+                <button class="btn btn-primary" id="save-profile-btn">Save Changes</button>
+              </div>
+            </div>
+        </div>
+
+        <!-- Account Tab -->
+        <div class="tab-content" id="account-tab">
+          <div class="form-group">
+            <label for="account-username">Username</label>
+            <input type="text" id="account-username" class="form-control" disabled>
+          </div>
+          <div class="form-group">
+            <label for="language">Language</label>
+            <select id="language" class="form-control">
+              <option value="en">English</option>
+              <option value="es">Spanish</option>
+              <option value="fr">French</option>
+              <option value="de">German</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="timezone">Timezone</label>
+            <select id="timezone" class="form-control">
+              <option value="-12:00">(GMT-12:00) International Date Line West</option>
+              <option value="-08:00">(GMT-08:00) Pacific Time (US & Canada)</option>
+              <option value="-05:00">(GMT-05:00) Eastern Time (US & Canada)</option>
+              <option value="+00:00">(GMT) Greenwich Mean Time : Dublin, London</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="role">Role</label>
+            <input type="text" id="role" class="form-control" disabled>
+          </div>
+          <div class="form-group">
+            <label for="joined">Member Since</label>
+            <input type="text" id="joined" class="form-control" disabled>
+          </div>
+          <div style="margin-top: 30px;">
+            <button class="btn btn-primary" id="update-account-btn">Update Account</button>
+            <button class="btn btn-outline" style="margin-left: 10px;" id="cancel-account-btn">Cancel</button>
+          </div>
+        </div>
+
+        <!-- Security Tab -->
+        <div class="tab-content" id="security-tab">
+          <div class="security-item">
+            <div class="security-info">
+              <h4>Password</h4>
+              <p>Last changed <span id="password-changed-date">never</span></p>
+            </div>
+            <div class="security-status">
+              <span class="status-badge status-active">Active</span>
+              <button class="btn btn-outline" id="change-password-btn">Change</button>
+            </div>
+          </div>
+          <div class="security-item">
+            <div class="security-info">
+              <h4>Two-Factor Authentication</h4>
+              <p>Add an extra layer of security to your account</p>
+            </div>
+            <div class="security-status">
+              <span class="status-badge status-inactive">Inactive</span>
+              <button class="btn btn-primary" id="enable-2fa-btn">Enable</button>
+            </div>
+          </div>
+          <div class="security-item">
+            <div class="security-info">
+              <h4>Recent Devices</h4>
+              <p>No recent devices found</p>
+            </div>
+            <div class="security-status">
+              <button class="btn btn-outline" id="view-devices-btn">View All</button>
+            </div>
+          </div>
+          <div class="security-item">
+            <div class="security-info">
+              <h4>Login History</h4>
+              <p>Track all login attempts to your account</p>
+            </div>
+            <div class="security-status">
+              <button class="btn btn-outline" id="view-logs-btn">View Logs</button>
+            </div>
+          </div>
+          <div style="margin-top: 30px; text-align: right;">
+            <button class="btn btn-outline" id="signout-all-btn">Sign out all devices</button>
+          </div>
+          
+          <!-- Password Change Modal -->
+          <div id="password-modal" class="modal">
+            <div class="modal-content">
+              <span class="close">&times;</span>
+              <h3>Change Password</h3>
+              <div class="form-group">
+                <label for="current-password">Current Password</label>
+                <input type="password" id="current-password" class="form-control">
+              </div>
+              <div class="form-group">
+                <label for="new-password">New Password</label>
+                <input type="password" id="new-password" class="form-control">
+              </div>
+              <div class="form-group">
+                <label for="confirm-password">Confirm New Password</label>
+                <input type="password" id="confirm-password" class="form-control">
+              </div>
+              <div class="form-group">
+                <button class="btn btn-primary" id="submit-password-change">Change Password</button>
+                <button class="btn btn-outline" id="cancel-password-change">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/admin/settings.js') }}"></script>
+{% endblock %}

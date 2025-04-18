@@ -1,0 +1,293 @@
+{% extends "shared/adminLayout/adminlayout.html" %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin/psychologist.css') }}">
+{% endblock %}
+
+
+
+{% block content %}
+
+    <!-- Hero Section -->
+    <section class="hero light-hero">
+      <h1>Psychologist Management Panel</h1>
+      <p>View, deactivate, or remove psychologist profiles from the system.</p>
+    </section>
+
+
+
+    <!-- Psychologist Table -->
+    <section class="section-table">
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="psychologistsTableBody">
+            <!-- Table content will be dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination" id="pagination">
+        <!-- Pagination will be dynamically populated -->
+      </div>
+    </section>
+  </div>
+
+  <!-- View Psychologist Details Modal -->
+  <div class="modal" id="psychologistDetailsModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Psychologist Details</h3>
+        <button class="close-modal" onclick="closeModal('psychologistDetailsModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="profile-header">
+          <img src="" alt="Profile Photo" class="profile-avatar" id="modalPsychologistAvatar">
+          <div class="profile-info">
+            <h3 id="modalPsychologistName"></h3>
+            <p id="modalPsychologistSpecialty"></p>
+            <p id="modalPsychologistStatus"></p>
+          </div>
+        </div>
+
+        <div class="details-section">
+          <div class="detail-row">
+            <div class="detail-label">Email:</div>
+            <div class="detail-value" id="modalPsychologistEmail"></div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Phone:</div>
+            <div class="detail-value" id="modalPsychologistPhone"></div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">License Number:</div>
+            <div class="detail-value" id="modalPsychologistLicense"></div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Years of Experience:</div>
+            <div class="detail-value" id="modalPsychologistExperience"></div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Specialties:</div>
+            <div class="detail-value">
+              <div class="specialties-list" id="modalPsychologistSpecialties"></div>
+            </div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Bio:</div>
+            <div class="detail-value" id="modalPsychologistBio"></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="action-btn view-btn" onclick="closeModal('psychologistDetailsModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Deactivate Confirmation Modal -->
+  <div class="modal confirmation-modal" id="deactivateModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Deactivate Psychologist</h3>
+        <button class="close-modal" onclick="closeModal('deactivateModal')">&times;</button>
+      </div>
+      <div class="confirmation-body">
+        <i class='bx bx-error-circle'></i>
+        <h3>Deactivate this psychologist?</h3>
+        <p>This will prevent them from accessing the system but preserve their data. You can reactivate them later.</p>
+        <div class="modal-footer">
+          <button class="action-btn view-btn" onclick="closeModal('deactivateModal')">Cancel</button>
+          <button class="action-btn deactivate-btn" onclick="handleStatusUpdate(currentPsychologistId, { is_approved: false })">Deactivate</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal confirmation-modal" id="deleteModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Delete Psychologist</h3>
+        <button class="close-modal" onclick="closeModal('deleteModal')">&times;</button>
+      </div>
+      <div class="confirmation-body">
+        <i class='bx bx-error-circle'></i>
+        <h3>Delete this psychologist permanently?</h3>
+        <p>This action cannot be undone. All associated data will be removed from the system.</p>
+        <div class="modal-footer">
+          <button class="action-btn view-btn" onclick="closeModal('deleteModal')">Cancel</button>
+          <button class="action-btn delete-btn" onclick="handleDeletePsychologist(currentPsychologistId)">Delete Permanently</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<!-- Edit Psychologist Modal -->
+<div class="modal" id="editPsychologistModal">
+    <div class="modal-content large-modal">
+        <div class="modal-header">
+            <h2><i class='bx bx-edit'></i> Edit Psychologist</h2>
+            <button class="close-modal" onclick="closeModal('editPsychologistModal')">
+                <i class='bx bx-x'></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="editPsychologistForm" onsubmit="handleUpdatePsychologist(event)">
+                <div class="form-grid">
+                    <!-- Profile Picture Section -->
+                    <div class="profile-upload-section">
+                        <div class="profile-preview">
+                            <img id="editProfilePreview" src="/static/images/profile.jpg" alt="Profile Preview">
+                            <div class="upload-overlay">
+                                <i class='bx bx-camera'></i>
+                                <span>Change Photo</span>
+                            </div>
+                        </div>
+                        <input type="file" id="editProfilePicture" name="profile_picture" accept="image/*" hidden>
+                    </div>
+
+                    <!-- Personal Information -->
+                    <div class="form-section">
+                        <h3><i class='bx bx-user'></i> Personal Information</h3>
+                        <div class="input-grid">
+                            <div class="form-group">
+                                <label for="editFirstName">First Name</label>
+                                <input type="text" id="editFirstName" name="first_name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="editLastName">Last Name</label>
+                                <input type="text" id="editLastName" name="last_name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="editEmail">Email Address</label>
+                                <input type="email" id="editEmail" name="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="editPhone">Phone Number</label>
+                                <input type="tel" id="editPhone" name="phone" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Professional Information -->
+                    <div class="form-section">
+                        <h3><i class='bx bx-briefcase'></i> Professional Information</h3>
+                        <div class="input-grid">
+                            <div class="form-group">
+                                <label for="editLicenseNumber">License Number (Read-only)</label>
+                                <input type="text" id="editLicenseNumber" name="license_number" readonly disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="editPrimarySpecialty">Primary Specialty</label>
+                                <select id="editPrimarySpecialty" name="primary_specialty" required>
+                                    <option value="">Select Specialty</option>
+                                    <option value="Clinical Psychology">Clinical Psychology</option>
+                                    <option value="Counseling Psychology">Counseling Psychology</option>
+                                    <option value="Child Psychology">Child Psychology</option>
+                                    <option value="Marriage Counseling">Marriage Counseling</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="editYearsExperience">Years of Experience</label>
+                                <input type="number" id="editYearsExperience" name="years_experience" min="0" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Specialties Section -->
+                    <div class="form-section full-width">
+                        <h3><i class='bx bx-plus-medical'></i> Additional Specialties</h3>
+                        <div class="form-group">
+                            <label>Additional Specialties (Select all that apply)</label>
+                            <div class="specialty-checkboxes">
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="anxiety" name="specialties" value="Anxiety">
+                                    <label for="anxiety">Anxiety Disorders</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="depression" name="specialties" value="Depression">
+                                    <label for="depression">Depression</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="trauma" name="specialties" value="PTSD">
+                                    <label for="trauma">Trauma/PTSD</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="relationships" name="specialties" value="Relationships">
+                                    <label for="relationships">Relationship Issues</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="stress" name="specialties" value="Stress Management">
+                                    <label for="stress">Stress Management</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="adhd" name="specialties" value="ADHD">
+                                    <label for="adhd">ADHD</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="autism" name="specialties" value="Autism Spectrum">
+                                    <label for="autism">Autism Spectrum</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="eating" name="specialties" value="Eating Disorders">
+                                    <label for="eating">Eating Disorders</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="addiction" name="specialties" value="Addiction">
+                                    <label for="addiction">Addiction</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="ocd" name="specialties" value="OCD">
+                                    <label for="ocd">OCD</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="bipolar" name="specialties" value="Bipolar Disorder">
+                                    <label for="bipolar">Bipolar Disorder</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="personality" name="specialties" value="Personality Disorders">
+                                    <label for="personality">Personality Disorders</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bio Section -->
+                    <div class="form-section full-width">
+                        <h3><i class='bx bx-detail'></i> Professional Bio</h3>
+                        <div class="form-group">
+                            <textarea id="editBio" name="bio" rows="4" required></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="action-btn cancel-btn" onclick="closeModal('editPsychologistModal')">
+                        <i class='bx bx-x'></i> Cancel
+                    </button>
+                    <button type="submit" class="action-btn save-btn">
+                        <i class='bx bx-check'></i> Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+  {% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="{{ url_for('static', filename='js/admin/psychologist.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,200 @@
+{% extends "shared/psychologistLayout/psychologist_navigation.html" %}
+{% block title %}Appointments - SerenityQ{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/psychologist/appointments.css') }}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css">
+{% endblock %}
+
+{% block page_title %}Appointments{% endblock %}
+
+{% block content %}
+
+        <!-- Calendar and Appointments Layout -->
+        <div class="appointment-layout">
+            <!-- Calendar Section -->
+            <div class="calendar-section">
+                <div class="calendar-header">
+                    <h3>Appointment Calendar</h3>
+                    <div class="calendar-actions">
+                        <button class="calendar-btn secondary" id="prevMonth">
+                            <i class='bx bx-chevron-left'></i>
+                        </button>
+                        <button class="calendar-btn secondary" id="todayBtn">Today</button>
+                        <button class="calendar-btn secondary" id="nextMonth">
+                            <i class='bx bx-chevron-right'></i>
+                        </button>
+                    </div>
+                </div>
+                <div id="calendar"></div>
+            </div>
+
+            <!-- Appointments List Section -->
+            <div class="appointments-list">
+                <div class="appointments-header">
+                    <h3>Upcoming Appointments</h3>
+                    <div class="filter-options">
+                        <button class="filter-btn active">All</button>
+                        <button class="filter-btn">Today</button>
+                        <button class="filter-btn">This Week</button>
+                    </div>
+                </div>
+                <div class="appointment-items">
+                    <!-- Appointment Card 1 -->
+                    <div class="appointment-card upcoming">
+                        <div class="appointment-card-header">
+                            <span class="appointment-time">10:00 AM - 11:00 AM</span>
+                            <span class="appointment-status status-confirmed">Confirmed</span>
+                        </div>
+                        <div class="appointment-patient">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Patient" class="patient-avatar">
+                            <div class="patient-info">
+                                <h4>Michael Brown</h4>
+                                <p>ID: P-7802 | Anxiety Treatment</p>
+                            </div>
+                        </div>
+                        <div class="appointment-details">
+                            <span class="appointment-type">Cognitive Behavioral Therapy</span>
+                            <div class="appointment-actions">
+                                <button class="action-btn secondary-btn">
+                                    <i class='bx bx-chat'></i> Message
+                                </button>
+                                <button class="action-btn primary-btn start-session-btn" data-patient="Michael Brown" data-type="Cognitive Behavioral Therapy">
+                                    <i class='bx bx-video'></i> Start
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Appointment Card 2 -->
+                    <div class="appointment-card upcoming">
+                        <div class="appointment-card-header">
+                            <span class="appointment-time">2:30 PM - 3:30 PM</span>
+                            <span class="appointment-status status-confirmed">Confirmed</span>
+                        </div>
+                        <div class="appointment-patient">
+                            <img src="https://randomuser.me/api/portraits/women/63.jpg" alt="Patient" class="patient-avatar">
+                            <div class="patient-info">
+                                <h4>Jessica Smith</h4>
+                                <p>ID: P-7731 | Depression</p>
+                            </div>
+                        </div>
+                        <div class="appointment-details">
+                            <span class="appointment-type">Psychotherapy Session</span>
+                            <div class="appointment-actions">
+                                <button class="action-btn secondary-btn">
+                                    <i class='bx bx-chat'></i> Message
+                                </button>
+                                <button class="action-btn primary-btn start-session-btn" data-patient="Jessica Smith" data-type="Psychotherapy Session">
+                                    <i class='bx bx-video'></i> Start
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Appointment Card 3 -->
+                    <div class="appointment-card pending">
+                        <div class="appointment-card-header">
+                            <span class="appointment-time">Tomorrow, 9:00 AM</span>
+                            <span class="appointment-status status-pending">Pending</span>
+                        </div>
+                        <div class="appointment-patient">
+                            <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="Patient" class="patient-avatar">
+                            <div class="patient-info">
+                                <h4>David Wilson</h4>
+                                <p>ID: P-7698 | PTSD</p>
+                            </div>
+                        </div>
+                        <div class="appointment-details">
+                            <span class="appointment-type">Trauma Therapy</span>
+                            <div class="appointment-actions">
+                                <button class="action-btn secondary-btn">
+                                    <i class='bx bx-chat'></i> Message
+                                </button>
+                                <button class="action-btn secondary-btn confirm-btn">
+                                    <i class='bx bx-check'></i> Confirm
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Appointment Card 4 -->
+                    <div class="appointment-card">
+                        <div class="appointment-card-header">
+                            <span class="appointment-time">Apr 09, 11:00 AM</span>
+                            <span class="appointment-status status-confirmed">Confirmed</span>
+                        </div>
+                        <div class="appointment-patient">
+                            <img src="https://randomuser.me/api/portraits/women/28.jpg" alt="Patient" class="patient-avatar">
+                            <div class="patient-info">
+                                <h4>Amanda Lee</h4>
+                                <p>ID: P-7645 | Stress Management</p>
+                            </div>
+                        </div>
+                        <div class="appointment-details">
+                            <span class="appointment-type">Mindfulness Session</span>
+                            <div class="appointment-actions">
+                                <button class="action-btn secondary-btn">
+                                    <i class='bx bx-chat'></i> Message
+                                </button>
+                                <button class="action-btn secondary-btn reschedule-btn">
+                                    <i class='bx bx-edit'></i> Reschedule
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Appointment Modal -->
+    <div class="modal-overlay" id="appointmentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Appointment Details</h3>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-patient-info">
+                <img src="" alt="Patient" class="modal-patient-avatar" id="modalPatientAvatar">
+                <div class="modal-patient-details">
+                    <h4 id="modalPatientName"></h4>
+                    <p id="modalPatientId"></p>
+                    <p id="modalPatientCondition"></p>
+                </div>
+            </div>
+            <div class="modal-appointment-details">
+                <div class="detail-row">
+                    <div class="detail-label">Date & Time:</div>
+                    <div class="detail-value" id="modalAppointmentTime"></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Type:</div>
+                    <div class="detail-value" id="modalAppointmentType"></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Status:</div>
+                    <div class="detail-value" id="modalAppointmentStatus"></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Notes:</div>
+                    <div class="detail-value" id="modalAppointmentNotes">No additional notes</div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="action-btn secondary-btn" id="modalMessageBtn">
+                    <i class='bx bx-chat'></i> Message
+                </button>
+                <button class="action-btn primary-btn" id="modalStartBtn">
+                    <i class='bx bx-video'></i> Start Session
+                </button>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+<script src="{{ url_for('static', filename='js/psychologist/appointment.js') }}"></script>
+{% endblock %}

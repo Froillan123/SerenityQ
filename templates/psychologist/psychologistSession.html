@@ -1,0 +1,288 @@
+{% extends "shared/psychologistLayout/psychologist_navigation.html" %}
+{% block title %}Appointments - SerenityQ{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/psychologist/session.css') }}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css">
+{% endblock %}
+
+{% block page_title %}Appointments{% endblock %}
+
+{% block content %}
+
+<div class="messenger-container">
+    <!-- Conversations List -->
+    <div class="conversations-list">
+        <div class="list-header">
+            <h2>Messages</h2>
+            <div class="list-actions">
+                <button class="toggle-request-btn" id="toggleRequestBtn">
+                    <i class='bx bx-user-plus'></i>
+                    <span class="request-badge">1</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Search Box -->
+        <div class="search-conversations">
+            <i class='bx bx-search'></i>
+            <input type="text" placeholder="Search conversations...">
+        </div>
+        
+        <!-- Active Sessions -->
+        <div class="conversations" id="activeConversations">
+            <div class="conversation active" data-user="michael-brown">
+                <div class="conversation-left">
+                    <div class="avatar">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Patient">
+                        <span class="online-status"></span>
+                    </div>
+                    <div class="conversation-info">
+                        <h4>Michael Brown</h4>
+                        <p class="last-message">Thanks for your help yesterday</p>
+                    </div>
+                </div>
+                <div class="conversation-right">
+                    <span class="time">2:45 PM</span>
+                    <span class="unread-count">3</span>
+                </div>
+            </div>
+            
+            <div class="conversation" data-user="jessica-smith">
+                <div class="conversation-left">
+                    <div class="avatar">
+                        <img src="https://randomuser.me/api/portraits/women/63.jpg" alt="Patient">
+                    </div>
+                    <div class="conversation-info">
+                        <h4>Jessica Smith</h4>
+                        <p class="last-message">See you at our next session</p>
+                    </div>
+                </div>
+                <div class="conversation-right">
+                    <span class="time">Yesterday</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Session Requests -->
+        <div class="requests-list" id="sessionRequests">
+            <div class="requests-header">
+                <h3>Session Requests</h3>
+                <button class="close-requests" id="closeRequestsBtn">
+                    <i class='bx bx-x'></i>
+                </button>
+            </div>
+            
+            <div class="request">
+                <div class="request-left">
+                    <div class="avatar">
+                        <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="Patient">
+                    </div>
+                    <div class="request-info">
+                        <h4>David Wilson</h4>
+                        <p>Requested session for Anxiety</p>
+                        <span class="request-time">Today at 10:30 AM</span>
+                    </div>
+                </div>
+                <div class="request-actions">
+                    <button class="accept-btn">
+                        <i class='bx bx-check'></i>
+                    </button>
+                    <button class="decline-btn">
+                        <i class='bx bx-x'></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="request">
+                <div class="request-left">
+                    <div class="avatar">
+                        <img src="https://randomuser.me/api/portraits/women/28.jpg" alt="Patient">
+                    </div>
+                    <div class="request-info">
+                        <h4>Amanda Lee</h4>
+                        <p>Requested session for Depression</p>
+                        <span class="request-time">Yesterday at 4:15 PM</span>
+                    </div>
+                </div>
+                <div class="request-actions">
+                    <button class="accept-btn">
+                        <i class='bx bx-check'></i>
+                    </button>
+                    <button class="decline-btn">
+                        <i class='bx bx-x'></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Chat Container -->
+    <div class="chat-container" id="chatContainer">
+        <!-- Chat Header -->
+        <div class="chat-header">
+            <div class="chat-user-info">
+                <button class="back-to-conversations" id="backToConversations">
+                    <i class='bx bx-arrow-back'></i>
+                </button>
+                <div class="avatar">
+                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Patient">
+                    <span class="online-status"></span>
+                </div>
+                <div>
+                    <h4>Michael Brown</h4>
+                    <p>Active now</p>
+                </div>
+            </div>
+            <div class="chat-actions">
+                <button class="action-btn" id="voiceCallBtn">
+                    <i class='bx bx-phone'></i>
+                </button>
+                <button class="action-btn" id="videoCallBtn">
+                    <i class='bx bx-video'></i>
+                </button>
+                <button class="action-btn more-options">
+                    <i class='bx bx-dots-vertical-rounded'></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Chat Messages -->
+        <div class="chat-messages">
+            <div class="message-date">
+                <span>Today</span>
+            </div>
+            
+            <div class="message received">
+                <div class="avatar">
+                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Patient">
+                </div>
+                <div class="message-content">
+                    <p>Hello Dr. Smith, I've been feeling much better since our last session.</p>
+                    <span class="message-time">2:30 PM</span>
+                </div>
+            </div>
+            
+            <div class="message received">
+                <div class="avatar">
+                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Patient">
+                </div>
+                <div class="message-content">
+                    <p>The techniques you suggested have really helped with my anxiety.</p>
+                    <span class="message-time">2:31 PM</span>
+                </div>
+            </div>
+            
+            <div class="message sent">
+                <div class="message-content">
+                    <p>That's great to hear Michael! I'm glad the techniques are working for you.</p>
+                    <span class="message-time">2:35 PM</span>
+                </div>
+            </div>
+            
+            <div class="message sent">
+                <div class="message-content">
+                    <p>How was your experience with the breathing exercises?</p>
+                    <span class="message-time">2:36 PM</span>
+                </div>
+            </div>
+            
+            <div class="message received">
+                <div class="avatar">
+                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Patient">
+                </div>
+                <div class="message-content">
+                    <p>They've been really helpful, especially when I feel overwhelmed at work.</p>
+                    <span class="message-time">2:45 PM</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Chat Input -->
+        <div class="chat-input">
+            <button class="emoji-btn">
+                <i class='bx bx-smile'></i>
+            </button>
+            <input type="text" placeholder="Write a message...">
+            <button class="send-btn">
+                <i class='bx bx-send'></i>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Empty State -->
+    <div class="empty-chat" id="emptyChat">
+        <div class="empty-content">
+            <div class="empty-icon">
+                <i class='bx bx-conversation'></i>
+            </div>
+            <h3>Select a conversation</h3>
+            <p>Choose an existing conversation or accept a new session request to start messaging.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Video Call Modal -->
+<div class="video-call-modal" id="videoCallModal">
+    <div class="video-call-container">
+        <div class="video-header">
+            <h3>Video Session with Michael Brown</h3>
+            <button class="video-close" id="closeVideoModal">
+                <i class='bx bx-x'></i>
+            </button>
+        </div>
+        <div class="video-content">
+            <div class="remote-video">
+                <video id="remoteVideo" autoplay playsinline></video>
+                <div class="remote-user">Michael Brown</div>
+            </div>
+            <div class="local-video">
+                <video id="localVideo" autoplay playsinline muted></video>
+            </div>
+        </div>
+        <div class="video-controls">
+            <button class="video-control-btn" id="muteBtn">
+                <i class='bx bx-microphone'></i>
+            </button>
+            <button class="video-control-btn" id="videoToggleBtn">
+                <i class='bx bx-video'></i>
+            </button>
+            <button class="video-control-btn end-call" id="endVideoCallBtn">
+                <i class='bx bx-phone-off'></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Three Dots Options Modal -->
+<div class="options-modal" id="optionsModal">
+    <div class="options-content">
+        <button class="option-btn" id="minimizeBtn">
+            <i class='bx bx-minus'></i>
+            <span>Minimize</span>
+        </button>
+        <button class="option-btn" id="endSessionBtn">
+            <i class='bx bx-log-out'></i>
+            <span>End Session</span>
+        </button>
+    </div>
+</div>
+
+<!-- Confirm End Session Modal -->
+<div class="confirm-modal" id="confirmEndSessionModal">
+    <div class="confirm-content">
+        <h3>End Session</h3>
+        <p>Are you sure you want to end this session?</p>
+        <div class="confirm-buttons">
+            <button class="confirm-btn cancel-btn" id="cancelEndSession">Cancel</button>
+            <button class="confirm-btn confirm-end-btn" id="confirmEndSession">End Session</button>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/psychologist/session.js') }}"></script>
+{% endblock %}

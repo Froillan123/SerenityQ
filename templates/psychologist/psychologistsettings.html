@@ -1,0 +1,384 @@
+
+{% extends "shared/psychologistLayout/psychologist_navigation.html" %}
+{% block title %}Appointments - SerenityQ{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/psychologist/settings.css') }}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css">
+{% endblock %}
+
+{% block page_title %}Appointments{% endblock %}
+
+{% block content %}
+
+        <div class="settings-container">
+            <!-- Settings Sidebar -->
+            <div class="settings-sidebar">
+                <h3>Settings</h3>
+                <ul class="settings-menu">
+                    <li><a href="#profile" class="active" id="profile-tab"><i class='bx bx-user'></i> Profile</a></li>
+                    <li><a href="#professional" id="professional-tab"><i class='bx bx-briefcase'></i> Professional Info</a></li>
+                    <li><a href="#security" id="security-tab"><i class='bx bx-shield'></i> Security</a></li>
+                    <li><a href="#notifications" id="notifications-tab"><i class='bx bx-bell'></i> Notifications</a></li>
+                    <li><a href="#billing" id="billing-tab"><i class='bx bx-credit-card'></i> Billing</a></li>
+                </ul>
+            </div>
+
+            <!-- Settings Content -->
+            <div class="settings-content">
+                <!-- Profile Section -->
+                <div class="settings-section" id="profile-section">
+                    <div class="settings-header">
+                        <h2><i class='bx bx-user'></i> Profile Settings</h2>
+                    </div>
+
+                    <div class="profile-card">
+                        <div class="profile-avatar">
+                            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Profile Photo">
+                            <label class="avatar-upload">
+                                <i class='bx bx-camera'></i>
+                                <input type="file" id="avatar-upload" accept="image/*">
+                            </label>
+                        </div>
+                        <div class="profile-info">
+                            <h3>Dr. Sarah Johnson</h3>
+                            <p>Clinical Psychologist | Member since 2018</p>
+                            <div class="profile-stats">
+                                <div class="stat-item">
+                                    <div class="stat-value">142</div>
+                                    <div class="stat-label">Patients</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">4.9</div>
+                                    <div class="stat-label">Rating</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">98%</div>
+                                    <div class="stat-label">Response</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form id="profile-form">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="first-name">First Name</label>
+                                <input type="text" id="first-name" value="Sarah" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="last-name">Last Name</label>
+                                <input type="text" id="last-name" value="Johnson" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email Address</label>
+                                <input type="email" id="email" value="sarah.johnson@example.com" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Phone Number</label>
+                                <input type="tel" id="phone" value="+1 (555) 123-4567">
+                            </div>
+                            <div class="form-group full-width">
+                                <label for="bio">Professional Bio</label>
+                                <textarea id="bio">Dr. Sarah Johnson is a licensed clinical psychologist with over 10 years of experience in treating anxiety, depression, and relationship issues. She specializes in cognitive behavioral therapy and mindfulness-based approaches.</textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-outline">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Professional Info Section (Hidden by default) -->
+                <div class="settings-section" id="professional-section" style="display: none;">
+                    <div class="settings-header">
+                        <h2><i class='bx bx-briefcase'></i> Professional Information</h2>
+                    </div>
+
+                    <div class="license-card">
+                        <div class="license-header">
+                            <div class="license-title">Professional License</div>
+                            <div class="license-status status-verified">Verified</div>
+                        </div>
+                        <div class="license-details">
+                            <div class="license-detail">
+                                <span class="detail-label">License Number</span>
+                                <span class="detail-value">PSY-1234567</span>
+                            </div>
+                            <div class="license-detail">
+                                <span class="detail-label">Issuing State</span>
+                                <span class="detail-value">California</span>
+                            </div>
+                            <div class="license-detail">
+                                <span class="detail-label">Expiration Date</span>
+                                <span class="detail-value">June 15, 2025</span>
+                            </div>
+                            <div class="license-detail">
+                                <span class="detail-label">Specialty</span>
+                                <span class="detail-value">Clinical Psychology</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form id="professional-form">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="license-number">License Number</label>
+                                <input type="text" id="license-number" value="PSY-1234567" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="license-state">Issuing State</label>
+                                <select id="license-state" required>
+                                    <option value="CA" selected>California</option>
+                                    <option value="NY">New York</option>
+                                    <!-- Other states would be listed here -->
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="expiration-date">Expiration Date</label>
+                                <input type="date" id="expiration-date" value="2025-06-15" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="primary-specialty">Primary Specialty</label>
+                                <select id="primary-specialty" required>
+                                    <option value="clinical" selected>Clinical Psychology</option>
+                                    <option value="counseling">Counseling Psychology</option>
+                                    <option value="school">School Psychology</option>
+                                    <option value="health">Health Psychology</option>
+                                </select>
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Additional Specialties</label>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px;">
+                                    <label class="checkbox-container">Anxiety Disorders
+                                        <input type="checkbox" checked>
+                                        <span class="checkmark"></span>
+                                    </label>
+                                    <label class="checkbox-container">Depression
+                                        <input type="checkbox" checked>
+                                        <span class="checkmark"></span>
+                                    </label>
+                                    <label class="checkbox-container">Trauma/PTSD
+                                        <input type="checkbox" checked>
+                                        <span class="checkmark"></span>
+                                    </label>
+                                    <label class="checkbox-container">Relationship Issues
+                                        <input type="checkbox">
+                                        <span class="checkmark"></span>
+                                    </label>
+                                    <label class="checkbox-container">Stress Management
+                                        <input type="checkbox" checked>
+                                        <span class="checkmark"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="years-experience">Years of Experience</label>
+                                <input type="number" id="years-experience" value="10" min="0" max="50" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="hourly-rate">Hourly Rate ($)</label>
+                                <input type="number" id="hourly-rate" value="150" min="50" max="500" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Upload Updated License (if applicable)</label>
+                            <div class="file-upload">
+                                <label for="license-upload">
+                                    <i class='bx bx-cloud-upload'></i>
+                                    <p>Drag & drop your file here or click to browse</p>
+                                    <span>PDF, JPG or PNG (Max 5MB)</span>
+                                    <input type="file" id="license-upload" accept=".pdf,.jpg,.jpeg,.png">
+                                </label>
+                            </div>
+                            <div class="uploaded-files">
+                                <!-- Uploaded files would appear here -->
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-outline">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Update Professional Info</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Security Section (Hidden by default) -->
+                <div class="settings-section" id="security-section" style="display: none;">
+                    <div class="settings-header">
+                        <h2><i class='bx bx-shield'></i> Security Settings</h2>
+                    </div>
+
+                    <div class="security-item">
+                        <div class="security-info">
+                            <h4>Password</h4>
+                            <p>Last changed 3 months ago</p>
+                        </div>
+                        <button class="btn btn-outline" id="change-password-btn">Change</button>
+                    </div>
+
+                    <div class="security-item">
+                        <div class="security-info">
+                            <h4>Two-Factor Authentication</h4>
+                            <p>Add an extra layer of security to your account</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="security-item">
+                        <div class="security-info">
+                            <h4>Login Activity</h4>
+                            <p>View recent login attempts and devices</p>
+                        </div>
+                        <button class="btn btn-outline">View Activity</button>
+                    </div>
+
+                    <div class="security-item">
+                        <div class="security-info">
+                            <h4>Connected Devices</h4>
+                            <p>2 devices currently active</p>
+                        </div>
+                        <button class="btn btn-outline">Manage Devices</button>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-primary">Save Security Settings</button>
+                    </div>
+                </div>
+
+                <!-- Notifications Section (Hidden by default) -->
+                <div class="settings-section" id="notifications-section" style="display: none;">
+                    <div class="settings-header">
+                        <h2><i class='bx bx-bell'></i> Notification Preferences</h2>
+                    </div>
+
+                    <h3 class="section-title"><i class='bx bx-envelope'></i> Email Notifications</h3>
+                    <div class="notification-item">
+                        <div class="notification-info">
+                            <h4>Appointment Reminders</h4>
+                            <p>Receive reminders about upcoming appointments</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="notification-item">
+                        <div class="notification-info">
+                            <h4>New Messages</h4>
+                            <p>Get notified when you receive new messages</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="notification-item">
+                        <div class="notification-info">
+                            <h4>Patient Updates</h4>
+                            <p>Notifications about your patients' progress</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <h3 class="section-title"><i class='bx bx-mobile'></i> Push Notifications</h3>
+                    <div class="notification-item">
+                        <div class="notification-info">
+                            <h4>Session Alerts</h4>
+                            <p>Get alerts when sessions are about to start</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="notification-item">
+                        <div class="notification-info">
+                            <h4>Urgent Requests</h4>
+                            <p>Immediate notifications for urgent requests</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-primary">Save Notification Settings</button>
+                    </div>
+                </div>
+
+                <!-- Billing Section (Hidden by default) -->
+                <div class="settings-section" id="billing-section" style="display: none;">
+                    <div class="settings-header">
+                        <h2><i class='bx bx-credit-card'></i> Billing & Payments</h2>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="billing-email">Billing Email</label>
+                            <input type="email" id="billing-email" value="billing@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="tax-id">Tax ID</label>
+                            <input type="text" id="tax-id" value="12-3456789">
+                        </div>
+                    </div>
+
+                    <h3 class="section-title"><i class='bx bx-credit-card'></i> Payment Methods</h3>
+                    <div class="license-card">
+                        <div class="license-header">
+                            <div class="license-title">Primary Payment Method</div>
+                        </div>
+                        <div class="license-details">
+                            <div class="license-detail">
+                                <span class="detail-label">Card Type</span>
+                                <span class="detail-value">Visa</span>
+                            </div>
+                            <div class="license-detail">
+                                <span class="detail-label">Card Number</span>
+                                <span class="detail-value">•••• •••• •••• 4242</span>
+                            </div>
+                            <div class="license-detail">
+                                <span class="detail-label">Expiration Date</span>
+                                <span class="detail-value">12/2024</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-outline" style="margin-top: 20px;">
+                        <i class='bx bx-plus'></i> Add Payment Method
+                    </button>
+
+                    <h3 class="section-title"><i class='bx bx-receipt'></i> Billing History</h3>
+                    <p style="margin-bottom: 20px;">View and download your past invoices and receipts</p>
+                    <button class="btn btn-outline">
+                        <i class='bx bx-history'></i> View Billing History
+                    </button>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-primary">Update Billing Info</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/psychologist/settings.js') }}"></script>
+{% endblock %}

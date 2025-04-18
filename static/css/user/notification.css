@@ -1,0 +1,258 @@
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.page-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.page-title h1 {
+    font-size: 24px;
+    color: var(--dark);
+}
+
+.mark-all-read {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.mark-all-read:hover {
+    background-color: var(--primary-light);
+}
+
+.notifications-container {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.notification-filters {
+    display: flex;
+    padding: 15px 20px;
+    border-bottom: 1px solid #e4e6eb;
+    overflow-x: auto;
+    gap: 10px;
+}
+
+.filter-button {
+    padding: 8px 16px;
+    border-radius: 20px;
+    background-color: var(--light);
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: all 0.2s;
+}
+
+.filter-button.active {
+    background-color: var(--primary);
+    color: white;
+}
+
+.filter-button:hover:not(.active) {
+    background-color: #e4e6eb;
+}
+
+.notification-item {
+    display: flex;
+    padding: 16px 20px;
+    border-bottom: 1px solid #e4e6eb;
+    transition: background-color 0.2s;
+    position: relative;
+}
+
+.notification-item.unread {
+    background-color: rgba(93, 95, 239, 0.05);
+}
+
+.notification-item.unread::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background-color: var(--primary);
+}
+
+.notification-item:last-child {
+    border-bottom: none;
+}
+
+.notification-item:hover {
+    background-color: var(--light);
+}
+
+.notification-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 15px;
+    background-color: var(--primary-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+}
+
+.notification-content {
+    flex-grow: 1;
+}
+
+.notification-title {
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: var(--dark);
+}
+
+.notification-message {
+    color: var(--gray);
+    margin-bottom: 5px;
+    line-height: 1.4;
+}
+
+.notification-item.unread .notification-title,
+.notification-item.unread .notification-message {
+    font-weight: 600;
+    color: var(--dark);
+}
+
+.notification-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+}
+
+.notification-time {
+    color: var(--gray);
+}
+
+.notification-tags {
+    display: flex;
+    gap: 5px;
+}
+
+.notification-tag {
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.tag-accepted {
+    background-color: rgba(76, 175, 80, 0.1);
+    color: var(--success);
+}
+
+.tag-rescheduled {
+    background-color: rgba(255, 209, 102, 0.1);
+    color: #e6b800;
+}
+
+.tag-cancelled {
+    background-color: rgba(244, 67, 54, 0.1);
+    color: var(--error);
+}
+
+.tag-reminder {
+    background-color: rgba(93, 95, 239, 0.1);
+    color: var(--primary);
+}
+
+.notification-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-left: 10px;
+}
+
+.notification-action {
+    color: var(--gray);
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    transition: all 0.2s;
+}
+
+.notification-action:hover {
+    background-color: #e4e6eb;
+    color: var(--primary);
+}
+
+.empty-state {
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--gray);
+}
+
+.empty-icon {
+    font-size: 48px;
+    margin-bottom: 20px;
+    color: var(--primary-light);
+}
+
+.load-more {
+    padding: 12px;
+    text-align: center;
+    color: var(--primary);
+    font-weight: 500;
+    cursor: pointer;
+    border-top: 1px solid #e4e6eb;
+}
+
+.load-more:hover {
+    background-color: var(--light);
+}
+
+@media (max-width: 600px) {
+    .container {
+        padding: 10px;
+    }
+
+    .page-title h1 {
+        font-size: 20px;
+    }
+
+    .mark-all-read span {
+        display: none;
+    }
+
+    .notification-item {
+        padding: 12px 15px;
+    }
+
+    .notification-avatar {
+        width: 40px;
+        height: 40px;
+    }
+
+    .notification-title {
+        font-size: 14px;
+    }
+
+    .notification-message {
+        font-size: 13px;
+    }
+
+    .notification-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+}

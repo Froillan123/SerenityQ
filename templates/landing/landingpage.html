@@ -1,0 +1,255 @@
+{% extends "shared/landingpage/landingpageLayout.html" %}
+
+{% block content %}
+     <!-- Hero Section - Redesigned -->
+     <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>Personalized Mental Health Support <span class="highlight">When You Need It</span></h1>
+                    <p class="hero-subtitle">SerenityQ's AI technology matches you with the ideal psychologist based on your unique needs and preferences.</p>
+                    <div class="hero-buttons">
+                        <a href="#" class="btn btn-primary" id="find-psychologist-btn">
+                            <i class="fas fa-search"></i> Find Your Psychologist
+                        </a>
+                        <a href="#" class="btn btn-outline" id="how-it-works-btn">
+                            <i class="fas fa-play-circle"></i> How It Works
+                        </a>
+                    </div>
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">500+</div>
+                            <div class="stat-label">Qualified Professionals</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">98%</div>
+                            <div class="stat-label">Satisfaction Rate</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">24/7</div>
+                            <div class="stat-label">Availability</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <div class="image-container">
+                        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Mental health support" class="main-image">
+                        <div class="image-highlight"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2>Why Choose SerenityQ</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3>AI Matching</h3>
+                    <p>Our intelligent system analyzes your needs and matches you with the most suitable psychologist based on your specific situation.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>Instant Connection</h3>
+                    <p>Priority matching with online psychologists for immediate support when you need it most.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3>Integrated Chat</h3>
+                    <p>Seamless communication with your psychologist through our secure messaging platform.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <h2>How SerenityQ Works</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Describe Your Feelings</h3>
+                    <p>Chat with our AI assistant and describe what you're experiencing in your own words.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Get Matched</h3>
+                    <p>Our system analyzes your needs and suggests the best psychologists for your situation.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Book & Connect</h3>
+                    <p>Schedule an appointment and start your session through video, phone, or chat.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Psychologists Section -->
+    <section class="psychologists" id="psychologists">
+        <div class="container">
+            <h2>Our Trusted Psychologists</h2>
+            <div class="therapists-grid">
+                <div class="therapist-card">
+                    <div class="therapist-image" style="background-image: url('https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80');"></div>
+                    <div class="therapist-info">
+                        <h3>Dr. Sarah Johnson</h3>
+                        <span class="therapist-specialty">Anxiety & Depression</span>
+                        <span class="therapist-status status-online">Online Now</span>
+                    </div>
+                </div>
+                <div class="therapist-card">
+                    <div class="therapist-image" style="background-image: url('https://images.unsplash.com/photo-1594824476967-48c8b964273f?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80');"></div>
+                    <div class="therapist-info">
+                        <h3>Dr. Michael Chen</h3>
+                        <span class="therapist-specialty">Relationship Counseling</span>
+                        <span class="therapist-status status-online">Online Now</span>
+                    </div>
+                </div>
+                <div class="therapist-card">
+                    <div class="therapist-image" style="background-image: url('https://images.unsplash.com/photo-1622253692010-333f2da6031d?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80');"></div>
+                    <div class="therapist-info">
+                        <h3>Dr. Amina Rodriguez</h3>
+                        <span class="therapist-specialty">Trauma & PTSD</span>
+                        <span class="therapist-status status-offline">Offline</span>
+                    </div>
+                </div>
+                <div class="therapist-card">
+                    <div class="therapist-image" style="background-image: url('https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80');"></div>
+                    <div class="therapist-info">
+                        <h3>Dr. James Wilson</h3>
+                        <span class="therapist-specialty">Child Psychology</span>
+                        <span class="therapist-status status-online">Online Now</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <h2>Ready to Start Your Mental Health Journey?</h2>
+            <p>SerenityQ makes it easy to find the right support for your unique needs. Our AI matching system ensures you connect with the perfect psychologist.</p>
+            <a href="#" class="btn btn-secondary">Get Matched Now</a>
+        </div>
+    </section>
+
+
+   
+    <!-- Enhanced User Type Selection Modal -->
+    <div class="modal" id="user-type-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="user-options-grid">
+                <div class="user-option-card patient-option">
+                    <div class="user-option-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h3 class="user-option-title">I Need Support</h3>
+                    <p class="user-option-description">
+                        Connect with licensed psychologists tailored to your specific mental health needs.
+                    </p>
+                    <div class="benefits-list">
+                        <div class="benefit-item">
+                            <i class="fas fa-check-circle"></i> AI-powered matching
+                        </div>
+                        <div class="benefit-item">
+                            <i class="fas fa-check-circle"></i> Flexible scheduling
+                        </div>
+                        <div class="benefit-item">
+                            <i class="fas fa-check-circle"></i> Secure communication
+                        </div>
+                    </div>
+                    <a href="{{ url_for('auth.register_api') }}" class="user-option-button">
+                        Continue as Patient
+                    </a>
+                </div>
+                <div class="user-option-card psychologist-option">
+                    <div class="user-option-icon">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <h3 class="user-option-title">I Provide Support</h3>
+                    <p class="user-option-description">
+                        Join our network of mental health professionals and grow your practice.
+                    </p>
+                    <div class="benefits-list">
+                        <div class="benefit-item">
+                            <i class="fas fa-check-circle"></i> Qualified client referrals
+                        </div>
+                        <div class="benefit-item">
+                            <i class="fas fa-check-circle"></i> Streamlined scheduling
+                        </div>
+                        <div class="benefit-item">
+                            <i class="fas fa-check-circle"></i> Secure payment processing
+                        </div>
+                    </div>
+                    <a href="{{ url_for('psychologist.psychologist_register') }}" class="user-option-button">
+                        Continue as Psychologist
+                    </a>
+                </div>
+            </div>
+            <p class="already-have-account">
+                Already have an account? <a href="#" id="show-login-from-type">Login here</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Login Type Selection Modal -->
+<div class="modal" id="login-type-modal">
+    <div class="modal-content login-selection-modal">
+        <span class="close-modal">&times;</span>
+        <div class="login-modal-header">
+           
+        </div>
+        <div class="login-selection-options">
+            <div class="login-selection-card patient-selection">
+                <div class="selection-card-inner">
+                    <div class="selection-card-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="selection-card-content">
+                        <h3>Patient Login</h3>
+                        <p>Access your personalized mental health dashboard and continue your journey</p>
+                    </div>
+                    <a href="{{ url_for('auth.login_api') }}" class="btn btn-primary btn-selection">
+                        Continue as Patient
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                <div class="selection-card-decoration"></div>
+            </div>
+            <div class="login-selection-card psychologist-selection">
+                <div class="selection-card-inner">
+                    <div class="selection-card-icon">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <div class="selection-card-content">
+                        <h3>Psychologist Login</h3>
+                        <p>Access your professional dashboard and client management tools</p>
+                    </div>
+                    <a href="{{ url_for('psychologist.psychologist_login') }}" class="btn btn-secondary btn-selection">
+                        Continue as Psychologist
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                <div class="selection-card-decoration"></div>
+            </div>
+        </div>
+        <div class="login-modal-footer">
+            <p>Don't have an account? <a href="#" id="show-user-type">Sign up here</a></p>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

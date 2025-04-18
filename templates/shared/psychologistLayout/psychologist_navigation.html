@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SerenityQ - Psychologist{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/psychologist/navbar.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+        <!-- Sidebar for Desktop -->
+        <div class="sidebar" id="sidebar">
+            <button class="close-sidebar" id="closeSidebar">
+                <i class='bx bx-chevron-left'></i>
+            </button>
+            <div class="sidebar-header">
+                <i class='bx bx-brain icon'></i>
+                <h3>SerenityQ</h3>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="{% if request.path == url_for('psychologist.appointments') %}active{% endif %}">
+                    <a href="{{ url_for('psychologist.appointments') }}">
+                        <i class='bx bx-calendar icon'></i>
+                        <span>Appointments</span>
+                    </a>
+                </li>
+                <li class="{% if request.path == url_for('psychologist.dashboard') %}active{% endif %}">
+                    <a href="{{ url_for('psychologist.dashboard') }}">
+                        <i class='bx bx-bar-chart-alt-2 icon'></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="{% if request.path == url_for('psychologist.sessions') %}active{% endif %}">
+                    <a href="{{ url_for('psychologist.sessions') }}">
+                        <i class='bx bx-conversation icon'></i>
+                        <span>Sessions</span>
+                    </a>
+                </li>
+                <!-- New Reports link added here -->
+                <li class="{% if request.path == url_for('psychologist.reports') %}active{% endif %}">
+                    <a href="{{ url_for('psychologist.reports') }}">
+                        <i class='bx bx-file icon'></i>
+                        <span>Reports</span>
+                    </a>
+                </li>
+                <li class="{% if request.path == url_for('psychologist.settings') %}active{% endif %}">
+                    <a href="{{ url_for('psychologist.settings') }}">
+                        <i class='bx bx-cog icon'></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('psychologist.psychologist_logout') }}">
+                        <i class='bx bx-log-out icon'></i>
+                        <span>Log Out</span>
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+
+
+    <!-- Main Container -->
+    <div class="main-container">
+       
+
+        <!-- Content Section -->
+       <div>
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+    <!-- Bottom Navbar for Mobile -->
+    <div class="bottom-navbar">
+        <a href="{{ url_for('psychologist.appointments') }}" class="nav-item {% if request.path == url_for('psychologist.appointments') %}active{% endif %}">
+            <i class='bx bx-calendar'></i>
+            <span></span>
+        </a>
+        <a href="{{ url_for('psychologist.dashboard') }}" class="nav-item {% if request.path == url_for('psychologist.dashboard') %}active{% endif %}">
+            <i class='bx bx-bar-chart-alt-2'></i>
+            <span></span>
+        </a>
+        <a href="{{ url_for('psychologist.sessions') }}" class="nav-item {% if request.path == url_for('psychologist.sessions') %}active{% endif %}">
+            <i class='bx bx-conversation'></i>
+            <span></span>
+        </a>
+        <a href="{{ url_for('psychologist.reports') }}" class="nav-item {% if request.path == url_for('psychologist.reports') %}active{% endif %}">
+            <i class='bx bx-file icon'></i>
+            <span></span>
+        </a>
+        <a href="{{ url_for('psychologist.settings') }}" class="nav-item {% if request.path == url_for('psychologist.settings') %}active{% endif %}">
+            <i class='bx bx-cog'></i>
+            <span></span>
+        </a>
+    </div>
+
+    {% block scripts %}
+    <script>
+        // Toggle sidebar
+        const sidebar = document.getElementById('sidebar');
+        const toggleSidebar = document.getElementById('toggleSidebar');
+        const closeSidebar = document.getElementById('closeSidebar');
+    
+        if (toggleSidebar) {
+            toggleSidebar.addEventListener('click', () => {
+                sidebar.classList.toggle('active');
+            });
+        }
+    
+        if (closeSidebar) {
+            closeSidebar.addEventListener('click', () => {
+                sidebar.classList.remove('active');
+            });
+        }
+    
+        // Close sidebar when clicking outside on desktop
+        document.addEventListener('click', (event) => {
+            if (window.innerWidth > 992 && 
+                !sidebar.contains(event.target) && 
+                !(toggleSidebar && toggleSidebar.contains(event.target))) {
+                sidebar.classList.remove('active');
+            }
+        });
+    
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 992) {
+                sidebar.classList.remove('active');
+            }
+        });
+    </script>
+    <script src="{{ url_for('static', filename='js/logout/psychologistlogout.js') }}"></script>
+    {% endblock %}
+</body>
+</html>
