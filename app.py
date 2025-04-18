@@ -25,8 +25,8 @@ migrate = Migrate(app, db)  # Initialize Flask-Migrate
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'serenityq.mentalhealth@gmail.com'
-app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+app.config['MAIL_USERNAME'] = 'serenityq143@gmail.com'
+app.config['MAIL_PASSWORD'] = 'ofel qkqc rnnx lbkc'
 app.config['MAIL_DEFAULT_SENDER'] = 'serenityq143@gmail.com'
 
 # File upload configuration
@@ -35,14 +35,13 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max upload size
 
 # JWT Configuration
 app.config['JWT_TOKEN_LOCATION'] = ['cookies']
-app.config['JWT_COOKIE_SECURE'] = True
-app.config['JWT_COOKIE_CSRF_PROTECT'] = True
-app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
+app.config['JWT_COOKIE_SECURE'] = False  # Set to True in production with HTTPS
+app.config['JWT_COOKIE_CSRF_PROTECT'] = False  # Enable in production
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'fallback-secret-key')
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=1)
-app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=30)
 
 # Admin configuration
-app.config['ADMIN_SECRET_KEY'] = os.getenv('ADMIN_SECRET_KEY')
+app.config['ADMIN_SECRET_KEY'] = os.getenv('ADMIN_SECRET_KEY', 'fallback-admin-key')
 
 # Add no-cache headers
 @app.after_request
