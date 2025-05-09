@@ -6,6 +6,10 @@ import signal
 import importlib
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Get the current directory
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -24,66 +28,68 @@ class ModelChangeHandler(FileSystemEventHandler):
             # Debounce to avoid multiple restarts for a single edit
             if current_time - self.last_modified > 1:
                 self.last_modified = current_time
-                print("\n🔄 Model changes detected! Restarting application...")
+                print("\n🔄 Model changes detected! Syncing database schema...")
                 restart_app()
 
 def run_flask_app():
     """Run the Flask application"""
     global app_process
-    # First, check if we need to apply migrations
+    
+    # Set FLASK_APP environment variable
+    os.environ["FLASK_APP"] = "app.py"
+    
+    # First, synchronize the database schema
     try:
-        # Try to initialize migrations if not already done
-        init_result = subprocess.run(
-            ["flask", "db", "init"],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True
-        )
+        print("🔄 Checking database connection...")
+        # Prepare environment
+        env_copy = os.environ.copy()
         
-        if "already exists" in init_result.stderr:
-            print("✅ Migrations folder already exists")
-        elif init_result.returncode == 0:
-            print("✅ Initialized migrations successfully")
-        else:
-            print("⚠️ Failed to initialize migrations, but continuing...")
-            
-        # Generate migration
-        migrate_result = subprocess.run(
-            ["flask", "db", "migrate", "-m", "auto migration from model changes"],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True
-        )
-        
-        if migrate_result.returncode == 0:
-            print("✅ Migration generated successfully")
-            
-            # Apply migration
-            upgrade_result = subprocess.run(
-                ["flask", "db", "upgrade"],
+        # Check if migration directory exists
+        if not os.path.exists('migrations'):
+            print("🔄 Initializing migrations...")
+            subprocess.run(
+                ["flask", "db", "init"],
+                env=env_copy,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 text=True
             )
-            
-            if upgrade_result.returncode == 0:
-                print("✅ Database upgraded successfully")
-            else:
-                print(f"❌ Database upgrade error: {upgrade_result.stderr}")
+        
+        # Generate and apply migrations (like Sequelize sync)
+        print("🔄 Checking for model changes...")
+        migrate_process = subprocess.run(
+            ["flask", "db", "migrate", "-m", "Auto migration from model changes"],
+            env=env_copy,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        
+        # If migration was generated successfully, apply it
+        if migrate_process.returncode == 0:
+            print("🔄 Applying migrations...")
+            subprocess.run(
+                ["flask", "db", "upgrade"],
+                env=env_copy,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True
+            )
+            print("✅ Database schema synchronized")
         else:
-            print(f"⚠️ Migration warning: {migrate_result.stderr}")
-            if "Target database is not up to date" in migrate_result.stderr:
+            print("✅ No schema changes detected or error occurred")
+            if "Target database is not up to date" in migrate_process.stderr:
                 print("🔄 Running database upgrade first...")
-                subprocess.run(["flask", "db", "upgrade"])
-                print("✅ Now retrying migration...")
-                subprocess.run(["flask", "db", "migrate", "-m", "auto migration from model changes"])
-                subprocess.run(["flask", "db", "upgrade"])
+                subprocess.run(["flask", "db", "upgrade"], env=env_copy)
+                print("🔄 Retrying migration...")
+                subprocess.run(["flask", "db", "migrate", "-m", "Auto migration"], env=env_copy)
+                subprocess.run(["flask", "db", "upgrade"], env=env_copy)
     except Exception as e:
-        print(f"⚠️ Migration exception: {str(e)}")
+        print(f"⚠️ Database sync exception: {str(e)}")
     
     # Run the application
     print("\n🚀 Starting SerenityQ application...")
-    app_process = subprocess.Popen(["python", "app.py"])
+    app_process = subprocess.Popen(["python", "app.py"], env=env_copy)
     return app_process
 
 def stop_app():
@@ -128,9 +134,13 @@ def start_file_watcher():
 def main():
     """Main entry point"""
     try:
-        # Set FLASK_APP environment variable
-        os.environ["FLASK_APP"] = "app.py"
-        
+        # Configuration info
+        db_url = os.getenv('DATABASE_URL', 'Local MySQL database')
+        if 'proxy.rlwy.net' in db_url:
+            print(f"🔌 Using PostgreSQL on Railway")
+        else:
+            print(f"🔌 Using development database")
+            
         # Start the file watcher
         start_file_watcher()
         
