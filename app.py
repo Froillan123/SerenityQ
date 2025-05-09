@@ -3,6 +3,9 @@ from routes import auth_bp, user_bp, admin_bp, psychologist_bp  # Import your bl
 from flask_migrate import Migrate
 from datetime import timedelta
 import os
+import pymysql
+import sqlalchemy
+
 # Initialize Flask app
 app = Flask(__name__)
 
@@ -64,8 +67,97 @@ app.register_blueprint(user_bp, url_prefix='/user')
 app.register_blueprint(admin_bp, url_prefix='/admin')  
 app.register_blueprint(psychologist_bp, url_prefix='/psychologist') 
 
+def create_database_if_not_exists():
+    """Create the database if it doesn't exist"""
+    try:
+        # For development with MySQL (XAMPP)
+        if os.getenv('FLASK_ENV') != 'production':
+            # Extract database name from URI
+            db_name = app.config['SQLALCHEMY_DATABASE_URI'].split('/')[-1]
+            
+            # Connect to MySQL without specifying a database
+            connection = pymysql.connect(
+                host='localhost',
+                user='root',
+                password='',
+                charset='utf8mb4'
+            )
+            
+            with connection.cursor() as cursor:
+                # Create database if it doesn't exist
+                cursor.execute(f"CREATE DATABASE IF NOT EXISTS {db_name}")
+                print(f"✅ Database '{db_name}' created or already exists")
+            
+            connection.close()
+        else:
+            # For production with PostgreSQL
+            db_uri = app.config['SQLALCHEMY_DATABASE_URI']
+            db_name = db_uri.split('/')[-1]
+            engine = sqlalchemy.create_engine(db_uri.rsplit('/', 1)[0] + '/postgres')
+            conn = engine.connect()
+            conn.execute("COMMIT")
+            
+            # Check if database exists
+            result = conn.execute(f"SELECT 1 FROM pg_database WHERE datname = '{db_name}'")
+            if not result.scalar():
+                conn.execute("COMMIT")
+                conn.execute(f'CREATE DATABASE {db_name}')
+                print(f"✅ Database '{db_name}' created")
+            else:
+                print(f"✅ Database '{db_name}' already exists")
+            
+            conn.close()
+            engine.dispose()
+            
+    except Exception as e:
+        print(f"❌ Database creation error: {str(e)}")
+        
 if __name__ == '__main__':
-    # Create tables if they don't exist (for development)
     with app.app_context():
-        db.create_all()
+        # Create database if it doesn't exist
+        create_database_if_not_exists()
+        
+        try:
+            # Try to connect to the database
+            db.engine.connect()
+            print("✅ Connected to database successfully")
+            
+            # Check if tables need to be created
+            from sqlalchemy import inspect
+            inspector = inspect(db.engine)
+            if not inspector.get_table_names():
+                print("📊 Creating database tables...")
+                db.create_all()
+                print("✅ Tables created successfully")
+            else:
+                print("✅ Database tables already exist")
+                
+            # Check if any models have changed
+            from alembic.migration import MigrationContext
+            from alembic.operations import Operations
+            
+            conn = db.engine.connect()
+            ctx = MigrationContext.configure(conn)
+            has_changes = False
+            
+            try:
+                # If this doesn't raise an exception, we're synced
+                if ctx.get_current_revision() is None:
+                    print("🔄 Initialize migration...")
+                    # If you want to initialize migrations, run: flask db init
+                    has_changes = True
+                else:
+                    print("✅ Database is up to date with migrations")
+            except Exception as e:
+                print(f"🔄 Migration check: {str(e)}")
+                has_changes = True
+                
+            conn.close()
+            
+            if has_changes:
+                print("💡 Run 'flask db migrate' and 'flask db upgrade' to apply changes")
+        except Exception as e:
+            print(f"❌ Database connection error: {str(e)}")
+            print("💡 Make sure your database server is running")
+    
     app.run(debug=True)

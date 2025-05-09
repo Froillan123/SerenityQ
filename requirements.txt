@@ -35,6 +35,7 @@ MarkupSafe==3.0.2
 click==8.1.7
 typing_extensions==4.12.2
 python-dotenv==1.1.0
+watchdog==4.0.0
 
 # Email & Validation
 dnspython==2.7.0
