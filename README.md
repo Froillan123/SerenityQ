@@ -136,19 +136,19 @@ Follow-up Support
 
 ## 📋 Database Synchronization Features
 
-SerenityQ includes automatic database synchronization, similar to how nodemon works in Node.js applications.
+SerenityQ includes automatic database synchronization, similar to how nodemon works in Node.js applications, and Sequelize's `sync({alter: true})` functionality.
 
-### Setup
+### Environment Setup
 
 1. Install dependencies:
    ```
    pip install -r requirements.txt
    ```
 
-2. Initialize the database (first time only):
-   ```
-   flask db init
-   ```
+2. Configure your database:
+   - Rename `env.sample` to `.env`
+   - Set your Railway PostgreSQL URL in the `DATABASE_URL` variable
+   - Or use local MySQL (XAMPP) by default if no DATABASE_URL is provided
 
 ### Running the Application
 
@@ -163,10 +163,11 @@ python run.py
 ```
 
 **Features:**
-- Automatically creates the database if it doesn't exist
+- Automatically detects your database type (PostgreSQL or MySQL)
 - Detects changes to models.py file in real-time
 - Automatically generates and applies migrations when models change
 - Restarts the application when necessary
+- Works similarly to nodemon in Node.js
 
 #### Option 2: Using Flask directly
 
@@ -185,10 +186,25 @@ flask db upgrade
 
 The database synchronization system includes:
 
-1. **Database Creation**: Automatically creates the database if it doesn't exist
-2. **Table Creation**: Creates tables based on your SQLAlchemy models
-3. **Migration Detection**: Detects when your models change
-4. **Migration Application**: Applies necessary schema changes through Alembic migrations
+1. **Database Detection**: Automatically detects if you're using PostgreSQL (Railway) or MySQL (local)
+2. **Table Creation**: Creates tables based on your SQLAlchemy models if none exist
+3. **Automatic Migrations**: Similar to Sequelize's `sync({alter: true})`, it detects and applies schema changes
+4. **Real-time Monitoring**: Watches for changes to your models and applies migrations automatically
+
+### Database Selection
+
+The system automatically chooses your database based on:
+
+1. If `DATABASE_URL` is present in your `.env` file, it uses PostgreSQL
+2. Otherwise, it defaults to MySQL with XAMPP (localhost:3306)
+
+### PostgreSQL on Railway
+
+For Railway deployment:
+
+1. Set your `DATABASE_URL` in the `.env` file
+2. The system will handle SSL connections automatically
+3. No need to create the database manually - Railway provisions it for you
 
 ### Troubleshooting
 
@@ -203,4 +219,6 @@ If you encounter issues with the automatic migrations:
 
 2. Check the migration files in the `migrations` directory for any errors
 
-3. Make sure your database server (MySQL/XAMPP) is running before starting the application
+3. Make sure your database server is running:
+   - For local development: Start XAMPP/MySQL
+   - For Railway: Check your connection string and network access

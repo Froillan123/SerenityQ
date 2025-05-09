@@ -1,27 +1,39 @@
 # dbconfig.py
 import os
-from urllib.parse import quote_plus
 from dotenv import load_dotenv
 load_dotenv()
 
-# Fetch database URL from environment variables
-database_url = os.getenv('DATABASE_URL')
+# Fetch database URL directly from environment variables
+DATABASE_URL = os.getenv('DATABASE_URL', 'postgresql://postgres:SSUFPJfWdKlXdtwMGIlXOMDYkQVwdDRE@shortline.proxy.rlwy.net:19479/railway')
 
-# If DATABASE_URL isn't set, construct it from individual components
-if not database_url:
-    db_user = os.getenv('PGUSER', 'postgres')
-    db_pass = quote_plus(os.getenv('PGPASSWORD', ''))
-    db_host = os.getenv('PGHOST', 'localhost')
-    db_port = os.getenv('PGPORT', '5432')
-    db_name = os.getenv('PGDATABASE', 'serenityq')
-    database_url = f'postgresql://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}'
-
-SQLALCHEMY_DATABASE_URI = database_url
+# Configure SQLAlchemy
+SQLALCHEMY_DATABASE_URI = DATABASE_URL
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+# Add SSL configuration for production PostgreSQL
+if 'proxy.rlwy.net' in DATABASE_URL:
+    from sqlalchemy.engine.url import make_url
+    
+    # Enable SSL for Railway PostgreSQL connections
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'connect_args': {
+            'sslmode': 'require',
+            'sslcert': None,
+            'sslkey': None,
+            'sslrootcert': None
+        },
+    }
+    
+    # Print connection info (remove in production)
+    url = make_url(DATABASE_URL)
+    print(f"Connecting to PostgreSQL: {url.host}:{url.port}/{url.database}")
+
+# For backward compatibility with other components
 DB_CONFIG = {
-    'host': os.getenv('DB_HOST'),
-    'user': os.getenv('DB_USER'),
-    'password': os.getenv('DB_PASSWORD'),
-    'database': os.getenv('DB_NAME')
+    'url': DATABASE_URL,
+    'host': os.getenv('DB_HOST', 'shortline.proxy.rlwy.net'),
+    'port': os.getenv('DB_PORT', '19479'),
+    'user': os.getenv('DB_USER', 'postgres'),
+    'password': os.getenv('DB_PASSWORD', 'SSUFPJfWdKlXdtwMGIlXOMDYkQVwdDRE'),
+    'database': os.getenv('DB_NAME', 'railway')
 }
