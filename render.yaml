@@ -1,0 +1,25 @@
+# Render.com service configuration
+services:
+  # Web service configuration
+  - type: web
+    name: serenityq
+    env: python
+    buildCommand: sh render_build.sh
+    startCommand: gunicorn app:app
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: RENDER
+        value: true
+      - key: PYTHON_VERSION
+        value: 3.9.0
+      - key: DATABASE_URL
+        fromDatabase:
+          name: serenityq-db
+          property: connectionString
+      
+# Add a PostgreSQL database
+databases:
+  - name: serenityq-db
+    plan: free
+    databaseName: serenityq 

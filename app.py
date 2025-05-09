@@ -13,18 +13,16 @@ load_dotenv()
 # Initialize Flask app
 app = Flask(__name__)
 
-# Check if running on Render.com
-is_render = os.environ.get('RENDER') == 'true'
-
-# Choose database configuration based on environment
-if os.getenv('DATABASE_URL') or is_render:
+# Determine database configuration based on environment
+# If DATABASE_URL is provided, use PostgreSQL config (Railway)
+if os.getenv('DATABASE_URL'):
     app.config.from_object('dbconfig')  # PostgreSQL config from dbconfig.py
-    print("✅ Using PostgreSQL configuration")
+    print("✅ Using Railway PostgreSQL database")
 else:
-    # XAMPP MySQL configuration for development
+    # Local MySQL configuration (XAMPP) for development
     app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:@localhost:3306/serenityq'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    print("✅ Using MySQL configuration")
+    print("✅ Using local MySQL database")
 
 # Initialize extensions
 CORS(app, supports_credentials=True)
@@ -46,8 +44,8 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max upload size
 
 # JWT Configuration
 app.config['JWT_TOKEN_LOCATION'] = ['cookies']
-app.config['JWT_COOKIE_SECURE'] = os.getenv('FLASK_ENV') == 'production' or is_render
-app.config['JWT_COOKIE_CSRF_PROTECT'] = os.getenv('FLASK_ENV') == 'production' or is_render
+app.config['JWT_COOKIE_SECURE'] = os.getenv('FLASK_ENV') == 'production'
+app.config['JWT_COOKIE_CSRF_PROTECT'] = os.getenv('FLASK_ENV') == 'production'
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'fallback-secret-key')
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=1)
 
@@ -76,17 +74,14 @@ app.register_blueprint(admin_bp, url_prefix='/admin')
 app.register_blueprint(psychologist_bp, url_prefix='/psychologist') 
 
 def create_database_if_not_exists():
-    """Create the database if it doesn't exist"""
+    """Create the database if it doesn't exist (for local development only)"""
     try:
-        # Check if using PostgreSQL (production) or MySQL (development)
-        if os.getenv('FLASK_ENV') == 'production' or os.getenv('DATABASE_URL') or is_render:
-            # For PostgreSQL (likely on Railway or Render), we don't need to create the database
-            # The database is already provisioned
-            print("✅ Using provisioned PostgreSQL database")
+        # Skip for Railway PostgreSQL - database already exists
+        if os.getenv('DATABASE_URL'):
+            print("✅ Using existing Railway database")
             return
         
         # For development with MySQL (XAMPP)
-        # Extract database name from URI
         db_name = app.config['SQLALCHEMY_DATABASE_URI'].split('/')[-1]
         
         # Connect to MySQL without specifying a database
@@ -107,68 +102,29 @@ def create_database_if_not_exists():
     except Exception as e:
         print(f"❌ Database creation error: {str(e)}")
         
-def sync_database_schema():
-    """Synchronize database schema with current models (like Sequelize's sync)"""
+def sync_database_tables():
+    """Ensure tables exist in the database (works for both Railway and local)"""
     try:
-        # Try to connect to the database
+        # Connect to the database
         db.engine.connect()
         print("✅ Connected to database successfully")
         
-        # Check if tables need to be created
-        from sqlalchemy import inspect
-        inspector = inspect(db.engine)
-        
-        if not inspector.get_table_names():
-            print("📊 No tables found. Creating database tables...")
-            db.create_all()
-            print("✅ Tables created successfully")
-        else:
-            print(f"✅ Found {len(inspector.get_table_names())} tables in database")
-            
-            # Like Sequelize's sync({alter: true}), check if migrations are needed
-            has_migrations_dir = os.path.exists('migrations')
-            
-            if not has_migrations_dir:
-                print("🔄 Initializing migrations...")
-                os.system('flask db init')
-                print("✅ Migrations initialized")
-                
-            # Generate migration
-            print("🔄 Checking for model changes...")
-            result = os.system('flask db migrate -m "Auto migration"')
-            
-            if result == 0:
-                print("🔄 Applying migrations...")
-                os.system('flask db upgrade')
-                print("✅ Database schema synchronized")
-            else:
-                print("✅ No schema changes detected or applying migrations directly")
-                # Try direct table creation if migration fails (for Render deployment)
-                if is_render or os.getenv('DATABASE_URL'):
-                    print("🔧 Force synchronizing database tables...")
-                    db.create_all()
-                    print("✅ Tables forcefully synchronized")
+        # Create tables that don't exist yet (like Sequelize sync)
+        print("📊 Synchronizing database tables...")
+        db.create_all()
+        print("✅ Database tables synchronized")
                 
     except Exception as e:
         print(f"❌ Database synchronization error: {str(e)}")
-        print("🔧 Attempting direct table creation...")
-        try:
-            # Last resort - try direct table creation
-            db.create_all()
-            print("✅ Tables created directly")
-        except Exception as inner_e:
-            print(f"❌ Table creation failed: {str(inner_e)}")
 
-# Initialize database tables when the app starts
-# This ensures tables are created even when running with gunicorn
+# Initialize database when the app starts
 with app.app_context():
-    # Create database if it doesn't exist
+    # Create database if needed (local development only)
     create_database_if_not_exists()
     
-    # Synchronize database schema with models (like Sequelize sync)
-    sync_database_schema()
-        
+    # Ensure all tables exist (for both local and Railway)
+    sync_database_tables()
+    
 if __name__ == '__main__':
-    # When running directly (not with gunicorn), we've already initialized 
-    # the database in the block above, so just start the server
+    # When running directly, we've already initialized the database
     app.run(debug=True)
