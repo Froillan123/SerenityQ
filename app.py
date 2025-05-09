@@ -13,8 +13,11 @@ load_dotenv()
 # Initialize Flask app
 app = Flask(__name__)
 
+# Check if running on Render.com
+is_render = os.environ.get('RENDER') == 'true'
+
 # Choose database configuration based on environment
-if os.getenv('FLASK_ENV') == 'production' or os.getenv('DATABASE_URL'):
+if os.getenv('DATABASE_URL') or is_render:
     app.config.from_object('dbconfig')  # PostgreSQL config from dbconfig.py
     print("✅ Using PostgreSQL configuration")
 else:
@@ -43,8 +46,8 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max upload size
 
 # JWT Configuration
 app.config['JWT_TOKEN_LOCATION'] = ['cookies']
-app.config['JWT_COOKIE_SECURE'] = os.getenv('FLASK_ENV') == 'production'
-app.config['JWT_COOKIE_CSRF_PROTECT'] = os.getenv('FLASK_ENV') == 'production'
+app.config['JWT_COOKIE_SECURE'] = os.getenv('FLASK_ENV') == 'production' or is_render
+app.config['JWT_COOKIE_CSRF_PROTECT'] = os.getenv('FLASK_ENV') == 'production' or is_render
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'fallback-secret-key')
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=1)
 
@@ -76,8 +79,8 @@ def create_database_if_not_exists():
     """Create the database if it doesn't exist"""
     try:
         # Check if using PostgreSQL (production) or MySQL (development)
-        if os.getenv('FLASK_ENV') == 'production' or os.getenv('DATABASE_URL'):
-            # For PostgreSQL (likely on Railway), we don't need to create the database
+        if os.getenv('FLASK_ENV') == 'production' or os.getenv('DATABASE_URL') or is_render:
+            # For PostgreSQL (likely on Railway or Render), we don't need to create the database
             # The database is already provisioned
             print("✅ Using provisioned PostgreSQL database")
             return
@@ -139,17 +142,33 @@ def sync_database_schema():
                 os.system('flask db upgrade')
                 print("✅ Database schema synchronized")
             else:
-                print("✅ No schema changes detected")
+                print("✅ No schema changes detected or applying migrations directly")
+                # Try direct table creation if migration fails (for Render deployment)
+                if is_render or os.getenv('DATABASE_URL'):
+                    print("🔧 Force synchronizing database tables...")
+                    db.create_all()
+                    print("✅ Tables forcefully synchronized")
                 
     except Exception as e:
         print(f"❌ Database synchronization error: {str(e)}")
+        print("🔧 Attempting direct table creation...")
+        try:
+            # Last resort - try direct table creation
+            db.create_all()
+            print("✅ Tables created directly")
+        except Exception as inner_e:
+            print(f"❌ Table creation failed: {str(inner_e)}")
+
+# Initialize database tables when the app starts
+# This ensures tables are created even when running with gunicorn
+with app.app_context():
+    # Create database if it doesn't exist
+    create_database_if_not_exists()
+    
+    # Synchronize database schema with models (like Sequelize sync)
+    sync_database_schema()
         
 if __name__ == '__main__':
-    with app.app_context():
-        # Create database if it doesn't exist
-        create_database_if_not_exists()
-        
-        # Synchronize database schema with models (like Sequelize sync)
-        sync_database_schema()
-    
+    # When running directly (not with gunicorn), we've already initialized 
+    # the database in the block above, so just start the server
     app.run(debug=True)
